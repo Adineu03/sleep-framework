@@ -1,0 +1,30 @@
+# GPT-2 Small Proof-of-Concept Configuration
+# Overrides base.yaml for fast iteration on CPU.
+
+model:
+  name: "gpt2"             # 124M parameters
+  device: "cpu"
+
+# Scaled down for 0.124B model
+tagging:
+  c_tag: 5000              # 5000 * 0.124 = 620 tags max
+  tau_base: 200             # faster decay for quicker experiments
+  gc_interval: 20
+
+prp:
+  c_prp: 500               # 500 * 0.124 = 62 PRP budget
+  crossref_interval: 100
+  allocation_interval: 20
+
+weights:
+  lora_rank: 4              # smaller rank for tiny model
+  lora_alpha: 8
+
+sleep:
+  batch_size: 8             # smaller batches for CPU
+  steps_per_memory: 3       # fewer steps for faster iteration
+  schedule_interval: 500    # sleep more frequently for testing
+  min_replay_length: 32
+
+tracking:
+  wandb_project: "sleep-memory-poc"

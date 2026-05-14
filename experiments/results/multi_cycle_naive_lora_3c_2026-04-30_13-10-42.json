@@ -1,0 +1,86 @@
+{
+  "experiment": "08_multi_cycle",
+  "timestamp": "2026-04-30_13-10-42",
+  "method": "naive_lora",
+  "n_cycles": 3,
+  "batch_size": 67,
+  "seed": 0,
+  "facts_file": "experiments/data/facts_200.json",
+  "config_path": "experiments/configs/qwen7b.yaml",
+  "overrides": {
+    "delta_max": 0.02,
+    "lambda_ewc": 50.0,
+    "alpha_slow": 0.0001,
+    "steps_per_memory": 4,
+    "kv_top_k": 64,
+    "replay_strategy": "original"
+  },
+  "naive_lora_settings": {
+    "steps": 200,
+    "batch_size": 32,
+    "lr": 0.0001,
+    "weight_decay": 0.01
+  },
+  "baseline_ppl": 4.126389113157112,
+  "cycle_results": [
+    {
+      "cycle": 1,
+      "n_facts": 67,
+      "n_steps": 200,
+      "first_loss": 3.0533149242401123,
+      "tail_loss_mean": 0.11798863932490349
+    },
+    {
+      "cycle": 2,
+      "n_facts": 67,
+      "n_steps": 200,
+      "first_loss": 2.001225233078003,
+      "tail_loss_mean": 0.09459158107638359
+    },
+    {
+      "cycle": 3,
+      "n_facts": 66,
+      "n_steps": 200,
+      "first_loss": 1.560607671737671,
+      "tail_loss_mean": 0.0811867792159319
+    }
+  ],
+  "eval_results": [
+    {
+      "cycle": 1,
+      "arm": "naive_lora",
+      "cumulative_n": 67,
+      "current_n": 67,
+      "dra_cumulative": 0.12935323383084577,
+      "dra_current": 0.12935323383084577,
+      "n_hits_cumulative": 23,
+      "n_hits_current": 23,
+      "bcp": 3.8427424920556006,
+      "post_ppl": 15.85665078388446
+    },
+    {
+      "cycle": 2,
+      "arm": "naive_lora",
+      "cumulative_n": 134,
+      "current_n": 67,
+      "dra_cumulative": 0.07960199004975124,
+      "dra_current": 0.1044776119402985,
+      "n_hits_cumulative": 23,
+      "n_hits_current": 14,
+      "bcp": 3.4240252184875324,
+      "post_ppl": 14.128860384742355
+    },
+    {
+      "cycle": 3,
+      "arm": "naive_lora",
+      "cumulative_n": 200,
+      "current_n": 66,
+      "dra_cumulative": 0.11166666666666666,
+      "dra_current": 0.13636363636363635,
+      "n_hits_cumulative": 58,
+      "n_hits_current": 22,
+      "bcp": 4.737170954095617,
+      "post_ppl": 19.54741065214424
+    }
+  ]
+}

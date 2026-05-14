@@ -1,0 +1,87 @@
+# SLEEP Base Configuration
+# All values match SLEEP_Formalization.md defaults exactly.
+# Override in experiment-specific configs, NOT here.
+
+model:
+  name: "gpt2"
+  device: "cpu"
+
+tagging:
+  d_tag: 128
+  beta: 0.99
+  kappa: 1.5
+  gap_tolerance: 3
+  min_span: 4
+  alpha_init: 2.0
+  kappa_wfast: 2.5
+  tau_base: 1000
+  gamma_decay: 0.5
+  epsilon: 0.01
+  epsilon_gc: 0.02
+  gc_interval: 100
+  delta_s: 0.3
+  theta_access: 0.7
+  c_tag: 5000
+
+prp:
+  w_error: 0.35
+  w_access: 0.30
+  w_crossref: 0.15
+  w_recency: 0.20
+  theta_xref: 0.5
+  crossref_interval: 500
+  tau_recency: 500
+  c_prp: 500
+  delta_steal: 0.05
+  allocation_interval: 100
+  kappa_prp: 0.5
+  theta_floor: 0.2
+
+weights:
+  lora_rank: 16
+  lora_alpha: 32
+  adapted_fraction: 0.333
+  adapted_matrices: ["v_proj", "o_proj"]
+  alpha_fast: 0.0001
+  momentum_fast: 0.9
+  alpha_slow: 0.00001
+  delta_max: 0.001
+  phi_min: 0.10
+  lambda_ewc: 100.0
+  fisher_refresh_interval: 10
+  fisher_calibration_mix: 0.7
+  epsilon_degrade: 0.02
+
+sleep:
+  replay_temperature: 0.7
+  replay_top_p: 0.9
+  seed_length_max: 32
+  theta_quality: 0.5
+  max_generation_attempts: 3
+  compression_target: 5
+  min_replay_length: 64
+  eta_default: 4
+  proximity_fraction: 0.5
+  sleep_optimizer: "adamw"
+  sleep_weight_decay: 0.01
+  grad_clip_norm: 1.0
+  steps_per_memory: 5
+  batch_size: 32
+  schedule_interval: 10000
+  pressure_threshold: 0.7
+  budget_threshold: 0.8
+  idle_timeout: 300
+  epsilon_learn: 0.1
+  theta_validate: 0.4
+  max_failures: 3
+
+cold_start:
+  kappa_cold: 3.0
+  n_burnin: 50
+  n_ramp: 50
+  n_mature: 500
+
+tracking:
+  wandb_project: "sleep-memory"
+  wandb_enabled: true
+  log_dir: "experiments/results"

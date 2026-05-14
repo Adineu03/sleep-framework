@@ -1,0 +1,96 @@
+% =============================================================================
+% Appendix
+% =============================================================================
+
+\appendix
+
+\section{Formalization Amendments}
+\label{app:amendments}
+
+We resolved 36 design questions in a pre-registered formalization document before any code was written. Empirical work surfaced five amendments, each documented with the experiment that motivated it. We summarize them here; the full formalization (including unchanged questions) is released alongside the implementation.
+
+\paragraph{A.1 ($\delta_{\max}$ must scale with model size).} The original specification of $\delta_{\max}=0.001$ as a per-parameter clip bound saturates within $\sim 30$ training steps on a 7B model with rank-16 LoRA: 36/36 LoRA parameters hit the clip on every step thereafter, and validation always fails. Required correction: $\delta_{\max} \approx 0.01$ at 7B scale. The per-parameter bound is the wrong abstraction; what matters is the Frobenius norm of the LoRA update relative to the model's natural weight scale. A scaling rule of $\delta_{\max}(d) = 0.001 \cdot \sqrt{d / 768}$ partially corrects this but underestimates the empirically required value.
+
+\paragraph{A.2 ($\alpha_{\mathrm{slow}}$ must exceed the dtype precision floor).} The original specification of $\alpha_{\mathrm{slow}} = 10^{-5}$ produces gradient updates that round to zero in bfloat16 storage: training loss is completely flat across 100 steps. Bumping to $10^{-4}$ produces a phase transition (loss $1.46 \to 0.55$). Required correction: $\alpha_{\mathrm{slow}} \geq 10 \cdot \mathrm{ulp}(\mathrm{dtype})$, which for bfloat16 is approximately $10^{-3} \cdot \|W\|_{\mathrm{avg}}$. The original $10^{-5}$ implicitly assumed float32; in mixed-precision training (the practical regime for 7B+), it is too small.
+
+\paragraph{A.3 ($\mu_{\mathrm{surprise}}$ has a generator-discriminator gap).} The quality check ``replay must be at least as surprising as the model's baseline'' rejects all replays in practice, because replays are generated from the same model that defines the surprise function and are therefore systematically more in-distribution than external calibration text. The empirical surprise of generated replays ($\sim 1.25$ nats) falls below the baseline computed on calibration text ($\sim 1.41$ nats). Required correction: replace the absolute threshold with a relative-gain criterion ($\mathrm{surprise(\mathrm{replay})} > \beta \cdot \mathrm{surprise(\mathrm{seed})}$) or compute the threshold from self-generated samples. Until amended, we disable the absolute check.
+
+\paragraph{A.4 (Validation has a data-volume floor).} The validation criterion $\mathrm{surprise}_\mathrm{new} < (1 - \epsilon_\mathrm{learn}) \cdot \mathrm{surprise}_\mathrm{old}$ with $\epsilon_\mathrm{learn} = 0.10$ is achievable only above a minimum number of replays. With 5 facts and 2--3 replays, $0\%$ of candidates pass; with 200 facts and $\sim 50$ replays, $40\%$--$60\%$ pass depending on safety settings. The criterion itself is sound, but the formalization should explicitly document that pass rates are zero below a benchmark-dependent volume threshold.
+
+\paragraph{A.5 (Tags are pointers, not storage).} The original formalization stored only the K/V projections of tagged tokens, but tagged tokens are short novel-entity mentions (4--8 tokens) that capture the location of the surprise without its content. Required correction: when a tag fires, store K/V for the full sentence containing the tagged span (the \emph{episode}), not just the tagged tokens. This corresponds to the proposal's own framing of tags as pointers but was implemented as direct storage. Section~\ref{sec:results_episodes} reports the empirical correction.
+
+\section{Hyperparameter Table}
+\label{app:hyperparams}
+
+\begin{table}[h]
+\centering
+\caption{Full hyperparameter list. ``Source'' indicates which of the 36 formalization questions specifies the parameter. ``Status'' indicates whether the value matches the original specification or was empirically amended.}
+\label{tab:hyperparams_full}
+\begin{tabular}{llll}
+\toprule
+Parameter & Value & Source & Status \\
+\midrule
+Tagging $\kappa$ (z-score threshold) & 1.5 & Q1.2 & default \\
+Tagging $g$ (gap tolerance) & 3 & Q1.3 & default \\
+Tagging min span length & 4 & Q1.3 & default \\
+Tagging EMA $\beta$ & 0.99 & Q1.2 & default \\
+PRP weights $(w_E, w_a, w_x, w_r)$ & (0.35, 0.30, 0.15, 0.20) & Q2.2 & default \\
+PRP budget multiplier $c_\mathrm{prp}$ & 500 & Q2.4 & default \\
+PRP cross-ref similarity threshold & 0.5 & Q2.2 & default \\
+LoRA rank ($r$) & 16 & Q3.1 & default \\
+LoRA $\alpha$ & 32 & Q3.1 & default \\
+Adapted layer fraction & 0.333 (top 1/3) & Q3.2 & default \\
+Adapted matrices & V, O & Q3.1 & default \\
+$\alpha_\mathrm{fast}$ & $10^{-4}$ & Q3.3 & default (LoRA W$_\mathrm{fast}$ only) \\
+$\alpha_\mathrm{slow}$ & $10^{-4}$ & Q3.3 & \textbf{amended (A.2)} \\
+$\delta_\mathrm{max}$ & 0.01 & Q3.4 & \textbf{amended (A.1)} \\
+$\lambda_\mathrm{EWC}$ & 100 & Q3.4 & default \\
+$\phi_\mathrm{min}$ (plasticity floor) & 0.10 & Q3.4 & default \\
+$\epsilon_\mathrm{learn}$ (validation) & 0.10 & Q4.6 & default \\
+$\epsilon_\mathrm{degrade}$ (rollback) & 0.02 & Q4.5 & default \\
+Replay temperature & 0.7 & Q4.1 & default \\
+Replay top-$p$ & 0.9 & Q4.1 & default \\
+Compression target & 5 & Q4.1 & default \\
+Steps per memory & 5 & Q4.4 & default \\
+Sleep weight decay & 0.01 & Q4.4 & default \\
+KV bank capacity (tokens) & 20{,}000 & --- & new (A.5) \\
+KV top-$k$ retrieval gate & 16 (default), 64 (episode) & --- & new (A.5) \\
+KV memory storage unit & full sentence (episode) & --- & \textbf{amended (A.5)} \\
+$\mu_\mathrm{surprise}$ (quality check) & disabled (set to 0) & Q4.1 & \textbf{amended (A.3)} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Implementation Details}
+\label{app:implementation}
+
+\subsection{KV Memory Injection Mechanics}
+
+KV memory injection requires care to avoid silently wrong attention scores. We document the choices made:
+
+\textbf{Position encoding.} We treat memory entries as occupying negative position IDs $[-n_\mathrm{mem}, -1]$. RoPE~\citep{su2024roformer} is applied at read time to memory keys with these positions. The encoding is mathematically valid (sin is odd, cos is even, both well-defined at negative inputs) and verified unit-tested. Memory thus appears to current queries (at positive positions) as ``recent context tokens,'' a pattern the model was trained on through RoPE's relative-position mechanic.
+
+\textbf{Attention mask.} Qwen2 uses float additive masks with $-\infty$ for masked positions and $0.0$ for visible. When extending the mask with memory columns, we fill those columns with $0.0$ of the mask's own dtype. A boolean True or integer 1 here would silently produce wrong scores on float-mask attention paths.
+
+\textbf{Cache ordering.} Memory K/V must be injected \emph{after} the \texttt{past\_key\_values} cache update, not before. If memory is injected first, the cache accumulates a duplicate copy of memory tokens on every autoregressive generation step; by step 50 the cache contains 50 copies of memory and BCP collapses (we observed $\sim 96\times$ degradation under this bug).
+
+\textbf{K/V extraction layer-norm.} When extracting K/V from a forward pass via \texttt{output\_hidden\_states=True}, the apparent ``hidden state at layer $\ell$'' is the input to layer $\ell$, but attention computes K/V from the layer-normed input. Skipping the layer-norm produces silently wrong K/V. We add an integration test that captures K/V via a forward hook during a normal forward pass and asserts equality with our extraction.
+
+\subsection{Per-Phase KV State}
+
+A correctness requirement we discovered: KV injection must be \emph{disabled} during W$_\mathrm{cons}$ training. If left enabled, the model can satisfy the training loss by relying on injected memory rather than encoding the replay content into weights---a crutch the model would not have at inference time after the bank is cleared. We add a \texttt{set\_enabled(bool)} method to the injector and toggle as follows:
+
+\begin{itemize}[itemsep=0.1em,topsep=0.2em]
+    \item Wake (tagging, KV write): enabled.
+    \item Phase 1 Generate (replay): enabled (so the model attends to source while compressing).
+    \item Phase 2 Quality check: state preserved (no parameter changes; result invariant).
+    \item Phase 3 Train (W$_\mathrm{cons}$ updates): \emph{disabled} (forces W$_\mathrm{cons}$ to encode into weights).
+    \item Phase 4 PPL check: disabled (clean preservation measurement).
+    \item Phase 5 Validate \& cleanup: disabled (clean recall measurement).
+    \item After successful consolidation: bank is cleared, enabled flag reset for next cycle.
+\end{itemize}
+
+\section{Multi-Cycle Configuration}
+\label{app:multi_cycle}
+
+The multi-cycle experiment of Section~\ref{sec:multi_cycle} uses Setting A from the Pareto sweep ($\delta_{\max} = 0.02$, $\lambda_{\mathrm{EWC}} = 50$, $\alpha_{\mathrm{slow}} = 10^{-4}$, steps-per-memory $= 4$) for the SLEEP arm. The naive LoRA arm uses 200 gradient steps per cycle on the cycle's batch only, with AdamW (lr $10^{-4}$, weight decay 0.01, batch size 32, uniform-with-replacement sampling). Both arms accumulate adapter state across cycles; weights from cycle $i$ persist into cycle $i+1$. Both arms are evaluated on identical control texts and recall benchmarks after each cycle. Replay strategy for the SLEEP arm is set to \texttt{original} (replays are the original fact tokens), eliminating replay quality as a confound and isolating the multi-cycle dynamics of the consolidation training step.

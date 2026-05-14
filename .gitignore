@@ -1,0 +1,78 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Test / type-check caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Claude Code local settings (machine-specific)
+.claude/
+
+# Experiment outputs (large files, pod-specific logs)
+experiments/results/*/
+!experiments/results/.gitkeep
+
+# Pod / SSH artifacts
+*.pem
+*.key
+known_hosts
+
+# Model checkpoints (large)
+checkpoints/
+models/
+*.pt
+*.pth
+*.bin
+*.safetensors
+*.gguf
+*.ckpt
+
+# HuggingFace cache
+.cache/
+.huggingface/
+
+# Weights & Biases
+wandb/
+
+# LaTeX build artifacts
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.log
+paper/*.out
+paper/*.toc
+paper/*.fls
+paper/*.fdb_latexmk
+paper/*.synctex.gz
+# Note: paper/main.pdf is intentionally NOT ignored — commit the compiled PDF
+# alongside the source so readers without a LaTeX toolchain can read the paper.
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets / environment
+.env
+.env.*
+!.env.example

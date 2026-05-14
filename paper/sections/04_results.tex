@@ -1,0 +1,149 @@
+% =============================================================================
+% Part 4: Results
+% =============================================================================
+
+\section{Results}
+\label{sec:results}
+
+The paper's empirical contribution is an anatomy of where in the SLEEP pipeline information is preserved, transformed, or lost. We organize the results around five questions, each with a specific experimental answer.
+
+\subsection{Encoding: LoRA Fast Weights vs. KV Memory Injection}
+\label{sec:results_encoding}
+
+\paragraph{Claim.} The original SLEEP design specified LoRA adapters as the fast-weight substrate. We find this configuration cannot deposit retrievable knowledge from a single inference pass, and we show that direct-write KV memory injection produces a clear---if limited---encoding signal.
+
+\paragraph{Setup.} We compare two W$_{\mathrm{fast}}$ substrates on identical 200-fact wake-only protocol: (i) LoRA W$_{\mathrm{fast}}$ updated by gradient descent on each tagged span (the original specification), and (ii) KV memory injection with episode storage and top-$k$ retrieval gating ($k=16$). For each, we evaluate multiple-choice accuracy and BCP after wake (no sleep cycle).
+
+\paragraph{Results.} Table~\ref{tab:substrate_comparison} reports the contrast. LoRA W$_{\mathrm{fast}}$ at $\alpha_{\mathrm{fast}} = 10^{-4}$ produces no detectable encoding signal: tagged-fact MC accuracy ($0.23$) is statistically indistinguishable from untagged-fact accuracy ($0.24$). Increasing the learning rate to $10^{-3}$ degrades the model (BCP $1.17$) without producing recall. We attribute this to the bfloat16 precision floor: at $\alpha_{\mathrm{fast}} = 10^{-4}$, single-step gradient updates are below the dtype's representable epsilon for typical weight magnitudes.
+
+\begin{table}[t]
+\centering
+\caption{W$_{\mathrm{fast}}$ substrate comparison on 200-fact wake-only protocol. KV injection produces a recognition signal that LoRA does not; KV without retrieval gating destroys BCP.}
+\label{tab:substrate_comparison}
+\begin{tabular}{lcccc}
+\toprule
+& MC Tagged & MC Untagged & $\Delta$ (T--U) & BCP \\
+\midrule
+LoRA W$_{\mathrm{fast}}$ ($\alpha = 10^{-4}$) & 0.23 & 0.24 & $-0.01$ & 0.99 \\
+LoRA W$_{\mathrm{fast}}$ ($\alpha = 10^{-3}$) & 0.24 & 0.24 & $0.00$  & 1.17 \\
+KV memory (no gating) & 0.27 & 0.16 & $+0.11$ & 96.88 \\
+KV memory ($k=16$, gated) & \textbf{0.28} & \textbf{0.12} & $\mathbf{+0.16}$ & \textbf{1.08} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+KV memory injection with retrieval gating produces a $+0.16$ multiple-choice gap between tagged and untagged facts, with BCP held at $1.08$ (Figure~\ref{fig:substrate}).
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/figure_substrate_comparison.pdf}
+\caption{Comparison of W$_{\mathrm{fast}}$ substrates on a 200-fact wake-only protocol. Left: tagged-vs-untagged multiple-choice accuracy. Right: BCP (log scale, since the no-gating KV configuration produces $\sim 100\times$ degradation). The KV substrate with retrieval gating is the only configuration that produces a measurable recognition signal (Tagged $-$ Untagged $= +0.16$) while preserving base capability.}
+\label{fig:substrate}
+\end{figure} Calibration analysis is more sensitive: the average probability assigned to the correct option, conditional on the model picking the wrong one, is $0.23$ for tagged facts vs $0.19$ for untagged---suggesting partial encoding signal that does not quite flip predictions. Without retrieval gating, the KV bank's contents drown attention on irrelevant queries, destroying base capability (BCP $96.88$).
+
+\subsection{Recognition Without Recall}
+\label{sec:results_rwr}
+
+The KV memory result above is structurally partial. Tagged-fact \emph{multiple-choice} accuracy exceeds untagged by $+0.16$, but tagged-fact \emph{cloze} accuracy is $0.00$ and tagged-fact \emph{free-form} accuracy is $0.00$. The same memories that bias four-way recognition fail to drive autoregressive token generation. We name this dissociation the \emph{recognition--recall gap} and treat it as the paper's central novel finding: it is not a defect of our specific implementation but, we argue, a structural property of memory-augmented attention over frozen pretrained models.
+
+\paragraph{The cognitive-psychology analogue.} The recognition--recall dissociation is a foundational observation in episodic memory research~\citep{morris2006elements}. Recognition (``does this seem familiar?'') can be supported by partial trace reactivation---a sense of fluency or matching---while free recall (``what came next?'') requires reconstructing the trace in sufficient completeness to generate its content. Patients with hippocampal damage often retain residual recognition ability even when free recall is severely impaired. The structural distinction in cognitive psychology is that recognition is a similarity-judgment task (compare the probe to stored representations), while recall is a generation task (produce the stored representation autoregressively from a cue). Our result reproduces this distinction in transformer language models for a different reason at the mechanistic level, but with the same operational consequence.
+
+\paragraph{The mechanistic explanation.} At each generation step, attention to memory K/V provides additive perturbations to the pre-softmax logits at every layer. For our $n_{\mathrm{mem}} \approx 5{,}500$ stored tokens with top-$k$ retrieval gating, the $k$ retained memory positions contribute at most $k/(k + |\text{seq}|)$ of total attention mass, with the remainder going to the current sequence's tokens whose keys are RoPE-anchored at the model's normal training distribution. Memory thus enters the next-token prediction as a small perturbation against a strong prior trained on trillions of tokens. The perturbation is sufficient to flip an argmax in a four-way comparison---all four options share the same prior and the memory tilts the relative scores---but is overwhelmed across an autoregressive generation, where each generated token comes from a categorical distribution over a 150{,}000-token vocabulary in which the prior dominates. A memory entry can nudge the most likely token of a sentence; it cannot consistently steer 50 generated tokens against the model's natural continuation distribution.
+
+\paragraph{Why this matters beyond SLEEP.} Memorizing Transformers~\citep{wu2022memorizing} avoids exactly this failure mode by retraining the model on memory-augmented losses, teaching the next-token distribution to depend on retrieved K/V. Our recognition-without-recall result is---in part---a precise specification of \emph{what} that fine-tuning fixes: the gap between attention-time bias and sampling-time use. For applications that need a frozen pretrained backbone with appended memory, the gap is structural and cannot be closed by hyperparameter tuning. We return to the architectural implications in Section~\ref{sec:discussion}.
+
+\subsection{Episode Storage: Tags Are Pointers}
+\label{sec:results_episodes}
+
+\paragraph{Claim.} The original formalization stored only tagged-token K/V; we show this captures entity mentions without their factual content, and that storing the full sentence containing the tag is necessary for replay quality.
+
+\paragraph{Diagnostic.} We inspect the generated replays produced by the sleep cycle when the bank stores only the tagged span. With seeds like ``\texttt{Nimbus Holdings reported Q}'', the model generates fluent financial-news text with fabricated revenue figures (``\texttt{\$32.6 million}'', ``\texttt{up 6.1\% from prior year}'')---values not in the original fact. The pattern persists across templates: stored entity-name K/V provide an attention bias toward ``earnings statement'' representations without supplying the specific facts.
+
+When storage is expanded to the full sentence containing the tag (the \emph{episode}), and the seed for replay generation is taken from the start of the episode rather than from the tag location, replay coherence improves: the consolidation rate (validation passes / candidates) rises from $40\%$ to $62\%$, and BCP improves from $1.06$ to $1.008$ (k=16, episode storage). The recall metrics, however, do not improve correspondingly---a finding we examine in Section~\ref{sec:results_consolidation}.
+
+This empirical correction validates the proposal's own framing: \emph{tags are pointers, not storage}. The implementation must store what the pointer indexes, not the pointer's surface form.
+
+\subsection{The Consolidation Bottleneck}
+\label{sec:results_consolidation}
+
+\paragraph{Claim.} Even when generative replay is replaced with the original tokens (eliminating replay-quality as a confound), SLEEP's safety machinery prevents sufficient W$_{\mathrm{cons}}$ updates for free-form recall.
+
+\paragraph{Setup.} We add a \emph{replay-strategy} parameter to the sleep engine. With \texttt{replay\_strategy="original"}, the engine bypasses generation entirely and uses the original fact tokens as replays. All other components---PRP allocation, EWC, hard clipping, validation, rollback, KV-disabled training---run unchanged. This isolates ``does W$_{\mathrm{cons}}$ training learn from data, given perfect data?''
+
+\paragraph{Result.} With original-token replays under default safety parameters ($\delta_{\max}=0.01, \lambda_{\mathrm{EWC}}=100, \alpha_{\mathrm{slow}}=10^{-4}$, $\sim$100 steps), recall remains at floor: $\mathrm{DRA} = 0.012$ with BCP $1.29$. The system's internal validation passes for $37/52$ candidates ($71\%$)---the pre-training and post-training surprise ratios on original spans show the required $\geq 10\%$ reduction---but external recall does not register the change. \emph{Internal validation criteria can pass while external recall fails.} We argue this self-grading discrepancy is a methodological concern broader than SLEEP: a system that grades itself on a proxy of its own behavior provides no protection against proxy--target mismatch.
+
+\subsection{The Stability--Plasticity Pareto Frontier}
+\label{sec:results_pareto}
+
+\paragraph{Claim.} Sweeping the four safety knobs produces a smooth Pareto curve with no operating point achieving both meaningful recall and preservation on the single-cycle benchmark.
+
+\paragraph{Setup.} Using original-token replay (clean signal), we sweep four settings of $(\delta_{\max}, \lambda_{\mathrm{EWC}}, \alpha_{\mathrm{slow}}, \mathrm{steps\_per\_memory})$ from SLEEP defaults to near-naive-LoRA. We compare against naive LoRA fine-tuning at matched compute. Table~\ref{tab:pareto} reports the curve.
+
+\begin{table}[t]
+\centering
+\caption{Single-cycle Pareto frontier on 200-fact benchmark. No SLEEP setting achieves $\mathrm{DRA} > 0.05$ with $\mathrm{BCP} < 1.05$. Naive LoRA achieves higher DRA at unacceptable BCP cost.}
+\label{tab:pareto}
+\begin{tabular}{lcccccc}
+\toprule
+Setting & $\delta_{\max}$ & $\lambda_{\mathrm{EWC}}$ & $\alpha_{\mathrm{slow}}$ & steps/mem & DRA & BCP \\
+\midrule
+SLEEP default     & 0.01     & 100  & $10^{-4}$ & 5  & 0.012 & 1.29 \\
+Mild relax (A)    & 0.02     & 50   & $10^{-4}$ & 4  & 0.050 & 1.67 \\
+Moderate (B)      & 0.05     & 10   & $3{\times}10^{-4}$ & 4  & 0.067 & 2.33 \\
+Aggressive (C)    & 0.10     & 1    & $5{\times}10^{-4}$ & 6  & 0.103 & 2.73 \\
+Naive LoRA        & $\infty$ & 0    & $10^{-4}$ & --- & 0.275 & 2.94 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The curve (Figure~\ref{fig:pareto}, also shown on page~1 as the paper's central result) is monotonic: relaxing safety raises DRA and raises BCP simultaneously. There is no knee; no inflection point where DRA jumps without BCP cost. On a single-cycle 200-fact benchmark, the SLEEP architecture's value proposition---``a small recall sacrifice in exchange for guaranteed preservation''---does not hold: every SLEEP point pays more BCP per percentage point of recall than naive LoRA does at its single endpoint.
+
+\paragraph{Reading 1.} A natural reading of these single-cycle results is that SLEEP's safety machinery is over-engineered. The mechanisms (EWC, hard clipping, interleaving, validation rollback) collectively dampen learning more than they protect base capability. On a one-shot benchmark, that is a true description of what they do.
+
+\subsection{Multi-Cycle Continual Learning: The Picture Inverts}
+\label{sec:multi_cycle}
+
+\paragraph{Claim.} SLEEP's safety mechanisms are designed for repeated-cycle continual learning, not for single-cycle one-shot benchmarks. When we evaluate in their intended regime, SLEEP's per-cost efficiency overtakes naive LoRA.
+
+\paragraph{Setup.} We split 200 facts into 3 disjoint batches of $\approx 67$. Across three sequential cycles, the model is exposed to one batch per cycle. After each cycle, we measure (i) DRA on the cumulative facts seen so far (the forgetting test), (ii) DRA on the current cycle's facts (the learning test), and (iii) BCP on controls (the preservation test). We compare two arms: \textbf{SLEEP-A} (Setting A from the Pareto sweep, the most efficient SLEEP point) and \textbf{Naive LoRA} (200 steps per cycle on the cycle's batch only). Crucially, both arms accumulate weight updates across cycles---each cycle starts from the previous cycle's adapter state.
+
+\begin{table}[t]
+\centering
+\caption{Three-cycle continual learning on disjoint batches. SLEEP preserves BCP $2\times$ better than naive LoRA at every cycle, with DRA-per-BCP-cost surpassing naive LoRA by cycle~3.}
+\label{tab:multi_cycle}
+\begin{tabular}{lccccc}
+\toprule
+& Cycle & Cum facts & DRA cum & DRA current & BCP \\
+\midrule
+\multirow{3}{*}{SLEEP-A}
+   & 1 & 67  & 0.010 & 0.010 & \textbf{1.10} \\
+   & 2 & 134 & 0.052 & 0.070 & \textbf{2.26} \\
+   & 3 & 200 & 0.058 & 0.066 & \textbf{2.31} \\
+\midrule
+\multirow{3}{*}{Naive LoRA}
+   & 1 & 67  & 0.129 & 0.129 & 3.84 \\
+   & 2 & 134 & 0.080 & 0.105 & 3.42 \\
+   & 3 & 200 & 0.112 & 0.136 & 4.74 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:multi_cycle} and Figure~\ref{fig:multi_cycle} report the head-to-head.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/figure_multi_cycle.pdf}
+\caption{Three-cycle continual learning on disjoint batches. Left: cumulative DRA (recall on all facts seen so far). Right: BCP (lower = better preservation). At every cycle, SLEEP-A's BCP is approximately half of naive LoRA's; the design-intent regime (multiple cycles) reverses the per-cost efficiency comparison from the single-cycle Pareto frontier.}
+\label{fig:multi_cycle}
+\end{figure} At every cycle, SLEEP's BCP is approximately half of naive LoRA's: cycle 1 $1.10$ vs $3.84$, cycle 2 $2.26$ vs $3.42$, cycle 3 $2.31$ vs $4.74$. Naive LoRA's BCP fluctuates and increases on the third cycle---the additional gradient steps continue to corrupt the model. SLEEP's BCP increases between cycle 1 and cycle 2 but stabilizes between cycle 2 and 3, suggesting the safety mechanisms slow---though do not eliminate---multi-cycle compounding.
+
+\paragraph{Per-cost efficiency at cycle 3.} We compute DRA per unit BCP-delta:
+\begin{itemize}[itemsep=0.1em,topsep=0.2em]
+    \item \textbf{SLEEP-A}: $0.058 / (2.31 - 1) = 0.045$
+    \item \textbf{Naive LoRA}: $0.112 / (4.74 - 1) = 0.030$
+\end{itemize}
+SLEEP delivers $1.5\times$ more recall per percentage point of BCP cost at cycle 3. The single-cycle finding inverts: \emph{SLEEP's safety machinery does deliver value, but only in its intended continual-learning regime.}
+
+\paragraph{Reading 2 supersedes Reading 1.} Single-cycle benchmarks systematically disadvantage architectures whose value emerges across cycles. The naive-LoRA-wins picture from Section~\ref{sec:results_pareto} is true for one-shot evaluation but does not generalize. We frame this as a methodological note for the field: continual-learning systems should not be evaluated by their per-cost efficiency on a single training pass.
+
+\paragraph{What the multi-cycle result does \emph{not} show.} Neither arm achieves $\mathrm{BCP} < 1.05$ at any cycle. The proposal's aspirational target was that SLEEP, run for many cycles, would maintain BCP near $1$ while accumulating substantial DRA. Our results contradict this aspiration: SLEEP slows BCP degradation but does not prevent it. We discuss the architectural implications in Section~\ref{sec:discussion}.

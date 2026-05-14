@@ -1,0 +1,70 @@
+\documentclass{article}
+
+% Standard ML conference packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{xcolor}
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage{enumitem}
+\usepackage{natbib}
+
+% Page setup (switch to conference style for submission)
+\usepackage[margin=1in]{geometry}
+
+\title{Recognition Without Recall:\\
+Empirical Limits of Biologically-Inspired \\
+Memory Consolidation in Transformers}
+
+\author{Aditya Tripathi\\
+\texttt{adityatripathi1503@gmail.com}}
+
+\date{}
+
+\begin{document}
+
+\maketitle
+
+% =============================================================================
+% Part 1: Abstract + Introduction
+% =============================================================================
+\input{sections/01_abstract_intro}
+
+% =============================================================================
+% Part 2: Background + Method
+% =============================================================================
+\input{sections/02_background_method}
+
+% =============================================================================
+% Part 3: Experimental Setup
+% =============================================================================
+\input{sections/03_experimental_setup}
+
+% =============================================================================
+% Part 4: Results
+% =============================================================================
+\input{sections/04_results}
+
+% =============================================================================
+% Part 5: Related Work + Discussion + Conclusion + Broader Impact
+% =============================================================================
+\input{sections/05_related_discussion_conclusion}
+
+% =============================================================================
+% References
+% =============================================================================
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+% =============================================================================
+% Appendix
+% =============================================================================
+\input{sections/06_appendix}
+
+\end{document}

@@ -1,0 +1,34 @@
+% =============================================================================
+% Part 1: Abstract + Introduction
+% =============================================================================
+
+\begin{abstract}
+We implement and empirically evaluate a biologically-faithful memory consolidation architecture for Large Language Models, drawing on the synaptic tagging-and-capture hypothesis~\citep{frey1997synaptic,redondo2011making}, the Complementary Learning Systems framework~\citep{mcclelland1995why}, and hippocampal-neocortical replay during sleep~\citep{wilson1994reactivation,diekelmann2010memory}. Our system, SLEEP, augments a 7B-parameter transformer with five interacting components: prediction-error tagging, direct-write key-value (KV) memory, protein-resource-allocation prioritization, generative replay, and LoRA-based consolidation under explicit safety constraints. Across 200 single-exposure synthetic facts on Qwen2.5-7B, we systematically isolate where the architecture succeeds and fails. Direct-write KV memory injection produces a clear \emph{recognition} signal (Tagged--Untagged $\Delta = +0.16$ on multiple-choice), but the same memories do not surface during free-form autoregressive \emph{recall}---a transformer analogue of the recognition--recall dissociation in cognitive psychology. Even when generative replay is replaced with the original tokens (eliminating replay-quality as a confound), SLEEP's safety machinery yields no operating point with $\mathrm{BCP} < 1.05$ that achieves $\mathrm{DRA} > 0.05$. In a multi-cycle continual-learning evaluation on disjoint batches, however, SLEEP preserves base capability $2\times$ better than naive LoRA fine-tuning at every cycle (BCP $2.31$ vs $4.74$ at cycle 3), confirming that single-cycle benchmarks understate biologically-inspired safety mechanisms. We map five formalization amendments required for the architecture to function at scale and identify the consolidation step's stability--plasticity tradeoff as the central open problem.
+\end{abstract}
+
+\section{Introduction}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.78\textwidth]{figures/figure_pareto_frontier.pdf}
+\caption{The paper's central empirical finding. Single-cycle stability--plasticity Pareto frontier on a 200-fact one-shot benchmark: SLEEP configurations sweep from default (most conservative) to aggressive; naive LoRA marks the unconstrained extreme. The green band shows the preservation-acceptable region ($\mathrm{BCP} < 1.05$); the dotted line shows a useful-recall threshold ($\mathrm{DRA} > 0.05$). No setting we tested falls in the upper-left intersection. A multi-cycle evaluation (Section~\ref{sec:multi_cycle}) reverses the per-cost comparison in SLEEP's favor.}
+\label{fig:pareto}
+\end{figure}
+
+Large language models exhibit a form of architectural anterograde amnesia: pretrained weights are fixed at deployment, and any new information learned during inference exists only within the context window, vanishing once the conversation ends. Retrieval-augmented generation~\citep{lewis2020retrieval} treats this as plumbing---append a database lookup to every query---rather than as a representational gap to close. Biological memory faces an analogous problem and solves it through a structured pipeline: surprising experiences are flagged at the synapse via prediction-error-driven tags~\citep{frey1997synaptic,rao1999predictive}, those tags compete for limited plasticity-related proteins~\citep{redondo2011making}, and the resulting episodic traces are gradually transferred from hippocampus to neocortex through replay during sleep~\citep{mcclelland1995why,wilson1994reactivation,diekelmann2010memory}. The result is continuous, selective, single-exposure learning that does not catastrophically overwrite existing knowledge.
+
+We ask whether this pipeline can be implemented faithfully in a transformer language model, and we answer with empirical detail. Following our pre-registered formalization (36 design questions resolved before any code was written), we implement all five biological mechanisms---tagging, KV memory, protein allocation, sleep replay, and dual-weight consolidation---on Qwen2.5-7B. Rather than reporting a single end-to-end metric, we instrument every component and identify exactly where in the pipeline information is preserved, transformed, or lost. This anatomy-of-failure framing produces a paper of mixed but specific results: the encoding components work, the consolidation components do not (in the parameter range we test), and the framework reveals a fundamental limitation of single-exposure parametric learning with current attention-based architectures.
+
+Figure~\ref{fig:pareto} previews the paper's central empirical result: the stability--plasticity Pareto frontier on a single-cycle 200-fact benchmark, showing that no SLEEP configuration we tested achieves $\mathrm{BCP} < 1.05$ at $\mathrm{DRA} > 0.05$, while a multi-cycle evaluation (Section~\ref{sec:multi_cycle}) inverts the per-cost comparison in SLEEP's favor.
+
+\paragraph{Contributions.}
+\begin{enumerate}[label=(C\arabic*),itemsep=0.15em,topsep=0.2em,leftmargin=*]
+    \item LoRA fast weights cannot encode at single exposure: $\alpha_{\mathrm{fast}} = 10^{-4}$ falls below the bfloat16 precision floor; $10^{-3}$ degrades the model without learning.
+    \item Direct-write KV memory injection produces recognition (Tagged--Untagged $\Delta = +0.16$ MC) but not generative recall---a transformer analogue of the cognitive recognition--recall dissociation.
+    \item Tags are pointers: storing only tagged tokens captures entity mentions without facts; episode-level storage is required.
+    \item Internal validation passes while external recall fails ($37/52$ candidates pass surprise-reduction; DRA at floor)---a self-grading discrepancy not unique to SLEEP.
+    \item No single-cycle Pareto operating point achieves $\mathrm{DRA} > 0.05$ with $\mathrm{BCP} < 1.05$ across our four-setting sweep.
+    \item Multi-cycle evaluation inverts the comparison: SLEEP preserves BCP $2\times$ better than naive LoRA at every cycle ($2.31$ vs $4.74$ at cycle 3), validating the architecture's design-intent regime.
+\end{enumerate}
+
+We do not claim SLEEP works as a deployable system. We claim something more specific: we show which biological mechanisms transfer to transformers (tagging, attention-based recognition, resource allocation), which do not in the form proposed (generative replay, LoRA consolidation under tight safety), and which require architectural rethinking before they will. We release the implementation, formalization, experimental logs, and the five required amendments.
