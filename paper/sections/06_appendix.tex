@@ -1,28 +1,30 @@
 % =============================================================================
-% Appendix
+% Annexure
 % =============================================================================
 
 \appendix
+\renewcommand{\thesection}{Annexure~\Alph{section}}
+\renewcommand{\thesubsection}{\Alph{section}.\arabic{subsection}}
 
 \section{Formalization Amendments}
 \label{app:amendments}
 
 We resolved 36 design questions in a pre-registered formalization document before any code was written. Empirical work surfaced five amendments, each documented with the experiment that motivated it. We summarize them here; the full formalization (including unchanged questions) is released alongside the implementation.
 
-\paragraph{A.1 ($\delta_{\max}$ must scale with model size).} The original specification of $\delta_{\max}=0.001$ as a per-parameter clip bound saturates within $\sim 30$ training steps on a 7B model with rank-16 LoRA: 36/36 LoRA parameters hit the clip on every step thereafter, and validation always fails. Required correction: $\delta_{\max} \approx 0.01$ at 7B scale. The per-parameter bound is the wrong abstraction; what matters is the Frobenius norm of the LoRA update relative to the model's natural weight scale. A scaling rule of $\delta_{\max}(d) = 0.001 \cdot \sqrt{d / 768}$ partially corrects this but underestimates the empirically required value.
+\paragraph{A.1 ($\delta_{\max}$ must scale with model size):} The original specification of $\delta_{\max}=0.001$ as a per-parameter clip bound saturates within $\sim 30$ training steps on a 7B model with rank-16 LoRA: 36/36 LoRA parameters hit the clip on every step thereafter, and validation always fails. Required correction: $\delta_{\max} \approx 0.01$ at 7B scale. The per-parameter bound is the wrong abstraction; what matters is the Frobenius norm of the LoRA update relative to the model's natural weight scale. A scaling rule of $\delta_{\max}(d) = 0.001 \cdot \sqrt{d / 768}$ partially corrects this but underestimates the empirically required value.
 
-\paragraph{A.2 ($\alpha_{\mathrm{slow}}$ must exceed the dtype precision floor).} The original specification of $\alpha_{\mathrm{slow}} = 10^{-5}$ produces gradient updates that round to zero in bfloat16 storage: training loss is completely flat across 100 steps. Bumping to $10^{-4}$ produces a phase transition (loss $1.46 \to 0.55$). Required correction: $\alpha_{\mathrm{slow}} \geq 10 \cdot \mathrm{ulp}(\mathrm{dtype})$, which for bfloat16 is approximately $10^{-3} \cdot \|W\|_{\mathrm{avg}}$. The original $10^{-5}$ implicitly assumed float32; in mixed-precision training (the practical regime for 7B+), it is too small.
+\paragraph{A.2 ($\alpha_{\mathrm{slow}}$ must exceed the dtype precision floor):} The original specification of $\alpha_{\mathrm{slow}} = 10^{-5}$ produces gradient updates that round to zero in bfloat16 storage: training loss is completely flat across 100 steps. Bumping to $10^{-4}$ produces a phase transition (loss $1.46 \to 0.55$). Required correction: $\alpha_{\mathrm{slow}} \geq 10 \cdot \mathrm{ulp}(\mathrm{dtype})$, which for bfloat16 is approximately $10^{-3} \cdot \|W\|_{\mathrm{avg}}$. The original $10^{-5}$ implicitly assumed float32; in mixed-precision training (the practical regime for 7B+), it is too small.
 
-\paragraph{A.3 ($\mu_{\mathrm{surprise}}$ has a generator-discriminator gap).} The quality check ``replay must be at least as surprising as the model's baseline'' rejects all replays in practice, because replays are generated from the same model that defines the surprise function and are therefore systematically more in-distribution than external calibration text. The empirical surprise of generated replays ($\sim 1.25$ nats) falls below the baseline computed on calibration text ($\sim 1.41$ nats). Required correction: replace the absolute threshold with a relative-gain criterion ($\mathrm{surprise(\mathrm{replay})} > \beta \cdot \mathrm{surprise(\mathrm{seed})}$) or compute the threshold from self-generated samples. Until amended, we disable the absolute check.
+\paragraph{A.3 ($\mu_{\mathrm{surprise}}$ has a generator-discriminator gap):} The quality check ``replay must be at least as surprising as the model's baseline'' rejects all replays in practice, because replays are generated from the same model that defines the surprise function and are therefore systematically more in-distribution than external calibration text. The empirical surprise of generated replays ($\sim 1.25$ nats) falls below the baseline computed on calibration text ($\sim 1.41$ nats). Required correction: replace the absolute threshold with a relative-gain criterion ($\mathrm{surprise(\mathrm{replay})} > \beta \cdot \mathrm{surprise(\mathrm{seed})}$) or compute the threshold from self-generated samples. Until amended, we disable the absolute check.
 
-\paragraph{A.4 (Validation has a data-volume floor).} The validation criterion $\mathrm{surprise}_\mathrm{new} < (1 - \epsilon_\mathrm{learn}) \cdot \mathrm{surprise}_\mathrm{old}$ with $\epsilon_\mathrm{learn} = 0.10$ is achievable only above a minimum number of replays. With 5 facts and 2--3 replays, $0\%$ of candidates pass; with 200 facts and $\sim 50$ replays, $40\%$--$60\%$ pass depending on safety settings. The criterion itself is sound, but the formalization should explicitly document that pass rates are zero below a benchmark-dependent volume threshold.
+\paragraph{A.4 (Validation has a data-volume floor):} The validation criterion $\mathrm{surprise}_\mathrm{new} < (1 - \epsilon_\mathrm{learn}) \cdot \mathrm{surprise}_\mathrm{old}$ with $\epsilon_\mathrm{learn} = 0.10$ is achievable only above a minimum number of replays. With 5 facts and 2--3 replays, $0\%$ of candidates pass; with 200 facts and $\sim 50$ replays, $40\%$--$60\%$ pass depending on safety settings. The criterion itself is sound, but the formalization should explicitly document that pass rates are zero below a benchmark-dependent volume threshold.
 
-\paragraph{A.5 (Tags are pointers, not storage).} The original formalization stored only the K/V projections of tagged tokens, but tagged tokens are short novel-entity mentions (4--8 tokens) that capture the location of the surprise without its content. Required correction: when a tag fires, store K/V for the full sentence containing the tagged span (the \emph{episode}), not just the tagged tokens. This corresponds to the proposal's own framing of tags as pointers but was implemented as direct storage. Section~\ref{sec:results_episodes} reports the empirical correction.
+\paragraph{A.5 (Tags are pointers, not storage):} The original formalization stored only the K/V projections of tagged tokens, but tagged tokens are short novel-entity mentions (4--8 tokens) that capture the location of the surprise without its content. Required correction: when a tag fires, store K/V for the full sentence containing the tagged span (the \emph{episode}), not just the tagged tokens. This corresponds to the proposal's own framing of tags as pointers but was implemented as direct storage. Section~\ref{sec:results_episodes} reports the empirical correction.
 
 \section{Hyperparameter Table}
 \label{app:hyperparams}
 
-\begin{table}[h]
+\begin{table}[ht]
 \centering
 \caption{Full hyperparameter list. ``Source'' indicates which of the 36 formalization questions specifies the parameter. ``Status'' indicates whether the value matches the original specification or was empirically amended.}
 \label{tab:hyperparams_full}
@@ -85,7 +87,7 @@ A correctness requirement we discovered: KV injection must be \emph{disabled} du
     \item Phase 1 Generate (replay): enabled (so the model attends to source while compressing).
     \item Phase 2 Quality check: state preserved (no parameter changes; result invariant).
     \item Phase 3 Train (W$_\mathrm{cons}$ updates): \emph{disabled} (forces W$_\mathrm{cons}$ to encode into weights).
-    \item Phase 4 PPL check: disabled (clean preservation measurement).
+    \item Phase 4 Perplexity check: disabled (clean preservation measurement).
     \item Phase 5 Validate \& cleanup: disabled (clean recall measurement).
     \item After successful consolidation: bank is cleared, enabled flag reset for next cycle.
 \end{itemize}

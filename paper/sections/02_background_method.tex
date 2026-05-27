@@ -1,63 +1,114 @@
 % =============================================================================
-% Part 2: Background + The SLEEP Architecture
+% Part 2: Related Work + Background + Problem Statement + SLEEP Architecture
+% (Reordered: prior work -> biological foundations -> open problem -> method.)
 % =============================================================================
+
+\section{Related Work}
+\label{sec:related}
+
+We organize related work by methodology rather than chronologically, highlighting how SLEEP relates to each line.
+
+\paragraph{Continual learning via regularization:}
+Kirkpatrick et al. introduced Elastic Weight Consolidation (EWC), which adds a Fisher-information-weighted quadratic penalty to anchor important parameters \citep{kirkpatrick2017overcoming}. Li and Hoiem proposed Learning Without Forgetting, which uses knowledge-distillation losses against the pre-adaptation model \citep{li2017learning}. Both require choosing parameters to protect, and both implicitly trade plasticity for stability. SLEEP inherits EWC as one of its safety mechanisms but compounds it with hard clipping, interleaving, and validation rollback; our results in Section~\ref{sec:results_pareto} show that this compound is over-engineered for single-cycle benchmarks but appropriately scaled for multi-cycle dynamics.
+
+\paragraph{Continual learning via replay:}
+Shin et al. proposed deep generative replay, which avoids storing raw old data by training a generator to produce old-task samples \citep{shin2017continual}. Rebuffi et al. introduced iCaRL, which maintains a small exemplar buffer and trains with rehearsal \citep{rebuffi2017icarl}. Chaudhry et al. showed that even very small replay buffers suffice for many continual-learning settings \citep{chaudhry2019tiny}. SLEEP's sleep cycle is conceptually closest to generative replay---a compressed sample of the experience drives consolidation---but our results in Section~\ref{sec:results_episodes} and Section~\ref{sec:results_consolidation} reveal a specific failure mode: in transformer language models, the generative step does not faithfully reproduce source content even when the source is available in attention via a memory bank, because the autoregressive prior dominates sampling.
+
+\paragraph{Memory-augmented transformers:}
+Wu et al. proposed Memorizing Transformers, which augment standard self-attention with a $k$-nearest-neighbour lookup over a database of past key-value (KV) pairs and fine-tune the model to use that bank during prediction \citep{wu2022memorizing}. Our KV memory bank borrows the substrate from this line. The crucial difference is that Memorizing Transformers train the model on the memory-augmented objective, whereas we use a frozen pretrained model and ask whether the bank can drive learning without retrieval-aware fine-tuning; the recognition-without-recall result in Section~\ref{sec:results_rwr} is, in part, an explanation of why such fine-tuning is necessary. Schmidhuber introduced fast-weight programmers, which predate the transformer but express the same idea in a different substrate---memory implemented as outer-product weight updates \citep{schmidhuber1992learning}.
+
+\paragraph{Retrieval-augmented generation:}
+Lewis et al. attach a learned retriever and an external corpus to a generator at inference time \citep{lewis2020retrieval}. RAG and SLEEP differ in design intent: RAG keeps memory external and re-queries it for every generation, whereas SLEEP attempts to internalize memory into weights so that the model becomes the database. Our results suggest that retrieval-from-attention (the recognition signal) is achievable without retraining but retrieval-into-generation (free-form recall) is not, so the SLEEP--RAG distinction collapses partly: the systems we study still require an attention-side mechanism to make encoded knowledge accessible during generation.
+
+\paragraph{Biologically-inspired machine learning:}
+McClelland et al. proposed Complementary Learning Systems (CLS) theory, which has motivated dual-system architectures in machine learning for two decades \citep{mcclelland1995why}; most implementations, however, stop at the conceptual level---two networks with different learning rates---without instantiating the full biological pipeline of tagging, PRP allocation, and sleep replay. Frey and Morris characterized synaptic tagging and capture (STC) \citep{frey1997synaptic}, which Redondo and Morris later extended \citep{redondo2011making}; Wilson and McNaughton, and Diekelmann and Born, characterized hippocampal--neocortical replay during sleep \citep{wilson1994reactivation,diekelmann2010memory}. SLEEP is, to our knowledge, the most faithful instantiation of these mechanisms attempted in a transformer language model. Our results characterize precisely which biological mechanisms transfer (tagging, attention-based recognition, resource allocation) and which fail in the form proposed (generative replay-driven consolidation under tight safety).
 
 \section{Background}
 \label{sec:background}
 
-\paragraph{Synaptic tagging and capture.}
-The synaptic tagging-and-capture (STC) hypothesis~\citep{frey1997synaptic,redondo2011making} posits that weak synaptic stimulation creates short-lived molecular ``tags'' which can later capture plasticity-related proteins (PRPs) synthesized in response to a separate strong stimulus, converting transient potentiation into durable change. STC explains how the brain implements selective consolidation: tags mark candidates, PRPs are the limited resource, and competition among tags determines which traces become permanent. Memory reconsolidation~\citep{nader2000fear} adds that previously consolidated traces become temporarily labile when re-accessed, allowing revision.
+We summarize the biological and machine-learning foundations on which SLEEP is built.
 
-\paragraph{Complementary learning systems.}
-Complementary Learning Systems (CLS) theory~\citep{mcclelland1995why} proposes two memory subsystems with distinct learning rates and storage formats: a fast hippocampal system that stores arbitrary episodic associations through one-shot binding, and a slow neocortical system that gradually accumulates statistical regularities. Sleep replay~\citep{wilson1994reactivation,diekelmann2010memory} bridges the two: the hippocampus reactivates recent experiences, training the neocortex while interleaving consolidated knowledge to prevent overwriting.
+\paragraph{Synaptic tagging and capture:}
+The STC hypothesis posits that weak synaptic stimulation creates short-lived molecular ``tags'' that can later capture PRPs synthesized in response to a separate strong stimulus, converting transient potentiation into durable change \citep{frey1997synaptic,redondo2011making}. STC explains how the brain implements selective consolidation: tags mark candidates, PRPs are the limited resource, and competition among tags determines which traces become permanent. Nader et al. showed that previously consolidated traces become temporarily labile when re-accessed, allowing revision \citep{nader2000fear}.
 
-\paragraph{Parameter-efficient fine-tuning.}
-Low-Rank Adaptation~\citep{hu2021lora} factors weight updates as $\Delta W = BA$ with $B \in \mathbb{R}^{d \times r}, A \in \mathbb{R}^{r \times d}$, $r \ll d$, training only $A,B$ while freezing the base model. LoRA enables targeted weight updates without full fine-tuning, making it the natural substrate for the slow consolidation system in our architecture.
+\paragraph{Complementary learning systems:}
+CLS theory proposes two memory subsystems with distinct learning rates and storage formats: a fast hippocampal system that stores arbitrary episodic associations through one-shot binding, and a slow neocortical system that gradually accumulates statistical regularities \citep{mcclelland1995why}. Sleep replay bridges the two systems through hippocampal reactivation of recent experiences, training the neocortex while interleaving consolidated knowledge to prevent overwriting \citep{wilson1994reactivation,diekelmann2010memory}.
 
-\paragraph{Memory-augmented transformers.}
-Standard transformer attention~\citep{vaswani2017attention} computes scores between learned queries and keys derived from the current context window. Memorizing Transformers~\citep{wu2022memorizing} augment this with a $k$-nearest-neighbor lookup over a bank of stored key-value pairs from past contexts. Schmidhuber's earlier fast-weight programmers~\citep{schmidhuber1992learning} proposed associative memory as outer-product weight updates. Both demonstrate that attention can be extended with external memory; both rely on retrieval-aware fine-tuning to teach the model to use that memory effectively. We adopt the KV-memory substrate from Memorizing Transformers but use it within a complete biologically-grounded consolidation pipeline rather than as a standalone retrieval mechanism.
+\paragraph{Parameter-efficient fine-tuning:}
+Hu et al. introduced LoRA, which factors weight updates as $\Delta W = BA$ with $B \in \mathbb{R}^{d \times r}$, $A \in \mathbb{R}^{r \times d}$, and $r \ll d$, training only $A$ and $B$ while freezing the base model \citep{hu2021lora}. LoRA enables targeted weight updates without full fine-tuning, making it the natural substrate for the slow consolidation system in our architecture.
 
-\paragraph{Continual learning.}
-Elastic Weight Consolidation~\citep{kirkpatrick2017overcoming} prevents forgetting by adding a Fisher-information-weighted quadratic penalty pulling parameters toward previous values. Generative replay~\citep{shin2017continual,rebuffi2017icarl} avoids storing raw old data by training a generator to synthesize old-task samples that are interleaved with new-task training. Both are mechanisms our consolidation step inherits.
+\paragraph{Memory-augmented attention:}
+Standard transformer attention computes scores between learned queries and keys derived from the current context window \citep{vaswani2017attention}. As reviewed in Section~\ref{sec:related}, memory-augmented variants extend this with a lookup over stored KV pairs from past contexts; both Memorizing Transformers and earlier fast-weight programmers rely on retrieval-aware fine-tuning to teach the model to use that memory effectively \citep{wu2022memorizing,schmidhuber1992learning}. We adopt the KV-memory substrate but place it within a complete biologically-grounded consolidation pipeline rather than treating it as a standalone retrieval mechanism.
+
+\paragraph{Continual learning mechanisms:}
+Our consolidation step inherits two mechanisms reviewed in Section~\ref{sec:related}: the Fisher-weighted EWC penalty against catastrophic forgetting \citep{kirkpatrick2017overcoming}, and generative replay, which interleaves synthesized old-task samples with new-task training \citep{shin2017continual,rebuffi2017icarl}.
+
+\section{Problem Statement and Research Questions}
+\label{sec:problem}
+
+The mechanisms reviewed in Section~\ref{sec:related} and Section~\ref{sec:background} are biological. The open question this paper addresses is whether they can be implemented faithfully inside a frozen pretrained transformer, and which of them survive the transfer. We decompose this into four research questions:
+
+\begin{itemize}[leftmargin=2.4em,itemsep=0.15em,topsep=0.2em]
+    \item[(RQ1)] Can a single inference pass deposit retrievable knowledge into a fast-weight store?
+    \item[(RQ2)] Does information sufficient for recognition also support free-form autoregressive recall?
+    \item[(RQ3)] Can a sleep-style consolidation step move that knowledge into permanent weights without degrading base capability?
+    \item[(RQ4)] Do safety mechanisms that appear over-engineered on a single cycle earn their cost across many cycles?
+\end{itemize}
+
+We resolved 36 such design questions in a pre-registered formalization before any code was written; the five amendments that empirical work forced are documented in Annexure~A. The remainder of the paper answers RQ1--RQ4 in turn (Sections~\ref{sec:results_encoding}--\ref{sec:multi_cycle}).
 
 \section{The SLEEP Architecture}
 \label{sec:method}
 
-SLEEP augments a frozen base model $W_{\mathrm{slow}}$ with three additions: (i) a \emph{tagging layer} that flags surprising spans during inference; (ii) a \emph{KV memory bank} (W$_{\mathrm{fast}}$) into which tagged spans are written one-shot; (iii) a \emph{consolidation adapter} (W$_{\mathrm{cons}}$, a LoRA module) that is updated during periodic ``sleep'' phases via replay-driven gradient descent under safety constraints. A \emph{PRP allocator} prioritizes which tags get consolidated. Figure~\ref{fig:architecture} summarizes the system.
+SLEEP augments a frozen base model $W_{\mathrm{slow}}$ with three additions:
 
-\begin{figure}[h]
+\begin{itemize}[leftmargin=2.4em,itemsep=0.15em,topsep=0.2em]
+    \item[(i)] A tagging layer that flags surprising spans during inference.
+    \item[(ii)] A KV memory bank ($W_{\mathrm{fast}}$) into which tagged spans are written one-shot.
+    \item[(iii)] A consolidation adapter ($W_{\mathrm{cons}}$, a LoRA module) that is updated during periodic sleep phases via replay-driven gradient descent under safety constraints.
+\end{itemize}
+
+A PRP allocator prioritizes which tags get consolidated. Figure~\ref{fig:architecture} summarizes the system. Throughout, labels of the form Q$x.y$ refer to the correspondingly numbered design question in the pre-registered formalization document (Annexure~A).
+
+\begin{figure}[ht]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/figure_architecture.pdf}
-\caption{The SLEEP architecture (Figure~2; the paper's central \emph{empirical} result is on page~1, Figure~\ref{fig:pareto}). Wake phase: input tokens are processed by the tagging layer; tags allocate against the PRP budget and write episode-level K/V into the memory bank. Sleep phase: bank-conditioned generative replay produces synthetic training samples that drive gradient updates to W$_{\mathrm{cons}}$ under EWC + hard-clipping safety constraints. After successful consolidation, the bank is cleared.}
+\caption{The SLEEP architecture showing wake phase (left) and sleep phase (right). Wake: input tokens are processed by the tagging layer; tags allocate against the PRP budget and write episode-level K/V into the memory bank. Sleep: bank-conditioned generative replay produces synthetic training samples that drive gradient updates to $W_{\mathrm{cons}}$ under EWC and hard-clipping safety constraints, after which the bank is cleared.}
 \label{fig:architecture}
 \end{figure}
 
 \subsection{Tagging Layer}
 \label{sec:tagging}
 
-For each input token $t$ at position $i$, the layer computes the model's per-token cross-entropy surprise $e_t = -\log p(x_t \mid x_{<t})$. An adaptive z-score thresholder maintains running mean $\mu$ and variance $\sigma^2$ via exponential moving average ($\beta = 0.99$) and flags positions where $(e_t - \mu)/\sigma > \kappa$ (default $\kappa = 1.5$). Adjacent flagged positions within $g = 3$ tokens are merged into spans; spans shorter than $4$ tokens are discarded. Each surviving span produces a \emph{tag} carrying a key vector $k = \mathrm{Proj}(\bar{h})$ derived from the mean hidden state, an initial strength $s_0 \propto \mathrm{tanh}(E_\mathrm{span} / \alpha)$, the source identifier, and the token range. Tags decay exponentially in time and are reinforced when accessed by similar future inputs (Q1.1--1.6 in the formalization).
+For each input token $t$ at position $i$, the layer computes the model's per-token cross-entropy surprise $e_t = -\log p(x_t \mid x_{<t})$. An adaptive z-score thresholder maintains running mean $\mu$ and variance $\sigma^2$ via an exponential moving average ($\beta = 0.99$) and flags positions where $(e_t - \mu)/\sigma > \kappa$ (default $\kappa = 1.5$). Adjacent flagged positions within $g = 3$ tokens are merged into spans; spans shorter than $4$ tokens are discarded. Each surviving span produces a \emph{tag} carrying a key vector $k = \mathrm{Proj}(\bar{h})$ derived from the mean hidden state, an initial strength $s_0 \propto \mathrm{tanh}(E_\mathrm{span} / \alpha)$, the source identifier, and the token range. Tags decay exponentially in time and are reinforced when accessed by similar future inputs (Q1.1--1.6).
 
-\subsection{KV Memory (W$_{\mathrm{fast}}$)}
+\subsection{KV Memory ($W_{\mathrm{fast}}$)}
 \label{sec:kv_memory}
 
-A central design correction in this work is that \emph{tags are pointers, not storage}. The original formalization stored only the K and V projections of the tagged tokens themselves; in practice this captured isolated entity mentions (``Nimbus Holdings'') without their factual contents (revenue figures, dates). We replace this with \emph{episode-level} storage: when a tag fires, we extract pre-RoPE keys and raw values for the full sentence containing the tag from each adapted attention layer. Concretely, for adapted layer $\ell$:
+A central design correction in this work is that \emph{tags are pointers, not storage}. The original formalization stored only the K and V projections of the tagged tokens themselves; in practice this captured isolated entity mentions (``Nimbus Holdings'') without their factual contents (revenue figures, dates). We replace this with \emph{episode-level} storage: when a tag fires, we extract pre-RoPE keys and raw values for the full sentence containing the tag from each adapted attention layer. Concretely, for adapted layer $\ell$, the memory key and value are computed by two separate projections of the layer-normed episode hidden state:
 
 \begin{equation}
-    K^{(\ell)}_{\mathrm{mem}} = W^{(\ell)}_K \cdot \mathrm{LayerNorm}_\ell(h^{(\ell)}_{\mathrm{episode}}), \quad V^{(\ell)}_{\mathrm{mem}} = W^{(\ell)}_V \cdot \mathrm{LayerNorm}_\ell(h^{(\ell)}_{\mathrm{episode}}),
+\label{eq:kmem}
+K^{(\ell)}_{\mathrm{mem}} = W^{(\ell)}_K \cdot \mathrm{LayerNorm}_\ell\!\left(h^{(\ell)}_{\mathrm{episode}}\right),
+\end{equation}
+\begin{equation}
+\label{eq:vmem}
+V^{(\ell)}_{\mathrm{mem}} = W^{(\ell)}_V \cdot \mathrm{LayerNorm}_\ell\!\left(h^{(\ell)}_{\mathrm{episode}}\right),
 \end{equation}
 
-where $h^{(\ell)}_{\mathrm{episode}}$ is the input hidden state at layer $\ell$ across the full episode, captured via \texttt{output\_hidden\_states=True}. Crucially, the layer-norm is applied before the projections to match what the model computes during its own attention forward---without this correction, extracted K/V differ from in-attention K/V by exactly one normalization, producing silently wrong attention scores.
+where $h^{(\ell)}_{\mathrm{episode}}$ is the input hidden state at layer $\ell$ across the full episode, captured via \texttt{output\_hidden\_states=True}. Crucially, the layer-norm is applied before the projections to match what the model computes during its own attention forward pass; without this correction, extracted K/V differ from in-attention K/V by exactly one normalization, producing silently wrong attention scores.
 
-At inference, stored K/V are injected as a prefix at \emph{negative position IDs} $[-n_\mathrm{mem}, -1]$ in each adapted layer's attention. RoPE~\citep{su2024roformer} is applied to memory keys at read time; because RoPE is a relative-position rotation, the memory at negative positions appears to current queries as ``recent prefix tokens,'' a regime the model was trained to handle. Per-query top-$k$ retrieval gating~\citep{wu2022memorizing} restricts attention to the $k$ memory positions whose Q$\cdot$K inner product is highest, with gating implemented through a $-\infty$ additive mask on excluded positions in the model's existing attention machinery.
+At inference, stored K/V are injected as a prefix at \emph{negative position IDs} $[-n_\mathrm{mem}, -1]$ in each adapted layer's attention. We apply Rotary Position Embedding (RoPE) to memory keys at read time \citep{su2024roformer}; because RoPE is a relative-position rotation, the memory at negative positions appears to current queries as ``recent prefix tokens,'' a regime the model was trained to handle. Following Wu et al., per-query top-$k$ retrieval gating restricts attention to the $k$ memory positions whose Q$\cdot$K inner product is highest, implemented through a $-\infty$ additive mask on excluded positions in the model's existing attention machinery \citep{wu2022memorizing}.
 
-The bank is per-tag indexed and supports per-tag eviction. Capacity is bounded by total stored tokens; capacity policy is delegated to the PRP allocator.
+The bank is per-tag indexed and supports per-tag eviction. Capacity is bounded by total stored tokens; the capacity policy is delegated to the PRP allocator.
 
 \subsection{PRP Allocation}
 \label{sec:prp}
 
-A composite score combines four signals (Q2.1 in the formalization):
+A composite score combines four signals (Q2.1):
 
 \begin{equation}
+\label{eq:prpscore}
     \mathrm{score}(\tau) = w_1 \cdot E_{\mathrm{span}}^{\mathrm{norm}} + w_2 \cdot \mathrm{access}^{\mathrm{norm}} + w_3 \cdot \mathrm{xref} + w_4 \cdot e^{-\Delta t / \tau_r},
 \end{equation}
 
@@ -66,29 +117,28 @@ with weights $(0.35, 0.30, 0.15, 0.20)$. Cross-reference density $\mathrm{xref}$
 \subsection{Sleep Engine}
 \label{sec:sleep_engine}
 
-A sleep cycle proceeds in five phases, with KV memory injection enabled or disabled per phase to enforce intended semantics:
+A sleep cycle proceeds in five phases, with KV memory injection enabled or disabled per phase to enforce the intended semantics:
 
 \begin{enumerate}[itemsep=0.15em,topsep=0.2em]
     \item \textbf{Generate} (KV active). For each candidate tag, produce a replay sample by autoregressively sampling from the model conditioned on the early tokens of the source episode. With KV memory active, the model can attend to the original experience while compressing it.
     \item \textbf{Quality check}. Replays are retained if (a) cosine similarity to the source $> 0.5$ and (b) mean per-token surprise exceeds a calibration threshold $\mu_{\mathrm{surprise}}$.
-    \item \textbf{Train} (KV disabled). W$_{\mathrm{cons}}$ is updated by gradient descent on the accepted replays interleaved 1:1 with self-generated samples drawn from the unadapted base model (the ``old knowledge'' arm). Training disables KV injection so that W$_{\mathrm{cons}}$ learns to encode the replay content into weights rather than relying on the bank as a crutch.
-    \item \textbf{PPL check} (optional, KV disabled). On benchmark data, post-training perplexity is compared to pre-training. If degradation exceeds $\epsilon_{\mathrm{degrade}}$, W$_{\mathrm{cons}}$ is rolled back.
-    \item \textbf{Validate \& cleanup} (KV disabled). For each candidate tag, the post-training model's surprise on the original span is compared to the pre-training surprise; passes if the reduction is at least $\epsilon_{\mathrm{learn}}$ (default 10\%). Passing tags are removed from the buffer; failing tags are penalized; tags that fail repeatedly are evicted permanently.
+    \item \textbf{Train} (KV disabled). $W_{\mathrm{cons}}$ is updated by gradient descent on the accepted replays interleaved 1:1 with self-generated samples drawn from the unadapted base model (the ``old knowledge'' arm). Training disables KV injection so that $W_{\mathrm{cons}}$ learns to encode the replay content into weights rather than relying on the bank as a crutch.
+    \item \textbf{Perplexity check} (optional, KV disabled). On benchmark data, post-training perplexity is compared to pre-training perplexity. If degradation exceeds $\epsilon_{\mathrm{degrade}}$, $W_{\mathrm{cons}}$ is rolled back.
+    \item \textbf{Validate \& cleanup} (KV disabled). For each candidate tag, the post-training model's surprise on the original span is compared to the pre-training surprise; the tag passes if the reduction is at least $\epsilon_{\mathrm{learn}}$ (default 10\%). Passing tags are removed from the buffer; failing tags are penalized; tags that fail repeatedly are evicted permanently.
 \end{enumerate}
 
-After successful consolidation, the KV bank is cleared---its content has (in principle) transferred to W$_{\mathrm{cons}}$.
+After successful consolidation, the KV bank is cleared---its content has, in principle, transferred to $W_{\mathrm{cons}}$.
 
 \subsection{Safety Machinery}
 \label{sec:safety}
 
-W$_{\mathrm{cons}}$ training applies four safety mechanisms simultaneously:
+$W_{\mathrm{cons}}$ training applies four safety mechanisms simultaneously. Each targets a distinct failure mode of replay-driven gradient updates:
 
-\textbf{EWC penalty}~\citep{kirkpatrick2017overcoming}: a Fisher-weighted quadratic regularizer pulls W$_{\mathrm{cons}}$ toward its pre-training checkpoint, with strength $\lambda_{\mathrm{EWC}}$ (default 100).
-
-\textbf{Hard clipping}: after each optimizer step, per-parameter changes are clipped to magnitude $\delta_{\max}$ (default 0.01) relative to the pre-cycle checkpoint, and gradients are scaled by per-layer plasticity coefficients $\phi_\ell \in [\phi_{\min}, 1]$ encoding ``hippocampal-like'' top-third layers as more plastic.
-
-\textbf{Old-knowledge interleaving}: each training step mixes replay samples with self-generated continuations from the unadapted base model, providing a regularization pressure toward preserving base capabilities.
-
-\textbf{Validation rollback}: candidates whose surprise on the original span does not drop by $\epsilon_{\mathrm{learn}} = 0.10$ are rolled back to their pre-cycle parameter values.
+\begin{itemize}[leftmargin=1.5em,itemsep=0.35em,topsep=0.3em]
+    \item \textbf{EWC penalty:} a Fisher-weighted quadratic regularizer pulls $W_{\mathrm{cons}}$ toward its pre-training checkpoint, with strength $\lambda_{\mathrm{EWC}}$ (default 100) \citep{kirkpatrick2017overcoming}.
+    \item \textbf{Hard clipping:} after each optimizer step, per-parameter changes are clipped to magnitude $\delta_{\max}$ (default 0.01) relative to the pre-cycle checkpoint, and gradients are scaled by per-layer plasticity coefficients $\phi_\ell \in [\phi_{\min}, 1]$ that encode ``hippocampal-like'' top-third layers as more plastic.
+    \item \textbf{Old-knowledge interleaving:} each training step mixes replay samples with self-generated continuations from the unadapted base model, providing regularization pressure toward preserving base capabilities.
+    \item \textbf{Validation rollback:} candidates whose surprise on the original span does not drop by $\epsilon_{\mathrm{learn}} = 0.10$ are rolled back to their pre-cycle parameter values.
+\end{itemize}
 
 The cumulative effect is a strong stability bias. The empirical question is whether this bias is correctly calibrated. Section~\ref{sec:results} shows it is not, in single-cycle settings; Section~\ref{sec:multi_cycle} shows it is more justified in multi-cycle settings.

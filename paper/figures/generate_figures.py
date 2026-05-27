@@ -82,6 +82,7 @@ def fig_substrate_comparison():
                  fontsize=12, y=1.02)
     plt.tight_layout()
     plt.savefig(os.path.join(OUT, "figure_substrate_comparison.pdf"))
+    plt.savefig(os.path.join(OUT, "figure_substrate_comparison.png"), dpi=200)
     plt.close()
     print("Wrote figure_substrate_comparison.pdf")
 
@@ -98,18 +99,22 @@ def fig_pareto_frontier():
     naive_dra = 0.275
     naive_bcp = 2.94
 
-    fig, ax = plt.subplots(figsize=(7.5, 4.5))
-    # SLEEP curve
+    fig, ax = plt.subplots(figsize=(8.0, 5.0))
+    # SLEEP curve. Labels go up-and-right (the curve ascends, so that
+    # quadrant is open) to avoid colliding with the line or each other.
     ax.plot(sleep_bcp, sleep_dra, "o-", color="#1f77b4", linewidth=2,
             markersize=9, label="SLEEP (sweep)", zorder=3)
     for i, lbl in enumerate(sleep_settings):
-        ax.annotate(lbl, xy=(sleep_bcp[i], sleep_dra[i]),
-                    xytext=(8, -3), textcoords="offset points", fontsize=9)
-    # Naive LoRA point
+        ax.annotate(lbl.replace("\n", " "), xy=(sleep_bcp[i], sleep_dra[i]),
+                    xytext=(7, 7), textcoords="offset points", fontsize=9,
+                    zorder=5)
+    # Naive LoRA point — label placed below-left so it clears the marker
+    # and does not run into the plot frame at the top-right.
     ax.plot(naive_bcp, naive_dra, "s", color="#d62728", markersize=11,
             label="Naive LoRA", zorder=4)
     ax.annotate("Naive LoRA", xy=(naive_bcp, naive_dra),
-                xytext=(-12, 8), textcoords="offset points", fontsize=9)
+                xytext=(-58, -6), textcoords="offset points", fontsize=9,
+                zorder=5)
 
     # Preservation threshold band
     ax.axvspan(1.0, 1.05, color="green", alpha=0.10,
@@ -119,15 +124,18 @@ def fig_pareto_frontier():
 
     ax.set_xlabel("BCP (lower = better preservation)")
     ax.set_ylabel("DRA (higher = better recall)")
-    ax.set_title("Single-cycle Pareto frontier: no operating point with BCP<1.05 has DRA>0.05",
-                 fontsize=11)
-    ax.set_xlim(0.95, 3.2)
-    ax.set_ylim(-0.01, 0.32)
+    ax.set_title("Single-cycle stability–plasticity Pareto frontier",
+                 fontsize=12, pad=12)
+    ax.set_xlim(0.95, 3.30)
+    ax.set_ylim(-0.02, 0.34)
     ax.grid(True, alpha=0.3, linestyle=":")
-    ax.legend(loc="lower right", framealpha=0.9)
+    # Upper-left quadrant (low BCP, high DRA) holds no data points, so the
+    # legend sits there without overlapping the curve or annotations.
+    ax.legend(loc="upper left", framealpha=0.9)
 
     plt.tight_layout()
     plt.savefig(os.path.join(OUT, "figure_pareto_frontier.pdf"))
+    plt.savefig(os.path.join(OUT, "figure_pareto_frontier.png"), dpi=200)
     plt.close()
     print("Wrote figure_pareto_frontier.pdf")
 
@@ -176,6 +184,7 @@ def fig_multi_cycle():
                  fontsize=12, y=1.02)
     plt.tight_layout()
     plt.savefig(os.path.join(OUT, "figure_multi_cycle.pdf"))
+    plt.savefig(os.path.join(OUT, "figure_multi_cycle.png"), dpi=200)
     plt.close()
     print("Wrote figure_multi_cycle.pdf")
 
@@ -227,6 +236,7 @@ def fig_architecture():
     ax.set_ylim(0, 1)
 
     plt.savefig(os.path.join(OUT, "figure_architecture.pdf"))
+    plt.savefig(os.path.join(OUT, "figure_architecture.png"), dpi=200)
     plt.close()
     print("Wrote figure_architecture.pdf")
 

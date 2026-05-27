@@ -1,61 +1,48 @@
 % =============================================================================
-% Part 5: Related Work + Discussion + Conclusion + Broader Impact
+% Part 5: Discussion + Conclusion and Future Scope
+% (Related Work has moved to Section 2. Broader Impact is absorbed into the
+%  Discussion as a final ethics paragraph.)
 % =============================================================================
 
-\section{Related Work}
-\label{sec:related}
-
-We organize related work by methodology rather than chronologically, highlighting how SLEEP relates to each line.
-
-\paragraph{Continual learning via regularization.}
-Elastic Weight Consolidation~\citep{kirkpatrick2017overcoming} adds a Fisher-information-weighted quadratic penalty to anchor important parameters; Learning Without Forgetting~\citep{li2017learning} uses knowledge-distillation losses against the pre-adaptation model. Both require choosing parameters to protect; both implicitly trade plasticity for stability. SLEEP inherits EWC as one of its safety mechanisms but compounds it with hard clipping, interleaving, and validation rollback. Our results in Section~\ref{sec:results_pareto} show that this compound is over-engineered for single-cycle benchmarks but appropriately scaled for multi-cycle dynamics.
-
-\paragraph{Continual learning via replay.}
-Generative replay~\citep{shin2017continual} avoids storing raw old data by training a generator to produce old-task samples; iCaRL~\citep{rebuffi2017icarl} maintains a small exemplar buffer and trains with rehearsal. Tiny Episodic Memories~\citep{chaudhry2019tiny} shows that even very small replay buffers suffice for many continual-learning settings. SLEEP's sleep cycle is conceptually closest to generative replay---a compressed sample of the experience drives consolidation---but our results in Section~\ref{sec:results_episodes} and~\ref{sec:results_consolidation} reveal a specific failure mode: in transformer language models, the generative step does not faithfully reproduce source content even when the source is available in attention via a memory bank, because the autoregressive prior dominates sampling.
-
-\paragraph{Memory-augmented transformers.}
-Memorizing Transformers~\citep{wu2022memorizing} augment standard self-attention with a $k$-nearest-neighbors lookup over a database of past key-value pairs. The model is fine-tuned to use the bank during prediction. Our KV memory bank borrows the substrate from this line. The crucial difference is: Memorizing Transformers train the model on the memory-augmented objective; we use a frozen pretrained model and ask whether the bank can drive learning without retrieval-aware fine-tuning. The recognition-without-recall result in Section~\ref{sec:results_rwr} is, in part, an explanation of why such fine-tuning is necessary. Schmidhuber's fast-weight programmers~\citep{schmidhuber1992learning} predate the transformer but introduce the same idea in a different substrate: memory implemented as outer-product weight updates.
-
-\paragraph{Retrieval-augmented generation.}
-RAG~\citep{lewis2020retrieval} attaches a learned retriever and an external corpus to a generator at inference time. RAG and SLEEP differ in design intent: RAG keeps memory external and re-queries it for every generation; SLEEP attempts to internalize memory into weights so the model becomes the database. Our results suggest that retrieval-from-attention (the recognition signal) is achievable without retraining, but retrieval-into-generation (free-form recall) is not---meaning that the SLEEP-RAG distinction collapses partly: the systems we study still require an attention-side mechanism to make encoded knowledge accessible during generation.
-
-\paragraph{Biologically-inspired ML.}
-Complementary Learning Systems theory~\citep{mcclelland1995why} has motivated dual-system architectures in ML for two decades, but most implementations stop at the conceptual level---two networks with different learning rates---without instantiating the full biological pipeline (tagging, PRP allocation, sleep replay). SLEEP is, to our knowledge, the most faithful instantiation of synaptic tagging-and-capture~\citep{frey1997synaptic,redondo2011making} and hippocampal-neocortical replay~\citep{wilson1994reactivation,diekelmann2010memory} attempted in a transformer language model. Our results characterize precisely which biological mechanisms transfer (tagging, attention-based recognition, resource allocation) and which fail in the form proposed (generative replay-driven consolidation under tight safety).
-
-\section{Discussion and Limitations}
+\section{Discussion}
 \label{sec:discussion}
 
-\paragraph{The recognition--recall gap.}
-The cleanest empirical signal we measured---a $+0.16$ multiple-choice gap on tagged facts versus untagged---did not survive transformation into autoregressive generation. We interpret this as a structural property of attention-augmented language models: stored memory K/V provide attention-time logit perturbations that can shift discrete classification but cannot consistently steer token-by-token sampling against a strong pretrained prior. Memorizing Transformers~\citep{wu2022memorizing} avoids this exact failure by retraining the model with memory-augmented losses; our recognition-without-recall finding identifies the specific gap their training closes. For systems that must use a frozen pretrained backbone, the gap is structural and not closed by hyperparameter tuning.
+\paragraph{Theoretical contribution:}
+The cleanest empirical signal we measured---a $+0.16$ multiple-choice gap on tagged facts versus untagged---did not survive transformation into autoregressive generation. We interpret this as a structural property of attention-augmented language models: stored memory K/V provide attention-time logit perturbations that can shift discrete classification but cannot consistently steer token-by-token sampling against a strong pretrained prior. This recognition--recall dissociation is, to our knowledge, the first time the cognitive-psychology phenomenon has been localized mechanistically in a frozen transformer. Two further conceptual contributions follow: the multi-cycle evaluation shows that single-cycle benchmarks systematically misrank continual-learning architectures, and the internal-validation-versus-external-recall discrepancy ($37/52$ candidates passed surprise-reduction while DRA stayed at floor) demonstrates that proxy self-grading can certify learning that is not externally testable.
 
-\paragraph{Internal validation vs external recall.}
-We observed in Section~\ref{sec:results_consolidation} that SLEEP's internal validation passed $37/52$ candidates while external free-form recall stayed at floor. The validation criterion measures surprise reduction on the original span---a sensible local target---but a local target need not align with the global behavior we care about (free-form generative recall). We highlight this as a methodological warning rather than a SLEEP-specific bug: many continual-learning systems use proxy metrics (loss decrease, surprise reduction, weight-change magnitude) as evidence of learning, and our results show these proxies can pass while the system has not learned anything externally testable.
+\paragraph{Practical implications:}
+For practitioners, three operational lessons follow. First, direct-write KV memory is a usable mechanism for \emph{recognition}-style tasks (classification, multiple-choice, similarity judgment) on a frozen backbone, but not for free-form generation; closing that gap requires retrieval-aware fine-tuning in the manner of Wu et al. \citep{wu2022memorizing}. Second, biologically-inspired safety mechanisms (EWC, clipping, interleaving, rollback) impose a real recall cost on a single pass but pay for themselves across cycles---SLEEP preserved base capability roughly twice as well as naive LoRA at every cycle. Third, any continual-learning system should be reported on a multi-cycle protocol; a single-cycle per-cost comparison would have rejected the architecture that the multi-cycle data vindicates.
 
-\paragraph{Single-cycle vs multi-cycle.}
-Our results across Sections~\ref{sec:results_pareto} and~\ref{sec:multi_cycle} flip in their qualitative conclusion. In single-cycle: naive LoRA wins on per-cost efficiency. In multi-cycle: SLEEP wins on per-cost efficiency by cycle 3. This is not contradiction but selection effect: each evaluation regime favors a different design. We argue that continual-learning architectures should not be reported on single-cycle benchmarks alone, because the safety mechanisms they invest in only show return across cycles.
-
-\paragraph{Limitations.}
+\paragraph{Challenges:}
 Several scope constraints bound the strength of our claims:
-(i) We test \emph{single} model scale (Qwen2.5-7B) and one dtype (bfloat16); the precision-floor finding for $\alpha_{\mathrm{slow}}$ is dtype-specific, and other findings may scale.
-(ii) We test \emph{synthetic} facts in 10 templates; natural document content may differ.
-(iii) We test a \emph{single} LoRA configuration (rank 16, V/O projections, top-third layers); other adapter geometries may behave differently.
-(iv) We force \emph{eager attention}; SDPA and FlashAttention paths handle 4D additive masks differently and we did not characterize them after the gating mechanism was finalized.
-(v) Our multi-cycle test runs \emph{three} cycles; longer continual-learning timescales may further differentiate the architectures.
-(vi) We use a \emph{single random seed} per condition; small effects carry run-to-run variance we did not characterize directly. We can, however, bound the seed-variance question with a back-of-the-envelope power calculation. The headline recognition signal is a difference of two proportions: tagged-fact MC accuracy ($p_T = 0.28$, $n_T = 134$) versus untagged ($p_U = 0.12$, $n_U = 66$). Treating each fact as an independent Bernoulli trial, the standard error of the difference is $\sqrt{p_T(1-p_T)/n_T + p_U(1-p_U)/n_U} \approx \sqrt{0.0015 + 0.0016} \approx 0.056$. The observed effect of $+0.16$ is therefore approximately $2.9$ standard errors above zero (one-sided $z$-test, $p \approx 0.002$). A second seed could plausibly land $\pm 0.06$ from the observed mean, but the qualitative conclusion---a positive recognition signal of order $0.10$--$0.20$---should be robust. The Pareto curve and multi-cycle BCP results, where the absolute differences are larger ($\Delta\mathrm{BCP} > 1.0$ between SLEEP-A and naive LoRA at every cycle), have wider safety margins. We acknowledge that this is a back-of-the-envelope analysis, not multi-seed empirical confirmation, and treat it as a budget item for follow-up work.
 
-The strongest claim our evidence supports is: in this specific configuration, on this dataset, with these safety hyperparameters, we observe the patterns reported. The intent of the paper is to provide a detailed map of where the architecture works and where it does not, so that future work has specific targets rather than impressions.
+\begin{itemize}[leftmargin=2.4em,itemsep=0.15em,topsep=0.2em]
+    \item[(i)] We test a \emph{single} model scale (Qwen2.5-7B) and one dtype (bfloat16); the precision-floor finding for $\alpha_{\mathrm{slow}}$ is dtype-specific, and other findings may scale differently.
+    \item[(ii)] We test \emph{synthetic} facts in 10 templates; natural document content may differ.
+    \item[(iii)] We test a \emph{single} LoRA configuration (rank 16, V/O projections, top-third layers); other adapter geometries may behave differently.
+    \item[(iv)] We force \emph{eager attention}; SDPA and FlashAttention paths handle 4D additive masks differently and we did not characterize them after the gating mechanism was finalized.
+    \item[(v)] Our multi-cycle test runs \emph{three} cycles; longer continual-learning timescales may further differentiate the architectures.
+    \item[(vi)] We use a \emph{single} random seed per condition; small effects carry run-to-run variance we did not characterize directly.
+\end{itemize}
 
-\paragraph{What this leaves for future work.}
-Three specific gaps emerge:
-(i) \emph{retrieval-aware consolidation}: the recognition-without-recall result motivates training the model to use stored memory during generation, in the manner of Memorizing Transformers, but as a phase within a multi-cycle consolidation pipeline rather than as a one-time fine-tune;
-(ii) \emph{external validation criteria}: the validation-vs-recall discrepancy motivates moving from surprise-reduction (a proxy of learning) to direct recall accuracy (the target) inside the consolidation loop;
-(iii) \emph{adaptive safety}: our Pareto curve shows safety constraints are uniformly applied; future work should engage them only when degradation is detected, in the manner of trust-region methods.
+We can, however, bound the seed-variance question with a back-of-the-envelope power calculation. The headline recognition signal is a difference of two proportions: tagged-fact MC accuracy ($p_T = 0.28$, $n_T = 134$) versus untagged ($p_U = 0.12$, $n_U = 66$). Treating each fact as an independent Bernoulli trial, the standard error of the difference is $\sqrt{p_T(1-p_T)/n_T + p_U(1-p_U)/n_U} \approx \sqrt{0.0015 + 0.0016} \approx 0.056$. The observed effect of $+0.16$ is therefore approximately $2.9$ standard errors above zero (one-sided $z$-test, $p \approx 0.002$). A second seed could plausibly land $\pm 0.06$ from the observed mean, but the qualitative conclusion---a positive recognition signal of order $0.10$--$0.20$---should be robust. The Pareto curve and multi-cycle BCP results, where the absolute differences are larger ($\Delta\mathrm{BCP} > 1.0$ between SLEEP-A and naive LoRA at every cycle), have wider safety margins. We acknowledge that this is a back-of-the-envelope analysis, not multi-seed empirical confirmation, and treat it as a budget item for follow-up work. The strongest claim our evidence supports is: in this specific configuration, on this dataset, with these safety hyperparameters, we observe the patterns reported.
 
-\section{Conclusion}
+\paragraph{Ethical considerations:}
+Continual-learning systems for language models, if they work, would reduce retraining costs substantially and enable models to learn from interaction. They would also raise privacy and safety concerns: persistent memory of user inputs, model memorization of sensitive information, and asymmetric power between systems that can update themselves and users who cannot. Our specific architecture stores user inputs (tagged spans) in the model's KV bank and consolidates a subset into permanent weights; deployed naively, this would amount to silent on-device data retention. We argue that any deployed continual-learning system must include explicit user controls over what is encoded, what is consolidated, and what is permanent, alongside mechanisms for selective forgetting on user request. These concerns are real but tractable; they do not, in our view, block the research direction.
+
+\section{Conclusion and Future Scope}
 \label{sec:conclusion}
 
-We implemented and empirically evaluated a biologically-faithful memory consolidation architecture for transformer language models. Our experiments show that direct-write KV memory injection produces a measurable recognition signal in pretrained transformers, but does not transfer to free-form recall without further mechanism; that the proposed consolidation step has no efficient single-cycle operating point yet does deliver multi-cycle preservation advantages over naive fine-tuning; and that five specific assumptions in the original formalization required empirical correction before the architecture would function at scale. The key open problem is consolidation: bridging from attention-based recognition into weights that support autoregressive generation, without sacrificing base-model preservation. Future work has specific targets rather than vague directions, and we release implementation, formalization, and full experimental logs to enable that work.
+We implemented and empirically evaluated a biologically-faithful memory consolidation architecture for transformer language models. Our experiments show that direct-write KV memory injection produces a measurable recognition signal in pretrained transformers but does not transfer to free-form recall without further mechanism; that the proposed consolidation step has no efficient single-cycle operating point yet does deliver multi-cycle preservation advantages over naive fine-tuning; and that five specific assumptions in the original formalization required empirical correction before the architecture would function at scale. The key open problem is consolidation: bridging from attention-based recognition into weights that support autoregressive generation, without sacrificing base-model preservation.
 
-\section*{Broader Impact}
+\paragraph{Future scope:}
+Our results give follow-up work specific targets rather than vague directions:
 
-Continual learning systems for language models, if they work, would reduce retraining costs substantially and enable models to learn from interaction. They would also raise privacy and safety concerns: persistent memory of user inputs, model memorization of sensitive information, and asymmetric power between systems that can update themselves and users who cannot. Our specific architecture stores user inputs (tagged spans) in the model's KV bank and consolidates a subset into permanent weights; deployed naively, this would amount to silent on-device data retention. We argue that any deployed continual-learning system must include explicit user controls over what is encoded, what is consolidated, and what is permanent, alongside mechanisms for selective forgetting on user request. These concerns are real but tractable; they do not, in our view, block the research direction.
+\begin{itemize}[leftmargin=2.4em,itemsep=0.15em,topsep=0.2em]
+    \item[(i)] \emph{Retrieval-aware consolidation}: train the model to use stored memory during generation, in the manner of Memorizing Transformers, but as a phase within a multi-cycle consolidation pipeline rather than as a one-time fine-tune.
+    \item[(ii)] \emph{External validation criteria}: move from surprise-reduction (a proxy of learning) to direct recall accuracy (the target) inside the consolidation loop.
+    \item[(iii)] \emph{Adaptive safety mechanisms}: engage safety constraints only when degradation is detected, in the manner of trust-region methods, rather than applying them uniformly.
+    \item[(iv)] \emph{Multi-cycle evaluation at longer timescales}: run well beyond three cycles to test whether SLEEP's BCP stabilizes or continues to compound.
+\end{itemize}
+
+We release the implementation, formalization, and full experimental logs to enable that work.
