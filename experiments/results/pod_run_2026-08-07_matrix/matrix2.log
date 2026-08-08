@@ -1,0 +1,18 @@
+=== [llama3_8b] STAGE 0: arch verification (ground-truth gate) ===
+[llama3_8b] VERIFY FAILED — skipping this model entirely. See llama3_8b_verify.log
+llama3_8b_VERIFY_FAILED
+=== [mistral7b] STAGE 0: arch verification (ground-truth gate) ===
+[mistral7b] VERIFY FAILED — skipping this model entirely. See mistral7b_verify.log
+mistral7b_VERIFY_FAILED
+=== [qwen1.5b] STAGE 0: arch verification (ground-truth gate) ===
+qwen1.5b_VERIFY_PASSED
+=== [qwen1.5b] STAGE 1: 5-seed recognition/pipeline ===
+qwen1.5b_STAGE1_DONE Fri Aug  7 06:55:40 UTC 2026
+=== [qwen1.5b] STAGE 2: 10-cycle multi-cycle, both arms, seeds 0-1 ===
+qwen1.5b_STAGE2_DONE Fri Aug  7 08:55:37 UTC 2026
+=== [qwen1.5b] STAGE 3: warm-up, gate-only + wcons, seeds 0-1 ===
+qwen1.5b_STAGE3_DONE Fri Aug  7 10:01:54 UTC 2026
+=== [qwen1.5b] STAGE 5: baselines ===
+qwen1.5b_STAGE5_DONE Fri Aug  7 10:06:34 UTC 2026
+qwen1.5b_ALL_DONE Fri Aug  7 10:06:34 UTC 2026
+MATRIX2_ALL_DONE Fri Aug  7 10:06:34 UTC 2026

@@ -1,0 +1,9 @@
+usage: 09_warmup_extension.py [-h] [--config CONFIG] --facts-file FACTS_FILE
+                              [--max-facts MAX_FACTS]
+                              [--corpus-file CORPUS_FILE]
+                              [--kv-top-k KV_TOP_K]
+                              [--kv-max-tokens KV_MAX_TOKENS]
+                              [--warmup-steps WARMUP_STEPS]
+                              [--warmup-lr WARMUP_LR] [--train-wcons]
+                              [--seed SEED] [--output OUTPUT]
+09_warmup_extension.py: error: argument --config: expected one argument

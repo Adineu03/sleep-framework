@@ -5,7 +5,7 @@
 \section{Results}
 \label{sec:results}
 
-The paper's empirical contribution is an anatomy of where in the SLEEP pipeline information is preserved, transformed, or lost. We organize the results around five questions, each with a specific experimental answer.
+The paper's empirical contribution is an anatomy of where in the SLEEP pipeline information is preserved, transformed, or lost. We organize the results around seven questions, each with a specific experimental answer: where encoding succeeds (\S\ref{sec:results_encoding}), why it does not become recall (\S\ref{sec:results_rwr}), what storage granularity is required (\S\ref{sec:results_episodes}), where consolidation stalls (\S\ref{sec:results_consolidation}), what the safety parameters buy (\S\ref{sec:results_pareto}), how the answers change with evaluation horizon (\S\ref{sec:multi_cycle}), and whether the recognition--recall gap can be repaired (\S\ref{sec:results_warmup}).
 
 \subsection{Encoding: LoRA Fast Weights vs. KV Memory Injection}
 \label{sec:results_encoding}
@@ -72,7 +72,45 @@ This empirical correction validates the proposal's own framing: \emph{tags are p
 
 \paragraph{Setup:} We add a \emph{replay-strategy} parameter to the sleep engine. With \texttt{replay\_strategy="original"}, the engine bypasses generation entirely and uses the original fact tokens as replays. All other components---PRP allocation, EWC, hard clipping, validation, rollback, KV-disabled training---run unchanged. This isolates ``does $W_{\mathrm{cons}}$ training learn from data, given perfect data?''
 
-\paragraph{Result:} With original-token replays under default safety parameters ($\delta_{\max}=0.01$, $\lambda_{\mathrm{EWC}}=100$, $\alpha_{\mathrm{slow}}=10^{-4}$, $\sim$100 steps), recall remains at floor: $\mathrm{DRA} = 0.012$ with BCP $1.29$. The system's internal validation passes for $37/52$ candidates ($71\%$)---the pre-training and post-training surprise ratios on original spans show the required $\geq 10\%$ reduction---but external recall does not register the change. \emph{Internal validation criteria can pass while external recall fails.} We argue this self-grading discrepancy is a methodological concern broader than SLEEP: a system that grades itself on a proxy of its own behavior provides no protection against proxy--target mismatch.
+\paragraph{Result:} With original-token replays under default safety parameters ($\delta_{\max}=0.01$, $\lambda_{\mathrm{EWC}}=100$, $\alpha_{\mathrm{slow}}=10^{-4}$, $\sim$100 steps), recall remains at floor across five seeds: $\mathrm{DRA} = 0.006 \pm 0.003$ with $\mathrm{BCP} = 1.066 \pm 0.032$. Perfect replay data does not rescue consolidation.
+
+\paragraph{Quantifying the self-grading discrepancy:} To measure---rather than argue---the mismatch between internal and external criteria, we add a second validation stage. Stage one is the original surprise-reduction check; stage two is a direct free-form recall test that asks whether the post-training model can produce any expected keyword from the fact's question prompt under greedy decoding. Table~\ref{tab:two_stage} reports both gates across five seeds.
+
+\begin{table}[t]
+\centering
+\caption{Two-stage validation across five seeds (200 facts, original-token replay). The surprise proxy confirms roughly 39 consolidations per run; fewer than one survives a direct recall test.}
+\label{tab:two_stage}
+\begin{tabular}{lcc}
+\toprule
+Quantity & Mean $\pm$ SD & Per-seed values \\
+\midrule
+Passed surprise-reduction (stage 1) & $38.8 \pm 0.4$ & 39, 39, 39, 39, 38 \\
+Passed direct recall gate (stage 2) & $0.4 \pm 0.5$ & 0, 1, 1, 0, 0 \\
+$\mathrm{DRA}$ & $0.006 \pm 0.003$ & .005, .007, .010, .003, .005 \\
+$\mathrm{BCP}$ & $1.066 \pm 0.032$ & 1.11, 1.03, 1.04, 1.09, 1.06 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The gap is a factor of roughly one hundred: \textbf{$\sim$97\% of the consolidations the system certifies internally fail an external recall test}, and the effect is consistent on every seed. \emph{Internal validation criteria can pass while external recall fails.} We argue this self-grading discrepancy is a methodological concern broader than SLEEP: a system that grades itself on a proxy of its own behavior provides no protection against proxy--target mismatch, and the magnitude here suggests the mismatch can be near-total rather than marginal.
+
+\paragraph{Cross-family and cross-scale replication:} Because both the recall floor and the self-grading gap could in principle be artefacts of one model's pretraining, we repeat the five-seed protocol on three further models spanning two additional configurations of the same family and two other families. Table~\ref{tab:cross_model} shows the outcome: the free-form recall floor sits at $\mathrm{DRA} \approx 0.006$--$0.007$ on every model, and the direct recall gate confirms at most a fraction of one consolidation per run everywhere, against 4--39 proxy confirmations. The number of \emph{candidates} varies substantially across families---Mistral's surprise statistics allocate a tenth as many as Qwen---but the false-confirmation structure is invariant. Notably, the same models follow in-context facts well (Table~\ref{tab:baselines}), so the parametric recall floor is not a comprehension failure.
+
+\begin{table}[t]
+\centering
+\caption{The recall floor and self-grading gap across four models, three families (5 seeds each, mean $\pm$ SD). The floor and the proxy--recall mismatch replicate everywhere.}
+\label{tab:cross_model}
+\begin{tabular}{lcccc}
+\toprule
+Model & DRA & BCP & Proxy passes & Recall-gate passes \\
+\midrule
+Qwen2.5-7B    & $0.006 \pm 0.003$ & $1.066 \pm 0.032$ & $38.8 \pm 0.4$ & $0.4 \pm 0.5$ \\
+Qwen2.5-1.5B  & $0.007 \pm 0.002$ & $0.997 \pm 0.003$ & $23.8 \pm 1.1$ & $0.0 \pm 0.0$ \\
+Llama-3.1-8B  & $0.006 \pm 0.003$ & $0.958 \pm 0.009$ & $9.2 \pm 2.4$  & $0.6 \pm 0.5$ \\
+Mistral-7B    & $0.007 \pm 0.000$ & $1.001 \pm 0.002$ & $4.0 \pm 1.0$  & $0.0 \pm 0.0$ \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsection{The Stability--Plasticity Pareto Frontier}
 \label{sec:results_pareto}
@@ -100,54 +138,100 @@ Naive LoRA        & $\infty$ & 0    & $10^{-4}$ & --- & 0.275 & 2.94 \\
 
 The curve (Figure~\ref{fig:pareto}, also shown on page~1 as the paper's central result) is monotonic: relaxing safety raises DRA and raises BCP simultaneously. There is no knee; no inflection point where DRA jumps without BCP cost. On a single-cycle 200-fact benchmark, the SLEEP architecture's value proposition---``a small recall sacrifice in exchange for guaranteed preservation''---does not hold: every SLEEP point pays more BCP per percentage point of recall than naive LoRA does at its single endpoint.
 
-\paragraph{Single-cycle interpretation:} A natural reading of these single-cycle results is that SLEEP's safety machinery is over-engineered. The mechanisms (EWC, hard clipping, interleaving, validation rollback) collectively dampen learning more than they protect base capability. On a one-shot benchmark, that is a true description of what they do.
-
-\subsection{Multi-Cycle Continual Learning: The Picture Inverts}
-\label{sec:multi_cycle}
-
-\paragraph{Proposed:} SLEEP's safety mechanisms are designed for repeated-cycle continual learning, not for single-cycle one-shot benchmarks. When we evaluate in their intended regime, SLEEP's per-cost efficiency overtakes naive LoRA.
-
-\paragraph{Setup:} We split 200 facts into 3 disjoint batches of $\approx 67$. Across three sequential cycles, the model is exposed to one batch per cycle. After each cycle, we measure (i) DRA on the cumulative facts seen so far (the forgetting test), (ii) DRA on the current cycle's facts (the learning test), and (iii) BCP on controls (the preservation test). We compare two arms: \textbf{SLEEP-A} (Setting A from the Pareto sweep, the most efficient SLEEP point) and \textbf{Naive LoRA} (200 steps per cycle on the cycle's batch only). Crucially, both arms accumulate weight updates across cycles---each cycle starts from the previous cycle's adapter state.
+\paragraph{Reference points:} Table~\ref{tab:baselines} places these numbers against three baselines that bound the problem. Supplying the fact in context yields $\mathrm{DRA} = 0.760$ at no preservation cost, establishing that the model reads and uses a fact it can see; RAG's shortfall against that ceiling ($0.213$) is therefore attributable to retrieval rather than to comprehension. Most pointedly, EWC applied alone---without hard clipping, interleaving, validation rollback, tagging, or sleep scheduling---reaches $\mathrm{DRA} = 0.070$ at $\mathrm{BCP} = 1.116$, a better recall-per-preservation ratio than any full SLEEP configuration in Table~\ref{tab:pareto}.
 
 \begin{table}[t]
 \centering
-\caption{Three-cycle continual learning on disjoint batches. SLEEP preserves BCP $2\times$ better than naive LoRA at every cycle, with DRA-per-BCP-cost surpassing naive LoRA by cycle~3.}
-\label{tab:multi_cycle}
-\begin{tabular}{lccccc}
+\caption{Baseline reference points across models (100 facts, single seed each). In-context injection bounds the task from above everywhere; on 7B-class models EWC-only achieves a better recall-per-preservation ratio than any full SLEEP configuration, though the effect weakens at 1.5B.}
+\label{tab:baselines}
+\begin{tabular}{lcccc}
 \toprule
-& Cycle & Cum facts & DRA cum & DRA current & BCP \\
+& Qwen-7B & Qwen-1.5B & Llama-8B & Mistral-7B \\
 \midrule
-\multirow{3}{*}{SLEEP-A}
-   & 1 & 67  & 0.010 & 0.010 & \textbf{1.10} \\
-   & 2 & 134 & 0.052 & 0.070 & \textbf{2.26} \\
-   & 3 & 200 & 0.058 & 0.066 & \textbf{2.31} \\
-\midrule
-\multirow{3}{*}{Naive LoRA}
-   & 1 & 67  & 0.129 & 0.129 & 3.84 \\
-   & 2 & 134 & 0.080 & 0.105 & 3.42 \\
-   & 3 & 200 & 0.112 & 0.136 & 4.74 \\
+In-context DRA & 0.760 & 0.700 & 0.987 & 0.927 \\
+RAG DRA        & 0.213 & 0.460 & 0.520 & 0.563 \\
+EWC-only DRA (BCP) & 0.070 (1.12) & 0.033 (1.43) & 0.073 (1.47) & 0.157 (2.53) \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:multi_cycle} and Figure~\ref{fig:multi_cycle} report the head-to-head.
+\paragraph{Single-cycle interpretation:} A natural reading of these single-cycle results is that SLEEP's safety machinery is over-engineered. The mechanisms (EWC, hard clipping, interleaving, validation rollback) collectively dampen learning more than they protect base capability, and the EWC-only baseline suggests that the marginal machinery beyond the Fisher penalty is not paying for itself. On a one-shot benchmark, that is a true description of what they do. Section~\ref{sec:multi_cycle} tests whether it remains true as the horizon lengthens.
+
+\subsection{Evaluation Horizon and Seed: The Long-Run Comparison Is Not Stable}
+\label{sec:multi_cycle}
+
+\paragraph{Proposed:} SLEEP's safety mechanisms are designed for repeated-cycle continual learning rather than single-cycle benchmarks. We therefore evaluate in that regime---and find that the comparison against naive fine-tuning is not stable in the number of cycles, which changes what can be claimed.
+
+\paragraph{Setup:} We split 200 facts into 10 disjoint batches of 20. Across ten sequential cycles the model sees one batch per cycle. After each cycle we measure (i) DRA on the cumulative facts seen so far (the forgetting test), (ii) DRA on the current cycle's facts (the learning test), and (iii) BCP on controls (the preservation test). We compare \textbf{SLEEP-A} (Setting A from the Pareto sweep) against \textbf{Naive LoRA} (200 steps per cycle on that cycle's batch). Both arms accumulate weight updates across cycles---each cycle starts from the previous cycle's adapter state. We run this protocol with three seeds on Qwen2.5-7B and two seeds on each of Qwen2.5-1.5B, Llama-3.1-8B, and Mistral-7B: nine SLEEP runs and nine naive runs in total.
+
+\begin{table}[t]
+\centering
+\caption{Ten-cycle continual learning across four models (cycle-10 endpoints). ``Plateau from'' gives the cycle at which the SLEEP arm's BCP stops changing. Every SLEEP run shows a step-then-plateau trajectory; the plateau \emph{level} varies by orders of magnitude across seeds of the same configuration.}
+\label{tab:multi_cycle}
+\begin{tabular}{llcccc}
+\toprule
+Model & Seed & SLEEP BCP@10 (plateau from) & Naive BCP@10 & SLEEP DRA & Naive DRA \\
+\midrule
+Qwen-7B   & 0 & 4.53 (c4)   & 3.36 & 0.050 & 0.085 \\
+Qwen-7B   & 1 & 10.20 (c3)  & 6.42 & 0.032 & 0.080 \\
+Qwen-7B   & 2 & 2.71 (c5)   & 5.44 & 0.057 & 0.078 \\
+Qwen-1.5B & 0 & 15.96 (c3)  & 21.01 & 0.045 & 0.035 \\
+Qwen-1.5B & 1 & 230.1 (c5)  & 45.83 & 0.012 & 0.048 \\
+Llama-8B  & 0 & 4.83 (c3)   & 6.09 & 0.032 & 0.083 \\
+Llama-8B  & 1 & 1530.9 (c3) & 7.11 & 0.045 & 0.075 \\
+Mistral-7B & 0 & 3.22 (c2)  & 2.90 & 0.008 & 0.192 \\
+Mistral-7B & 1 & 1.64 (c2)  & 3.72 & 0.003 & 0.160 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/figure_multi_cycle.pdf}
-\caption{Three-cycle continual learning on disjoint batches. Left: cumulative DRA (recall on all facts seen so far). Right: BCP (lower = better preservation). At every cycle, SLEEP-A's BCP is approximately half of naive LoRA's; the design-intent regime (multiple cycles) reverses the per-cost efficiency comparison from the single-cycle Pareto frontier.}
+\caption{Ten-cycle continual learning on disjoint batches (Qwen2.5-7B, seed 0 shown; Table~\ref{tab:multi_cycle} reports all nine run-pairs). Left: cumulative DRA. Right: BCP with the crossover marked. SLEEP's preservation advantage holds for three cycles, after which its BCP steps to a plateau while naive LoRA fluctuates.}
 \label{fig:multi_cycle}
 \end{figure}
 
-At every cycle, SLEEP's BCP is approximately half of naive LoRA's: cycle 1 $1.10$ vs $3.84$, cycle 2 $2.26$ vs $3.42$, cycle 3 $2.31$ vs $4.74$. Naive LoRA's BCP fluctuates and increases on the third cycle---the additional gradient steps continue to corrupt the model. SLEEP's BCP increases between cycle 1 and cycle 2 but stabilizes between cycle 2 and 3, suggesting the safety mechanisms slow---though do not eliminate---multi-cycle compounding.
+\paragraph{Result---a universal shape with a lottery for its level:} Table~\ref{tab:multi_cycle} reports all nine run-pairs. Three regularities hold in every run. First, the \emph{step-then-plateau} signature: each SLEEP run holds BCP near 1 for its first cycles, then jumps discretely and stays flat---within a few percent---for every remaining cycle (9/9 runs). Second, naive LoRA's cumulative recall exceeds SLEEP's in 8 of 9 pairs, typically by $2$--$20\times$. Third, no run of either arm ever satisfies $\mathrm{BCP} < 1.05$ beyond cycle two. What does \emph{not} replicate is the plateau level: across seeds of the \emph{same configuration} it spans $2.7$--$10.2$ on Qwen-7B, $16$--$230$ on Qwen-1.5B, and $4.8$--$1531$ on Llama---three orders of magnitude on identical hyperparameters. Which arm ``wins'' preservation at cycle 10 accordingly flips seed to seed (SLEEP wins 4 of 9 pairs, naive 5 of 9).
 
-\paragraph{Per-cost efficiency at cycle 3:} We compute DRA per unit BCP-delta:
-\begin{itemize}[itemsep=0.1em,topsep=0.2em]
-    \item \textbf{SLEEP-A}: $0.058 / (2.31 - 1) = 0.045$
-    \item \textbf{Naive LoRA}: $0.112 / (4.74 - 1) = 0.030$
-\end{itemize}
-SLEEP delivers $1.5\times$ more recall per percentage point of BCP cost at cycle 3. The single-cycle finding inverts: \emph{SLEEP's safety machinery does deliver value, but only in its intended continual-learning regime.}
+\paragraph{Interpretation---horizon and variance jointly decide the ordering:} Three successively larger experiments gave three different headlines: a single cycle favours naive LoRA; three cycles favour SLEEP (the ordering we ourselves reported from the three-cycle experiment); ten cycles across seeds shows the ordering is not stable at all. The seed-stable claims are structural, not comparative: SLEEP's clipping mechanism caps damage at a plateau whose \emph{existence} is guaranteed but whose \emph{level} is effectively a lottery over the optimisation path---consistent with $\delta_{\max}$ saturation geometry, where the clip freezes whatever damage has accumulated when saturation is reached---and the unconstrained baseline buys its consistently higher recall with wildly fluctuating damage. We conclude that \textbf{single-run, fixed-horizon comparisons of continual-learning architectures are unreliable at both of the scales this field typically reports}, and recommend that such comparisons state a horizon sweep and a seed spread or not be made.
 
-\paragraph{Multi-cycle interpretation:} This multi-cycle interpretation supersedes the single-cycle one. Single-cycle benchmarks systematically disadvantage architectures whose value emerges across cycles. The naive-LoRA-wins picture from Section~\ref{sec:results_pareto} is true for one-shot evaluation but does not generalize. We frame this as a methodological note for the field: continual-learning systems should not be evaluated by their per-cost efficiency on a single training pass.
+\paragraph{What this result does \emph{not} show:} It does not show SLEEP's safety machinery is useless---in 4 of 9 pairs it produced the better cycle-10 preservation, and its early-cycle protection is real everywhere. It shows the machinery does not deliver a \emph{reliable} advantage, and that the aspirational target---BCP near 1 across many cycles while DRA accumulates---was met by no run of either arm.
 
-\paragraph{What the multi-cycle result does \emph{not} show:} Neither arm achieves $\mathrm{BCP} < 1.05$ at any cycle. The proposal's aspirational target was that SLEEP, run for many cycles, would maintain BCP near $1$ while accumulating substantial DRA. Our results contradict this aspiration: SLEEP slows BCP degradation but does not prevent it. We discuss the architectural implications in Section~\ref{sec:discussion}.
+\subsection{Repairing the Gap: A Retrieval-Aware Warm-Up}
+\label{sec:results_warmup}
+
+\paragraph{Proposed:} The recognition--recall diagnosis of Section~\ref{sec:results_rwr} implies a specific repair: teach the frozen model to use KV memory during generation before asking it to consolidate. If the gap is a missing \emph{skill} rather than a structural limit, a lightweight warm-up should narrow it.
+
+\paragraph{Setup:} We run the warm-up of Section~\ref{sec:warmup_method} on 400 WikiText-2 passages disjoint from the evaluation facts, then re-run the identical recognition and recall evaluation on the 200-fact benchmark with the trained component frozen. We test two capacities: the \emph{gate only} ($36$ parameters) and \emph{gate + LoRA}, in which $W_{\mathrm{cons}}$ trains alongside. Success was pre-registered as $\mathrm{DRA} \in [0.10, 0.15]$ at $\mathrm{BCP} < 1.5$.
+
+\begin{table}[t]
+\centering
+\caption{Retrieval-aware warm-up across four models (two seeds per variant per model; $\Delta$DRA ranges span seeds). Recall moves by at most $\pm 0.008$ anywhere. The gate-only variant is harmless but inert; the $+$LoRA variant learns its objective yet damages base capability by a family-dependent, sometimes catastrophic amount.}
+\label{tab:warmup}
+\begin{tabular}{llcc}
+\toprule
+Model & Variant & $\Delta$DRA (seeds) & BCP after (seeds) \\
+\midrule
+Qwen-7B    & gate only & $+0.002, +0.002$ & $\sim$1.00, $\sim$1.00 \\
+Qwen-7B    & $+$ LoRA  & $+0.003, +0.000$ & 1.73, 3.74 \\
+Qwen-1.5B  & gate only & $+0.002, -0.002$ & 1.13, 1.13 \\
+Qwen-1.5B  & $+$ LoRA  & $+0.002, -0.002$ & 5.83, 19.9 \\
+Llama-8B   & gate only & $-0.007, +0.002$ & 1.78, 1.79 \\
+Llama-8B   & $+$ LoRA  & $-0.008, -0.002$ & $1.5{\times}10^{5}$, $1.5{\times}10^{6}$ \\
+Mistral-7B & gate only & $+0.008, -0.002$ & 2.77, 3.03 \\
+Mistral-7B & $+$ LoRA  & $-0.002, -0.005$ & $1.8{\times}10^{4}$, $1.0{\times}10^{5}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/figure_warmup_extension.pdf}
+\caption{Warm-up extension results. Left: recognition (MC) and recall (DRA) under each condition; the pre-registered DRA target is marked. Recognition rises above chance while recall stays at floor. Right: the preservation cost, showing that the higher-capacity variant buys its small recognition gain with substantial base-capability degradation.}
+\label{fig:warmup}
+\end{figure}
+
+\paragraph{Result---two distinct failure modes, replicated across families:} The gate-only variant does not train: its loss is flat and the learned scales converge to $0.99$--$1.00$, i.e.\ the optimizer finds that the identity is locally optimal. Thirty-six parameters modulating a memory signal cannot manufacture the capability to use it. The gate + LoRA variant \emph{does} learn the objective---on every model the warm-up loss falls substantially (e.g.\ $4.30 \to 3.33$ on Qwen-7B), confirming genuine acquisition of memory-conditioned prediction---and recognition improves modestly where the model survives (MC $0.220 \to 0.270$ on Qwen-7B, seed 0). But recall does not follow anywhere: across sixteen warm-up runs on four models, $|\Delta\mathrm{DRA}| \leq 0.008$ (Table~\ref{tab:warmup}). Meanwhile the LoRA variant's preservation cost is family-dependent and sometimes catastrophic: mild on Qwen-7B (BCP 1.7--3.7), severe on Qwen-1.5B (5.8--19.9), and destructive on Llama and Mistral (BCP $10^{4}$--$10^{6}$) at the same untuned learning rate. Two further observations: when LoRA is present the gate remains pinned at exactly $1.000$ (gradient flows to the higher-capacity component), and on Mistral the gate-only warm-up substantially \emph{reduced} the interference cost of carrying a populated memory bank (BCP with bank active: $8.9 \to 2.8$)---the gate learns to damp memory it cannot learn to exploit.
+
+\paragraph{Interpretation:} The honest statement carries its scope. \textbf{A lightweight retrieval-aware warm-up---$\leq$300 steps on a general corpus, with either a minimal gate or a rank-16 adapter---does not close the recognition--recall gap on any of four models spanning three families.} What it does do is deepen the original diagnosis in two ways. First, the gap survived a principled intervention drawn from published precedent \citep{wu2022memorizing,gmemllm2026,wang2024memoryllm}, replicated across families---stronger evidence of its structural character than any single-model observation. Second, the intervention moved recognition and recall \emph{differentially}---the same training that raised MC accuracy left free-form generation untouched---which is precisely the dissociation the paper names, now reproduced under an experimental manipulation rather than merely observed. We note the caveat that the warm-up learning rate was not tuned per family, which the Llama and Mistral collapses underline; a per-family-tuned variant is cheap follow-up work. We do not claim that retrieval-aware training cannot close the gap; Memorizing Transformers demonstrates that full-scale memory-augmented pretraining does. We claim that the cheap version does not, and we report the scale at which we tested it.

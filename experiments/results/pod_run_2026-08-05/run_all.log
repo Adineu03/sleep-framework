@@ -1,0 +1,11 @@
+=== STAGE 1: multi-seed recognition/pipeline (07 x seeds 0-4) ===
+STAGE1_DONE Wed Aug  5 08:23:29 UTC 2026
+=== STAGE 2: extended multi-cycle 10 cycles x 20 facts, both arms ===
+STAGE2_DONE Wed Aug  5 09:37:01 UTC 2026
+=== STAGE 3: warm-up extension, full 200 facts, seeds 0-2 ===
+STAGE3_DONE Wed Aug  5 10:14:36 UTC 2026
+=== STAGE 4: fp32 C1 precision-floor test (default alpha_slow=1e-5) ===
+STAGE4_DONE Wed Aug  5 10:20:58 UTC 2026
+=== STAGE 5: baselines (RAG / EWC-only / in-context) ===
+STAGE5_DONE Wed Aug  5 10:24:16 UTC 2026
+ALL_STAGES_DONE Wed Aug  5 10:24:16 UTC 2026

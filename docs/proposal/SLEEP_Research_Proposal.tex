@@ -1,0 +1,200 @@
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{titling}
+\usepackage[hidelinks]{hyperref}
+
+% ---- Palette ---------------------------------------------------------------
+\definecolor{ink}{RGB}{20,25,40}
+\definecolor{accent}{RGB}{27,54,93}      % sober navy
+\definecolor{rule}{RGB}{200,205,215}
+\definecolor{softgrey}{RGB}{95,100,110}
+
+\hypersetup{colorlinks=true, linkcolor=accent, urlcolor=accent, citecolor=accent}
+
+% ---- Section styling -------------------------------------------------------
+\titleformat{\section}
+  {\color{accent}\normalfont\large\bfseries}{\thesection.}{0.6em}{}
+\titleformat{\subsection}
+  {\color{ink}\normalfont\normalsize\bfseries}{\thesubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{1.4em}{0.5em}
+\titlespacing*{\subsection}{0pt}{1.0em}{0.35em}
+
+\setlist[itemize]{leftmargin=1.4em, itemsep=0.2em, topsep=0.25em}
+\setlist[enumerate]{leftmargin=1.6em, itemsep=0.25em, topsep=0.25em}
+
+\newcommand{\approxdollar}[1]{$\sim$\,\$#1}
+
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+
+% ---------------------------------------------------------------------------
+\begin{document}
+
+% ===== Title block =========================================================
+\begin{center}
+{\color{accent}\LARGE\bfseries From Diagnosis to Solution}\\[0.35em]
+{\large A Revision Roadmap and Retrieval-Aware Extension for the SLEEP Paper}\\[0.6em]
+{\color{softgrey}\normalsize Research proposal for a main-conference submission}
+\end{center}
+
+\vspace{0.4em}
+{\color{rule}\hrule height 0.8pt}
+\vspace{0.6em}
+
+\begin{center}
+\begin{tabular}{@{}r l@{\hspace{3em}}r l@{}}
+\textbf{Prepared for:} & Prof.\ Debashis Guha & \textbf{Date:} & 7 July 2026 \\
+ & Director, MAIB; Chair, CRTIB & & \\
+ & SP Jain School of Global Management & & \\[0.5em]
+\textbf{Prepared by:} & Aditya Tripathi & \textbf{Co-author:} & Dr.\ Rachit Garg \\
+\end{tabular}
+\end{center}
+
+\vspace{0.5em}
+{\color{rule}\hrule height 0.8pt}
+\vspace{0.8em}
+
+% ===== Preamble ============================================================
+Professor Guha,
+
+This memo requests your sign-off on a scoped, four-week plan to take \emph{Recognition Without Recall} from its current diagnostic form to a main-conference submission. The plan does two things: it consolidates the review feedback --- yours and the IBM~AI CTO review --- into a single phased schedule with costs, and it adds one substantive contribution that was not in the reviewed draft. That addition, a \emph{retrieval-aware warm-up phase}, is the focus of this memo, because it is what converts the paper from ``here is where the architecture breaks'' into ``here is where it breaks and the first principled step that repairs it.'' The rest is execution against feedback you have already given, so I keep it brief and spend the space on what is new.
+
+% ===== 1. Status ===========================================================
+\section{Where the paper stands}
+
+The paper is complete, archived, and reviewed:
+
+\begin{itemize}
+  \item \textbf{Archived} on Zenodo with a citable DOI: \href{https://doi.org/10.5281/zenodo.20176028}{10.5281/zenodo.20176028}.
+  \item \textbf{Code and logs} released at \href{https://github.com/Adineu03/sleep-framework}{github.com/Adineu03/sleep-framework} --- $\sim$3{,}500 lines, 297 tests, full experimental logs.
+  \item \textbf{Reviewed} by three domain experts across academia and industry. This proposal integrates the actionable items from those reviews.
+\end{itemize}
+
+The findings themselves are unchanged and I will not restate them beyond the three you already weighed: the $+0.16$ recognition signal ($\sim$2.9$\sigma$), the single-cycle Pareto frontier with no operating point at $\mathrm{BCP}<1.05$ and $\mathrm{DRA}>0.05$, and the multi-cycle preservation crossover ($\mathrm{BCP}$ 2.31 vs.\ 4.74 against naive LoRA at cycle~3). The open problem the paper names --- consolidation, i.e.\ moving attention-time recognition into weights that support generation --- is exactly what the extension below targets.
+
+% ===== 2. The extension ====================================================
+\section{The key addition: a retrieval-aware warm-up phase}
+
+Your review (item~\#5) recommended framing retrieval-aware fine-tuning explicitly as \emph{the next step} rather than vague future work. This proposal takes that recommendation as its centerpiece: instead of a mention in the discussion, we implement it inside the SLEEP pipeline and measure whether it closes the recognition--recall gap on the same 200-fact benchmark.
+
+\subsection{Mechanism}
+The gap has a specific mechanistic cause, established in the paper: a frozen pretrained model can let injected key--value (KV) memory \emph{bias a classification} but cannot let it \emph{steer autoregressive generation}, because the pretrained prior dominates sampling. The warm-up teaches the missing skill --- \emph{use the KV bank during generation} --- without teaching any test fact:
+
+\begin{enumerate}
+  \item Start from the frozen base model. Inject random KV entries drawn from a \emph{general} corpus (not the 200 facts).
+  \item Fine-tune a small LoRA adapter (optionally a lightweight gating module) on standard language-modeling loss \emph{with KV memory active}. The model learns to attend to relevant bank content while generating.
+  \item Freeze the warmed-up component and run SLEEP exactly as before.
+\end{enumerate}
+
+The warm-up carries no fact-specific knowledge; it installs a reusable capability. The prediction is that recall rises because the model now knows \emph{how} to use memory at sampling time, not just at comparison time. An optional enhancement --- a few-hundred-parameter trainable gate between memory attention and the residual stream, trained during warm-up and frozen thereafter --- provides a permanent, learned bridge from recognition to recall.
+
+\subsection{Expected result}
+The extension slots into a new results subsection with a single decisive table, run on the same benchmark and metrics already in the paper:
+
+\begin{center}
+\begin{tabular}{@{}l c c l@{}}
+\toprule
+\textbf{Condition} & \textbf{DRA} & \textbf{BCP} & \textbf{Status} \\
+\midrule
+SLEEP without warm-up & $\sim$0.005 & $\sim$1.00 & current result \\
+SLEEP with warm-up    & TBD         & TBD         & \textbf{the extension} \\
+Naive LoRA            & 0.275       & 2.94        & existing baseline \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The success criterion is modest and pre-registered: if warmed-up SLEEP reaches $\mathrm{DRA}\approx0.10$--$0.15$ at $\mathrm{BCP}<1.5$, the paper demonstrates that the recognition--recall gap is \emph{closable within the SLEEP framework} without abandoning the safety architecture. Even a partial narrowing is publishable, because it converts the central negative result into a diagnosed-and-treated result.
+
+\subsection{Why this changes the paper's standing}
+The extension completes a full research arc: (1)~we build a biologically-faithful consolidation system; (2)~we find where it breaks --- recognition without recall; (3)~we diagnose why --- frozen models do not use KV memory during generation; (4)~we locate the fix in adjacent, peer-reviewed literature; (5)~we apply it inside SLEEP as the warm-up; (6)~we show the gap narrows. Theory, implementation, failure, diagnosis, principled fix --- the arc that distinguishes a main-track paper from a findings-track one.
+
+% ===== 3. Precedent ========================================================
+\section{The extension is grounded, not speculative}
+
+Each component of the warm-up has a published precedent, and one of them independently validates SLEEP's own tagging mechanism:
+
+\begin{itemize}
+  \item \textbf{EM-LLM} (Fountas et al., ICLR~2025) segments the KV cache by \emph{surprise} --- nearly identical to SLEEP's tagging layer --- for infinite-context retrieval. It validates our tagging design and lets us position SLEEP precisely as ``EM-LLM plus consolidation into permanent weights.''
+  \item \textbf{G-MemLLM} (arXiv:2602.00015, Jan~2026) pairs a \emph{frozen} backbone with a small trainable gated latent-memory bank and reports a 13.3\% accuracy gain on ZsRE for Llama~3.1 --- direct evidence that a lightweight trainable component lets a frozen model use external memory. This motivates the optional gating module.
+  \item \textbf{MemoryLLM} (Wang et al., ICML~2024) demonstrates a self-updatable transformer memory with a learnable write-gate and top-$k$ router, establishing that gated memory in a transformer is a mature, reviewed idea.
+  \item \textbf{Memorizing Transformers} (Wu et al., ICLR~2022) --- already cited in the paper as the mechanism that closes the gap --- solves it by training on a memory-augmented objective. The warm-up is a lighter-weight, in-pipeline version of exactly that idea.
+\end{itemize}
+
+Positioning SLEEP against EM-LLM and G-MemLLM connects the paper to two recent top-venue works and frames the extension as the natural, expected next step rather than an isolated trick.
+
+% ===== 4. Consolidated roadmap =============================================
+\section{Consolidated revision roadmap}
+
+The eleven review items collapse into three phases. P1 generates the data every later item depends on; P2 makes the results comparable and complete; P3 (which now houses the extension) delivers the polish and the solution narrative.
+
+\newcolumntype{L}{>{\raggedright\arraybackslash}p{7.9cm}}
+\begin{center}
+\small
+\begin{tabular}{@{}L l@{}}
+\toprule
+\multicolumn{2}{@{}l}{\textbf{P1 --- Critical} \quad\textcolor{softgrey}{(Weeks 1--2, \approxdollar{70--80})}} \\
+\midrule
+Multiple random seeds (3--5) across all key experiments; report mean\,$\pm$\,SD & \approxdollar{20--30} \\
+Extended multi-cycle: 10--20 cycles to settle whether BCP plateaus or climbs & \approxdollar{20} \\
+Multi-model \& multi-precision: add Llama~3 / Mistral, test in float32, probe 1--3B scale & \approxdollar{30} \\
+\midrule
+\multicolumn{2}{@{}l}{\textbf{P2 --- High} \quad\textcolor{softgrey}{(Week 3, \approxdollar{30--40})}} \\
+\midrule
+Standard benchmark (LAMA / ROME--MEMIT) plus 50 post-cutoff real facts & \approxdollar{15} \\
+Missing baselines: RAG on the same facts, EWC-only, in-context injection & \approxdollar{10--15} \\
+Two-stage validation: surprise pre-filter + direct mini-recall gate (attacks the C4 self-grading gap) & \approxdollar{5} \\
+Tighten biological framing: constrain-or-trim per your item~\#7 & \$0 \\
+\midrule
+\multicolumn{2}{@{}l}{\textbf{P3 --- Polish \& Solution} \quad\textcolor{softgrey}{(Week 4, \approxdollar{5--10})}} \\
+\midrule
+\textbf{Retrieval-aware warm-up extension} (\S2) --- elevated from item~\#8 to a core result & \approxdollar{2--4} \\
+Failure-mode table mapping C1--C5 to cause, observability, and fix & \$0 \\
+Calibration plot: P(correct) for tagged vs.\ untagged facts & \$0 \\
+Repository polish (README, citation block) & done \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Totals:} eleven items, \approxdollar{100--120} in compute, $\sim$4 weeks of focused work. The extension itself is the cheapest line in the plan (\approxdollar{2--4}, roughly half a day) and the highest-leverage.
+
+% ===== 5. The ask ==========================================================
+\section{Requested decision}
+
+I request your sign-off to proceed with the plan as scoped above. Concretely, I am asking for three things:
+
+\begin{enumerate}
+  \item \textbf{Approval of the phased scope and sequencing} (P1\,$\rightarrow$\,P2\,$\rightarrow$\,P3) on the four-week, \approxdollar{120} budget.
+  \item \textbf{Confirmation that the retrieval-aware warm-up is the right centerpiece} --- that elevating item~\#8 into a full extension is the correct bet for a main-track story, or your steer if you would weight it differently.
+  \item \textbf{Guidance on the target venue and deadline} so I can align the four-week completion with the nearest suitable main-track window (e.g.\ NeurIPS, ICLR, or an ACL-family venue).
+\end{enumerate}
+
+With your go-ahead I will begin P1 immediately; the seed and multi-cycle runs are already scripted and can start the same day. I will report P1 results before committing P2 compute, so you retain a checkpoint after the most decision-relevant data lands.
+
+\vspace{0.8em}
+{\color{rule}\hrule height 0.6pt}
+\vspace{0.4em}
+{\color{softgrey}\small Respectfully submitted --- Aditya Tripathi \& Dr.\ Rachit Garg. Paper, code, and reviews available at the DOI and repository above.}
+
+% ===== References ==========================================================
+\section*{Key references for the extension}
+\small
+\begin{enumerate}[leftmargin=1.6em, label={[\arabic*]}]
+  \item Fountas et al. \emph{Human-inspired Episodic Memory for Infinite-Context LLMs} (EM-LLM). ICLR 2025.
+  \item G-MemLLM: \emph{Gated Latent Memory Augmentation for Long-Context Reasoning in LLMs}. arXiv:2602.00015, January 2026.
+  \item Wang et al. \emph{MemoryLLM: Towards Self-Updatable Large Language Models}. ICML 2024. (See also \emph{M+}, ICML 2025.)
+  \item Cetin et al. \emph{Neural Attention Memory Models} (NAMMs). ICLR 2025.
+  \item Wu et al. \emph{Memorizing Transformers}. ICLR 2022.
+\end{enumerate}
+
+\end{document}

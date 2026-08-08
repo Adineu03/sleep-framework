@@ -61,6 +61,7 @@ from sleep.sleep_engine.quality import quality_check, compute_baseline_surprise
 from sleep.evaluation.recall import evaluate_recall, RecallTestCase
 from sleep.evaluation.preservation import evaluate_perplexity, compute_bcp
 from sleep.utils.logging import setup_logging, get_logger
+from sleep.utils.seed import seed_everything
 
 setup_logging()
 logger = get_logger("experiment.07")
@@ -201,7 +202,23 @@ def main():
                         help="Override sleep.steps_per_memory. With ~50 "
                              "replays, this directly controls total steps "
                              "(steps = max(100, n_replays * steps_per_memory)).")
+    parser.add_argument("--seed", type=int, default=0,
+                        help="Random seed for reproducibility (torch/numpy/"
+                             "random). Run 3-5 seeds and report mean +/- std "
+                             "(mentor P1 item #1).")
+    parser.add_argument("--two-stage-validation", action="store_true",
+                        help="Confirm a consolidation only when BOTH the "
+                             "surprise-reduction check AND a direct free-form "
+                             "mini-recall test pass (mentor item #6). Attacks "
+                             "the C4 self-grading discrepancy.")
+    parser.add_argument("--output", type=str, default=None,
+                        help="If set, write a JSON results file (enables "
+                             "multi-seed aggregation via 10_run_seeds.py).")
     args = parser.parse_args()
+
+    # Seed everything up front so tagging decisions, replay sampling, MC
+    # distractor order, and LoRA init are reproducible for this seed.
+    seed_everything(args.seed)
 
     # Load facts (either from JSON file or use inline 5)
     global FACTS
@@ -403,14 +420,18 @@ def main():
         mu_surprise=mu_surprise,
         device=cfg["device"],
         replay_strategy=args.replay_strategy,
+        two_stage_validation=args.two_stage_validation,
     )
-    logger.info("Replay strategy: %s", args.replay_strategy)
+    logger.info("Replay strategy: %s | two-stage validation: %s",
+                args.replay_strategy, args.two_stage_validation)
 
-    # Run the sleep cycle
+    # Run the sleep cycle. fact_map (source_id -> fact) powers the mini-recall
+    # gate when two-stage validation is on; source_id is the fact id here.
     sleep_result = sleep_engine.run_cycle(
         candidates=candidates,
         original_tokens_map=original_tokens_map,
         key_projection=tagging.key_projection,
+        fact_map={f["id"]: f for f in FACTS},
     )
 
     print(f"\n  Sleep cycle results:")
@@ -587,7 +608,33 @@ def main():
         )
     print(f"  Verdict: {verdict}")
 
-    logger.info("Experiment 03 complete.")
+    # Optional JSON output (for multi-seed aggregation). Append-only; does not
+    # affect the printed report above.
+    if args.output:
+        payload = {
+            "experiment": "07_full_kv_pipeline",
+            "seed": args.seed,
+            "config_path": args.config,
+            "replay_strategy": args.replay_strategy,
+            "two_stage_validation": args.two_stage_validation,
+            "kv_top_k": args.kv_top_k,
+            "n_facts": len(FACTS),
+            "n_tags": len(all_tags),
+            "prp_allocated": prp_result["allocated"],
+            "dra": recall_result.get("dra", 0.0),
+            "bcp": bcp,
+            "baseline_ppl": baseline_ppl,
+            "post_ppl": post_ppl,
+            "n_consolidated": sleep_result.get("n_consolidated", 0),
+            "n_passed_surprise": sleep_result.get("n_passed_surprise", 0),
+            "n_passed_recall_gate": sleep_result.get("n_passed_recall_gate"),
+            "rolled_back": sleep_result.get("rolled_back", False),
+        }
+        with open(args.output, "w") as _f:
+            json.dump(payload, _f, indent=2, default=str)
+        logger.info("Wrote results JSON to %s", args.output)
+
+    logger.info("Experiment 07 complete.")
 
 
 if __name__ == "__main__":

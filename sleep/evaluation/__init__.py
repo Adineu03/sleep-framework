@@ -17,7 +17,19 @@ from sleep.evaluation.efficiency import (
     compute_consolidation_efficiency,
     compute_prp_allocation_quality,
 )
-from sleep.evaluation.baselines import RAGBaseline, NaiveLoRABaseline
+from sleep.evaluation.baselines import (
+    RAGBaseline,
+    NaiveLoRABaseline,
+    EWCOnlyBaseline,
+    InContextBaseline,
+)
+from sleep.evaluation.calibration import (
+    compute_calibration_metrics,
+    compute_stratified_calibration,
+    format_calibration_table,
+)
+from sleep.evaluation.calibration_plot import plot_tagged_vs_untagged_calibration
+from sleep.evaluation.benchmarks import load_benchmark, normalize_facts
 
 __all__ = [
     "evaluate_recall",
@@ -29,4 +41,12 @@ __all__ = [
     "compute_prp_allocation_quality",
     "RAGBaseline",
     "NaiveLoRABaseline",
+    "EWCOnlyBaseline",
+    "InContextBaseline",
+    "compute_calibration_metrics",
+    "compute_stratified_calibration",
+    "format_calibration_table",
+    "plot_tagged_vs_untagged_calibration",
+    "load_benchmark",
+    "normalize_facts",
 ]

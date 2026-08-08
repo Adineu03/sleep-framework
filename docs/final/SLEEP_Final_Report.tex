@@ -1,0 +1,255 @@
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{titling}
+\usepackage[hidelinks]{hyperref}
+
+% ---- Palette (matched to the proposal and interim report) ------------------
+\definecolor{ink}{RGB}{20,25,40}
+\definecolor{accent}{RGB}{27,54,93}
+\definecolor{rule}{RGB}{200,205,215}
+\definecolor{softgrey}{RGB}{95,100,110}
+\definecolor{gooddk}{RGB}{27,94,60}
+\definecolor{pend}{RGB}{140,90,20}
+
+\hypersetup{colorlinks=true, linkcolor=accent, urlcolor=accent, citecolor=accent}
+
+\titleformat{\section}
+  {\color{accent}\normalfont\large\bfseries}{\thesection.}{0.6em}{}
+\titleformat{\subsection}
+  {\color{ink}\normalfont\normalsize\bfseries}{\thesubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{1.4em}{0.5em}
+\titlespacing*{\subsection}{0pt}{1.0em}{0.35em}
+
+\setlist[itemize]{leftmargin=1.4em, itemsep=0.2em, topsep=0.25em}
+\setlist[enumerate]{leftmargin=1.6em, itemsep=0.25em, topsep=0.25em}
+
+\newcommand{\repl}{\textcolor{gooddk}{\textbf{Replicated}}}
+\newcommand{\rev}{\textcolor{pend}{\textbf{Revised}}}
+\newcommand{\nul}{\textcolor{softgrey}{\textbf{Null}}}
+
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+
+% ---------------------------------------------------------------------------
+\begin{document}
+
+% ===== Title block =========================================================
+\begin{center}
+{\color{accent}\LARGE\bfseries From Diagnosis to Solution}\\[0.35em]
+{\large SLEEP: Final Report on Implementation and Empirical Validation}\\[0.6em]
+{\color{softgrey}\normalsize Final report --- full validation programme including the four-model cross-family matrix}
+\end{center}
+
+\vspace{0.4em}
+{\color{rule}\hrule height 0.8pt}
+\vspace{0.6em}
+
+\begin{center}
+\begin{tabular}{@{}r l@{\hspace{3em}}r l@{}}
+\textbf{Prepared for:} & Prof.\ Debashis Guha & \textbf{Date:} & 8 August 2026 \\
+ & Director, MAIB; Chair, CRTIB & \textbf{Stage:} & Final (3 of 3) \\
+ & SP Jain School of Global Management & \textbf{Follows:} & Interim, 27 July 2026 \\[0.5em]
+\textbf{Prepared by:} & Aditya Tripathi & & \\
+\end{tabular}
+\end{center}
+
+\vspace{0.5em}
+{\color{rule}\hrule height 0.8pt}
+\vspace{0.8em}
+
+% ===== Preamble ============================================================
+Professor Guha,
+
+The validation programme is complete --- and more complete than the version scoped in July. Beyond
+the five run groups originally planned, we executed the full experimental matrix on \textbf{four
+models across three families} (Qwen2.5-7B, Qwen2.5-1.5B, Llama-3.1-8B, Mistral-7B): five-seed
+replication, ten-cycle continual learning, the warm-up extension, and all baselines, identically on
+each model. Total compute across the programme was roughly 25 GPU-hours ($\approx$USD~\$20). This
+report gives the numbers, states plainly which claims survived and which did not, and closes with
+what we believe the paper now contributes.
+
+Three results frame everything. First, the paper's central findings are now \textbf{universal across
+every model we can test at this scale}: the free-form recall floor sits at $\mathrm{DRA} \approx
+0.006$ on all four models while the same models follow in-context facts at up to $0.99$, and internal
+proxy validation falsely confirms $93$--$100\%$ of consolidations everywhere. Second, our own
+multi-cycle claim (C6) failed replication in an instructive way: across nine seeded ten-cycle
+run-pairs, the safety machinery's preservation plateau is universal in \emph{shape} but varies by
+three orders of magnitude in \emph{level} across seeds --- so the comparison we previously reported
+is not wrong so much as unstable, and the honest finding is that fixed-horizon single-run
+comparisons in this field are unreliable. Third, the proposed warm-up repair is a replicated null:
+sixteen runs, four models, recall never moved.
+
+% ===== 1. Programme summary ================================================
+\section{What was run}
+
+\begin{center}
+\small
+\begin{tabular}{@{}l l l@{}}
+\toprule
+Run group & Scope executed & Outcome \\
+\midrule
+1. Multi-seed pipeline      & 5 seeds $\times$ 4 models          & \repl\ (universal) \\
+2. Ten-cycle continual      & 9 seeded run-pairs, 4 models       & \rev\ (variance finding) \\
+3. Warm-up extension        & 16 runs, 4 models, 2 variants      & \nul\ (replicated) \\
+4. float32 precision test   & 7B, original defaults              & \repl\ (sharpened) \\
+5. Baselines                & RAG / in-context / EWC $\times$ 4 models & \rev\ (surprise) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Every architecture passed a ground-truth verification gate before any experiment ran: three checks
+asserting that KV injection is bit-identical with an empty bank, effective with a populated one, and
+exactly reversible when disabled. The gate rejected two defective configurations during the
+programme --- one config-encoding fault and one genuine Qwen-specific assumption in the attention
+patch --- both fixed before a single invalid number was produced. No model failed the repaired gate;
+Llama's identity check passed at $\mathrm{max}|\mathrm{diff}| = 0$.
+
+% ===== 2. Universal findings ===============================================
+\section{Findings that are now universal}
+
+\subsection{The recognition--recall floor}
+
+\begin{center}
+\small
+\begin{tabular}{@{}l c c c c@{}}
+\toprule
+ & Qwen-7B & Qwen-1.5B & Llama-8B & Mistral-7B \\
+\midrule
+Parametric recall (DRA, 5 seeds) & $0.006$ & $0.007$ & $0.006$ & $0.007$ \\
+In-context recall (same facts)   & $0.760$ & $0.700$ & $0.987$ & $0.927$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Every model recalls the facts nearly perfectly when they are visible in context, and at floor when
+they are stored parametrically through the consolidation pipeline. The dissociation is a property of
+the mechanism, not of any one model's pretraining. The weaker-prior hypothesis --- that a smaller
+model would let memory steer generation more easily --- is falsified at 1.5B.
+
+\subsection{The self-grading discrepancy}
+
+Across the four models, the internal surprise-reduction proxy certifies between $4$ and $39$
+consolidations per run (families differ greatly in how many candidates their surprise statistics
+allocate), yet at most a fraction of one per run survives a direct recall test: false-confirmation
+rates of $93$--$100\%$ everywhere. What began as your review item \#6 --- ``add a direct gate'' ---
+has become, in our view, one of the paper's two most durable contributions: proxy self-validation in
+continual learning can be near-totally wrong, invariantly across architectures.
+
+% ===== 3. The correction ===================================================
+\section{The correction: long-horizon comparisons are unstable}
+
+The interim position (single seed, ten cycles) was that naive fine-tuning overtakes SLEEP by cycle
+ten. Nine seeded run-pairs across the four models show that position was itself under-sampled:
+
+\begin{center}
+\small
+\begin{tabular}{@{}l l c c c c@{}}
+\toprule
+Model & Seed & SLEEP BCP@10 & Naive BCP@10 & SLEEP DRA & Naive DRA \\
+\midrule
+Qwen-7B    & 0 & 4.53   & 3.36  & 0.050 & 0.085 \\
+Qwen-7B    & 1 & 10.20  & 6.42  & 0.032 & 0.080 \\
+Qwen-7B    & 2 & 2.71   & 5.44  & 0.057 & 0.078 \\
+Qwen-1.5B  & 0 & 15.96  & 21.01 & 0.045 & 0.035 \\
+Qwen-1.5B  & 1 & 230.1  & 45.83 & 0.012 & 0.048 \\
+Llama-8B   & 0 & 4.83   & 6.09  & 0.032 & 0.083 \\
+Llama-8B   & 1 & 1530.9 & 7.11  & 0.045 & 0.075 \\
+Mistral-7B & 0 & 3.22   & 2.90  & 0.008 & 0.192 \\
+Mistral-7B & 1 & 1.64   & 3.72  & 0.003 & 0.160 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Three regularities hold in all nine pairs: SLEEP's BCP always follows a step-then-plateau
+trajectory (early cycles protected, then a discrete jump to a level that holds flat to cycle ten);
+naive LoRA's recall is higher in eight of nine pairs; and no run of either arm keeps
+$\mathrm{BCP}<1.05$ past cycle two. What does \emph{not} replicate is the plateau level --- $2.7$ to
+$10.2$ across three seeds of the identical Qwen-7B configuration, $4.8$ versus $1{,}531$ on Llama
+--- three orders of magnitude on unchanged hyperparameters, flipping the cycle-ten ``winner'' seed
+to seed (SLEEP 4/9, naive 5/9).
+
+The claim we now make is methodological and, we believe, stronger than the one it replaces:
+\textbf{fixed-horizon, single-run comparisons of continual-learning architectures are unreliable at
+the horizons and seed counts this literature typically reports.} The clipping mechanism guarantees a
+damage ceiling exists; where it lands is effectively a lottery over the optimisation path. We
+recommend such comparisons state a horizon sweep and a seed spread, or not be made.
+
+% ===== 4. The extension ====================================================
+\section{The warm-up: a replicated null}
+
+The pre-registered criterion ($\mathrm{DRA}\;0.10$--$0.15$ at $\mathrm{BCP}<1.5$) was met nowhere.
+Across sixteen runs --- two variants, two seeds, four models --- recall moved by at most
+$\pm 0.008$. The 36-parameter gate converges to identity on every model. The LoRA variant
+demonstrably learns memory-conditioned prediction everywhere (loss falls $\sim$1 nat) and lifts
+recognition where the model survives, yet recall never follows; its preservation cost is
+family-dependent and, on Llama and Mistral at the untuned learning rate, catastrophic
+($\mathrm{BCP}\;10^{4}$--$10^{6}$). One instructive side-finding: on Mistral the gate learned to
+\emph{suppress} memory interference it could not learn to exploit, reducing the cost of carrying a
+populated bank from $8.9\times$ to $2.8\times$.
+
+The diagnosis is thereby strengthened twice over: the recognition--recall gap survived a principled,
+precedent-grounded repair attempt, on every family, and the repair moved recognition and recall
+\emph{differentially} --- an experimental reproduction of the dissociation itself.
+
+% ===== 5. Baselines ========================================================
+\section{Baselines, completed across models}
+
+\begin{center}
+\small
+\begin{tabular}{@{}l c c c c@{}}
+\toprule
+ & Qwen-7B & Qwen-1.5B & Llama-8B & Mistral-7B \\
+\midrule
+In-context DRA & 0.760 & 0.700 & 0.987 & 0.927 \\
+RAG DRA        & 0.213 & 0.460 & 0.520 & 0.563 \\
+EWC-only DRA (BCP) & 0.070 (1.12) & 0.033 (1.43) & 0.073 (1.47) & 0.157 (2.53) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The uncomfortable finding stands and is now scoped: at 7B-class scale, EWC alone delivers a better
+recall-per-preservation ratio than the full SLEEP pipeline (weaker at 1.5B). RAG's shortfall against
+in-context is retrieval failure, not comprehension failure.
+
+% ===== 6. Paper state ======================================================
+\section{The paper as it now stands}
+
+All results above are integrated into the revised paper as primary content --- cross-model tables in
+the results, the nine-run horizon/seed analysis replacing the earlier multi-cycle section, the
+sixteen-run warm-up table, and the verification-gate methodology in the annexure. The title is
+unchanged. The contribution set, compressed: a universal recognition--recall dissociation with an
+in-context control; a universal, near-total proxy-validation failure; a replicated null on the
+lightweight repair; the precision-floor amendment separated into dtype and magnitude failures; and
+the long-horizon instability result. The paper no longer contains any headline claim resting on a
+single model or a single seed.
+
+% ===== 7. Recommendation ===================================================
+\section{Recommendation and requested input}
+
+We consider the empirical programme closed at this scale. The remaining open items are genuinely
+next-paper material rather than gaps: a many-seed characterisation of the plateau distribution, the
+warm-up at Memorizing-Transformers training scale with per-family learning rates, and extension to
+mixture-of-experts and larger models.
+
+We would welcome your judgement on two points: whether the horizon-and-seed instability result is
+best kept inside this paper (our view: yes, as its methodological anchor) or split into a short
+companion note aimed at the continual-learning evaluation literature; and the target venue and
+deadline, so the submission draft can be formatted accordingly.
+
+\vspace{0.8em}
+{\color{rule}\hrule height 0.6pt}
+\vspace{0.4em}
+{\color{softgrey}\small Respectfully submitted --- Aditya Tripathi. Full results (34 machine-readable files), execution logs, implementation, and the revised paper are in the project repository. The proposal (7~July) and interim report (27~July) accompany this document.}
+
+\end{document}

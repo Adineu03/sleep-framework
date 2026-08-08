@@ -1,0 +1,203 @@
+{
+  "script": "experiments/scripts/07_full_kv_pipeline.py",
+  "seeds_requested": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "seeds_succeeded": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "passthrough": [
+    "--config",
+    "experiments/configs/qwen7b.yaml",
+    "--facts-file",
+    "experiments/data/facts_200.json",
+    "--kv-top-k",
+    "64",
+    "--replay-strategy",
+    "original",
+    "--two-stage-validation"
+  ],
+  "aggregates": {
+    "dra": {
+      "mean": 0.006,
+      "std": 0.002527625148017183,
+      "n": 5,
+      "values": [
+        0.005,
+        0.006666666666666666,
+        0.009999999999999998,
+        0.003333333333333333,
+        0.005
+      ],
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "bcp": {
+      "mean": 1.0659475308669786,
+      "std": 0.03181089283420272,
+      "n": 5,
+      "values": [
+        1.108082695104745,
+        1.031547390587916,
+        1.0414878466287312,
+        1.0875547961010785,
+        1.0610649259124216
+      ],
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "n_consolidated": {
+      "mean": 0.4,
+      "std": 0.5477225575051661,
+      "n": 5,
+      "values": [
+        0.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "n_passed_surprise": {
+      "mean": 38.8,
+      "std": 0.4472135954999579,
+      "n": 5,
+      "values": [
+        39.0,
+        39.0,
+        39.0,
+        39.0,
+        38.0
+      ],
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    }
+  },
+  "per_seed": {
+    "0": {
+      "experiment": "07_full_kv_pipeline",
+      "seed": 0,
+      "config_path": "experiments/configs/qwen7b.yaml",
+      "replay_strategy": "original",
+      "two_stage_validation": true,
+      "kv_top_k": 64,
+      "n_facts": 200,
+      "n_tags": 162,
+      "prp_allocated": 50,
+      "dra": 0.005,
+      "bcp": 1.108082695104745,
+      "baseline_ppl": 4.121734239533049,
+      "post_ppl": 4.567222384647288,
+      "n_consolidated": 0,
+      "n_passed_surprise": 39,
+      "n_passed_recall_gate": 0,
+      "rolled_back": false
+    },
+    "1": {
+      "experiment": "07_full_kv_pipeline",
+      "seed": 1,
+      "config_path": "experiments/configs/qwen7b.yaml",
+      "replay_strategy": "original",
+      "two_stage_validation": true,
+      "kv_top_k": 64,
+      "n_facts": 200,
+      "n_tags": 162,
+      "prp_allocated": 49,
+      "dra": 0.006666666666666666,
+      "bcp": 1.031547390587916,
+      "baseline_ppl": 4.121734239533049,
+      "post_ppl": 4.2517641994871855,
+      "n_consolidated": 1,
+      "n_passed_surprise": 39,
+      "n_passed_recall_gate": 1,
+      "rolled_back": false
+    },
+    "2": {
+      "experiment": "07_full_kv_pipeline",
+      "seed": 2,
+      "config_path": "experiments/configs/qwen7b.yaml",
+      "replay_strategy": "original",
+      "two_stage_validation": true,
+      "kv_top_k": 64,
+      "n_facts": 200,
+      "n_tags": 162,
+      "prp_allocated": 49,
+      "dra": 0.009999999999999998,
+      "bcp": 1.0414878466287312,
+      "baseline_ppl": 4.121734239533049,
+      "post_ppl": 4.292736117507187,
+      "n_consolidated": 1,
+      "n_passed_surprise": 39,
+      "n_passed_recall_gate": 1,
+      "rolled_back": false
+    },
+    "3": {
+      "experiment": "07_full_kv_pipeline",
+      "seed": 3,
+      "config_path": "experiments/configs/qwen7b.yaml",
+      "replay_strategy": "original",
+      "two_stage_validation": true,
+      "kv_top_k": 64,
+      "n_facts": 200,
+      "n_tags": 162,
+      "prp_allocated": 50,
+      "dra": 0.003333333333333333,
+      "bcp": 1.0875547961010785,
+      "baseline_ppl": 4.121734239533049,
+      "post_ppl": 4.482611840458199,
+      "n_consolidated": 0,
+      "n_passed_surprise": 39,
+      "n_passed_recall_gate": 0,
+      "rolled_back": false
+    },
+    "4": {
+      "experiment": "07_full_kv_pipeline",
+      "seed": 4,
+      "config_path": "experiments/configs/qwen7b.yaml",
+      "replay_strategy": "original",
+      "two_stage_validation": true,
+      "kv_top_k": 64,
+      "n_facts": 200,
+      "n_tags": 162,
+      "prp_allocated": 51,
+      "dra": 0.005,
+      "bcp": 1.0610649259124216,
+      "baseline_ppl": 4.121734239533049,
+      "post_ppl": 4.373427635500827,
+      "n_consolidated": 0,
+      "n_passed_surprise": 38,
+      "n_passed_recall_gate": 0,
+      "rolled_back": false
+    }
+  }
+}

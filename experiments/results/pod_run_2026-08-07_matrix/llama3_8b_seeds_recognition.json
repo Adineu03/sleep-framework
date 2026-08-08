@@ -1,0 +1,222 @@
+{
+  "script": "experiments/scripts/07_full_kv_pipeline.py",
+  "seeds_requested": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "seeds_succeeded": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "passthrough": [
+    "--config",
+    "experiments/configs/llama3_8b.yaml",
+    "--facts-file",
+    "experiments/data/facts_200.json",
+    "--kv-top-k",
+    "64",
+    "--replay-strategy",
+    "original",
+    "--two-stage-validation"
+  ],
+  "aggregates": {
+    "dra": {
+      "mean": 0.006,
+      "std": 0.002788866755113585,
+      "n": 5,
+      "values": [
+        0.008333333333333333,
+        0.006666666666666666,
+        0.005,
+        0.0016666666666666666,
+        0.008333333333333333
+      ],
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "bcp": {
+      "mean": 0.9577788247060257,
+      "std": 0.008701750007632117,
+      "n": 5,
+      "values": [
+        0.9549292731542772,
+        0.950970501489505,
+        0.9604033412927758,
+        0.9717067105651122,
+        0.9508842970284579
+      ],
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "n_consolidated": {
+      "mean": 0.6,
+      "std": 0.5477225575051661,
+      "n": 5,
+      "values": [
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "n_passed_surprise": {
+      "mean": 9.2,
+      "std": 2.3874672772626644,
+      "n": 5,
+      "values": [
+        8.0,
+        6.0,
+        9.0,
+        12.0,
+        11.0
+      ],
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "n_passed_recall_gate": {
+      "mean": 0.6,
+      "std": 0.5477225575051661,
+      "n": 5,
+      "values": [
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    }
+  },
+  "per_seed": {
+    "0": {
+      "experiment": "07_full_kv_pipeline",
+      "seed": 0,
+      "config_path": "experiments/configs/llama3_8b.yaml",
+      "replay_strategy": "original",
+      "two_stage_validation": true,
+      "kv_top_k": 64,
+      "n_facts": 200,
+      "n_tags": 135,
+      "prp_allocated": 41,
+      "dra": 0.008333333333333333,
+      "bcp": 0.9549292731542772,
+      "baseline_ppl": 5.520145901389748,
+      "post_ppl": 5.271348913319675,
+      "n_consolidated": 1,
+      "n_passed_surprise": 8,
+      "n_passed_recall_gate": 1,
+      "rolled_back": false
+    },
+    "1": {
+      "experiment": "07_full_kv_pipeline",
+      "seed": 1,
+      "config_path": "experiments/configs/llama3_8b.yaml",
+      "replay_strategy": "original",
+      "two_stage_validation": true,
+      "kv_top_k": 64,
+      "n_facts": 200,
+      "n_tags": 135,
+      "prp_allocated": 37,
+      "dra": 0.006666666666666666,
+      "bcp": 0.950970501489505,
+      "baseline_ppl": 5.520145901389748,
+      "post_ppl": 5.2494959161398445,
+      "n_consolidated": 1,
+      "n_passed_surprise": 6,
+      "n_passed_recall_gate": 1,
+      "rolled_back": false
+    },
+    "2": {
+      "experiment": "07_full_kv_pipeline",
+      "seed": 2,
+      "config_path": "experiments/configs/llama3_8b.yaml",
+      "replay_strategy": "original",
+      "two_stage_validation": true,
+      "kv_top_k": 64,
+      "n_facts": 200,
+      "n_tags": 135,
+      "prp_allocated": 40,
+      "dra": 0.005,
+      "bcp": 0.9604033412927758,
+      "baseline_ppl": 5.520145901389748,
+      "post_ppl": 5.301566568118336,
+      "n_consolidated": 0,
+      "n_passed_surprise": 9,
+      "n_passed_recall_gate": 0,
+      "rolled_back": false
+    },
+    "3": {
+      "experiment": "07_full_kv_pipeline",
+      "seed": 3,
+      "config_path": "experiments/configs/llama3_8b.yaml",
+      "replay_strategy": "original",
+      "two_stage_validation": true,
+      "kv_top_k": 64,
+      "n_facts": 200,
+      "n_tags": 135,
+      "prp_allocated": 39,
+      "dra": 0.0016666666666666666,
+      "bcp": 0.9717067105651122,
+      "baseline_ppl": 5.520145901389748,
+      "post_ppl": 5.363962815678918,
+      "n_consolidated": 0,
+      "n_passed_surprise": 12,
+      "n_passed_recall_gate": 0,
+      "rolled_back": false
+    },
+    "4": {
+      "experiment": "07_full_kv_pipeline",
+      "seed": 4,
+      "config_path": "experiments/configs/llama3_8b.yaml",
+      "replay_strategy": "original",
+      "two_stage_validation": true,
+      "kv_top_k": 64,
+      "n_facts": 200,
+      "n_tags": 135,
+      "prp_allocated": 41,
+      "dra": 0.008333333333333333,
+      "bcp": 0.9508842970284579,
+      "baseline_ppl": 5.520145901389748,
+      "post_ppl": 5.249020054937514,
+      "n_consolidated": 1,
+      "n_passed_surprise": 11,
+      "n_passed_recall_gate": 1,
+      "rolled_back": false
+    }
+  }
+}

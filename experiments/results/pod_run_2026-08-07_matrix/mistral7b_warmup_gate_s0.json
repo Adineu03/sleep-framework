@@ -1,0 +1,48 @@
+{
+  "experiment": "09_warmup_extension",
+  "seed": 0,
+  "config_path": "experiments/configs/mistral7b.yaml",
+  "n_facts": 200,
+  "kv_top_k": 64,
+  "warmup_steps": 300,
+  "warmup_lr": 0.001,
+  "train_wcons": false,
+  "ppl_reference": 6.550295832742265,
+  "without_warmup": {
+    "mc_accuracy": 0.225,
+    "mc_mean_correct_prob": 0.24712827757000924,
+    "cloze_accuracy": 0.005,
+    "dra": 0.0016666666666666666,
+    "free_form_accuracy": 0.005,
+    "bcp": 8.86215413207233
+  },
+  "with_warmup": {
+    "mc_accuracy": 0.215,
+    "mc_mean_correct_prob": 0.24808244433254004,
+    "cloze_accuracy": 0.0,
+    "dra": 0.009999999999999998,
+    "free_form_accuracy": 0.03,
+    "bcp": 2.7745057114548044
+  },
+  "warmup": {
+    "n_steps": 300,
+    "final_loss": 5.6696319580078125,
+    "mean_loss": 5.201811160246531,
+    "initial_loss": 7.028196811676025,
+    "gate_scales": {
+      "22": 1.102717638015747,
+      "23": 0.9371349215507507,
+      "24": 0.9087762832641602,
+      "25": 0.9201112985610962,
+      "26": 0.9930903911590576,
+      "27": 1.0762031078338623,
+      "28": 1.01564621925354,
+      "29": 0.9350484609603882,
+      "30": 1.0602800846099854,
+      "31": 0.924245297908783
+    },
+    "train_wcons": false
+  },
+  "dra_delta": 0.008333333333333331,
+  "mc_delta": -0.010000000000000009
+}

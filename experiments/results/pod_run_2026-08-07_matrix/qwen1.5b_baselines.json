@@ -1,0 +1,20 @@
+{
+  "experiment": "11_baselines",
+  "seed": 0,
+  "config_path": "experiments/configs/qwen1.5b.yaml",
+  "n_facts": 100,
+  "results": {
+    "rag": {
+      "dra": 0.46,
+      "bcp": 1.0
+    },
+    "incontext": {
+      "dra": 0.7,
+      "bcp": 1.0
+    },
+    "ewc": {
+      "dra": 0.03333333333333333,
+      "bcp": 1.4308023333350453
+    }
+  }
+}

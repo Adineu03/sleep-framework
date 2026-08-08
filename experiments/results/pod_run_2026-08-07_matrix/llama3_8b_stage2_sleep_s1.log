@@ -1,0 +1,645 @@
+2026-08-07 12:08:36 | sleep.utils.seed               | INFO  | Seeded all RNGs with seed=1 (deterministic_algorithms=False)
+==============================================================================
+EXPERIMENT 08: Multi-Cycle Continual Learning
+  Method:     sleep
+  Cycles:     10
+  Batch size: 20
+==============================================================================
+  Loaded 200 facts (will run 10 cycles of 20 each)
+
+Loading model: /workspace/models/llama-3.1-8b (eager attention)
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]Loading weights:  15%|█▍        | 43/291 [00:00<00:00, 417.91it/s]Loading weights:  29%|██▉       | 85/291 [00:00<00:00, 333.22it/s]Loading weights:  41%|████      | 120/291 [00:00<00:00, 288.22it/s]Loading weights:  52%|█████▏    | 150/291 [00:00<00:00, 285.84it/s]Loading weights:  63%|██████▎   | 184/291 [00:00<00:00, 302.68it/s]Loading weights:  74%|███████▍  | 215/291 [00:00<00:00, 296.81it/s]Loading weights:  85%|████████▍ | 246/291 [00:00<00:00, 280.81it/s]Loading weights:  95%|█████████▍| 275/291 [00:00<00:00, 281.78it/s]Loading weights: 100%|██████████| 291/291 [00:00<00:00, 310.90it/s]
+  Model: 8.030B params
+2026-08-07 12:09:30 | sleep.weights.lora             | INFO  | LoRA target modules for llama: ['v_proj', 'o_proj']
+2026-08-07 12:09:30 | sleep.weights.lora             | INFO  | LoRA config: rank=16, alpha=32, layers=[22, 23, 24, 25, 26, 27, 28, 29, 30, 31] (of 32 total), targets=['v_proj', 'o_proj']
+2026-08-07 12:09:31 | sleep.weights.lora             | INFO  | Created LoRA adapter 'w_fast': 2129920 trainable parameters (0.0265% of base model)
+2026-08-07 12:09:31 | sleep.weights.lora             | INFO  | LoRA target modules for llama: ['v_proj', 'o_proj']
+2026-08-07 12:09:31 | sleep.weights.lora             | INFO  | LoRA config: rank=16, alpha=32, layers=[22, 23, 24, 25, 26, 27, 28, 29, 30, 31] (of 32 total), targets=['v_proj', 'o_proj']
+2026-08-07 12:09:31 | sleep.weights.lora             | INFO  | Dual adapters ready: w_fast=2129920 params, w_cons=2129920 params
+/usr/local/lib/python3.11/dist-packages/peft/tuners/tuners_utils.py:2193: UserWarning: Adapter cannot be set when the model is merged. Unmerging the model first.
+  warnings.warn("Adapter cannot be set when the model is merged. Unmerging the model first.")
+2026-08-07 12:09:31 | sleep.weights.fast_update      | INFO  | FastWeightUpdater initialized: 40 parameter groups, alpha_base=1.00e-04, momentum=0.90
+2026-08-07 12:09:31 | sleep.weights.plasticity       | INFO  | Adapted layers: [22, 23, 24, 25, 26, 27, 28, 29, 30, 31] (top 33% of 32 layers)
+2026-08-07 12:09:31 | sleep.weights.plasticity       | INFO  | Computed Frobenius norms for 224 base model weight matrices.
+2026-08-07 12:09:31 | sleep.weights.kv_injection     | INFO  | KVInjector installed on 10 layers: [22, 23, 24, 25, 26, 27, 28, 29, 30, 31]
+2026-08-07 12:09:31 | sleep.weights                  | INFO  | KV memory mode enabled | adapted_layers=[22, 23, 24, 25, 26, 27, 28, 29, 30, 31] | num_kv_heads=8 | head_dim=128 | max_total_tokens=20000 | top_k=64 | device=cuda:0 | dtype=torch.bfloat16
+2026-08-07 12:09:31 | sleep.weights                  | INFO  | DualWeightSystem initialized | W_fast: 2,129,920 params | W_cons: 2,129,920 params | Adapted layers: [22, 23, 24, 25, 26, 27, 28, 29, 30, 31] | Plasticity: 0.525–0.945 | KV bank installed
+/usr/local/lib/python3.11/dist-packages/peft/tuners/lora/layer.py:983: UserWarning: Already unmerged. Nothing to do.
+  warnings.warn("Already unmerged. Nothing to do.")
+2026-08-07 12:09:32 | sleep.sleep_engine.quality     | INFO  | Baseline surprise computed: mu_surprise=1.7099 nats over 53 tokens
+
+Measuring baseline PPL on controls...
+2026-08-07 12:09:32 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=5.5201 (mean_loss=1.7084, 53 tokens)
+  Baseline PPL: 5.5201
+2026-08-07 12:09:32 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-07 12:09:32 | sleep.experiment.08            | INFO  | [SLEEP Cycle 1] Wake phase: 20 facts
+2026-08-07 12:09:32 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-07 12:09:32 | sleep.tagging                  | INFO  | step=1 | 2 tags created from 2 spans | buffer: 2/40151 (0.0%)
+2026-08-07 12:09:32 | sleep.tagging                  | INFO  | step=2 | 1 tags created from 1 spans | buffer: 3/40151 (0.0%)
+2026-08-07 12:09:32 | sleep.tagging                  | INFO  | step=3 | 2 tags created from 2 spans | buffer: 5/40151 (0.0%)
+2026-08-07 12:09:32 | sleep.tagging                  | INFO  | step=4 | 1 tags created from 1 spans | buffer: 6/40151 (0.0%)
+2026-08-07 12:09:32 | sleep.tagging                  | INFO  | step=6 | 1 tags created from 1 spans | buffer: 7/40151 (0.0%)
+2026-08-07 12:09:33 | sleep.tagging                  | INFO  | step=7 | 1 tags created from 1 spans | buffer: 8/40151 (0.0%)
+2026-08-07 12:09:33 | sleep.tagging                  | INFO  | step=9 | 1 tags created from 1 spans | buffer: 9/40151 (0.0%)
+2026-08-07 12:09:33 | sleep.tagging                  | INFO  | step=12 | 1 tags created from 1 spans | buffer: 10/40151 (0.0%)
+2026-08-07 12:09:33 | sleep.tagging                  | INFO  | step=14 | 1 tags created from 1 spans | buffer: 11/40151 (0.0%)
+2026-08-07 12:09:33 | sleep.tagging                  | INFO  | step=17 | 1 tags created from 1 spans | buffer: 12/40151 (0.0%)
+2026-08-07 12:09:33 | sleep.experiment.08            | INFO  | [Cycle 1] Wake summary: 20 facts -> 10 KV writes; bank: 392/20000 tokens
+2026-08-07 12:09:33 | sleep.prp                      | INFO  | step=20 | PRP update: 3/4015 allocated (0%) | +3 -0 | threshold=0.297 | mean_score=0.264
+2026-08-07 12:09:33 | sleep.experiment.08            | INFO  | [Cycle 1] PRP: 3 allocated, 3 consolidation candidates
+2026-08-07 12:09:33 | sleep.sleep_engine             | INFO  | === Sleep cycle START | 3 candidates ===
+2026-08-07 12:09:33 | sleep.sleep_engine             | INFO  | Phase 1/5: GENERATE (strategy=original)
+2026-08-07 12:09:33 | sleep.sleep_engine             | INFO  | KV memory injection: DISABLED
+2026-08-07 12:09:33 | sleep.sleep_engine             | INFO  | Phase 1 (original strategy): 3 unique-source replays from 3 candidates
+[transformers] Ignoring clean_up_tokenization_spaces=True for BPE tokenizer TokenizersBackend. The clean_up_tokenization post-processing step is designed for WordPiece tokenizers and is destructive for BPE (it strips spaces before punctuation). Set clean_up_tokenization_spaces=False to suppress this warning, or set clean_up_tokenization_spaces_for_bpe_even_though_it_will_corrupt_output=True to force cleanup anyway.
+2026-08-07 12:09:33 | sleep.sleep_engine             | INFO  | Phase 1 complete: 3/3 replays generated
+2026-08-07 12:09:33 | sleep.sleep_engine             | INFO  | Phase 2/5: QUALITY CHECK
+2026-08-07 12:09:33 | sleep.sleep_engine             | INFO  | Phase 2 complete: 3/3 replays accepted
+2026-08-07 12:09:33 | sleep.sleep_engine             | INFO  | Phase 3/5: TRAIN (3 accepted replays)
+2026-08-07 12:09:33 | sleep.sleep_engine             | INFO  | KV memory injection: DISABLED
+2026-08-07 12:09:33 | sleep.weights.plasticity       | INFO  | Saved checkpoint for adapter 'w_cons': 40 parameters.
+2026-08-07 12:09:33 | sleep.weights.plasticity       | INFO  | Saved checkpoint for adapter 'w_cons': 40 parameters.
+2026-08-07 12:09:33 | sleep.sleep_engine.train       | INFO  | Starting sleep training | n_steps=100 | n_replay=3 | lr=1.00e-04 | device=cuda
+2026-08-07 12:09:38 | sleep.sleep_engine.train       | INFO  |   step 10/100 | loss=3.7271 | mean_loss=3.6312 | eta=9 | lr=1.00e-04
+2026-08-07 12:09:40 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:41 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:41 | sleep.weights.plasticity       | INFO  | Hard-clipped 2 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:41 | sleep.weights.plasticity       | INFO  | Hard-clipped 2 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:41 | sleep.sleep_engine.train       | INFO  |   step 20/100 | loss=3.0324 | mean_loss=3.4754 | eta=9 | lr=9.70e-05
+2026-08-07 12:09:42 | sleep.weights.plasticity       | INFO  | Hard-clipped 4 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:42 | sleep.weights.plasticity       | INFO  | Hard-clipped 4 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:43 | sleep.weights.plasticity       | INFO  | Hard-clipped 5 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:43 | sleep.weights.plasticity       | INFO  | Hard-clipped 5 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:43 | sleep.weights.plasticity       | INFO  | Hard-clipped 6 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:44 | sleep.weights.plasticity       | INFO  | Hard-clipped 6 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:44 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:45 | sleep.weights.plasticity       | INFO  | Hard-clipped 9 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:45 | sleep.weights.plasticity       | INFO  | Hard-clipped 12 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:45 | sleep.weights.plasticity       | INFO  | Hard-clipped 13 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:45 | sleep.sleep_engine.train       | INFO  |   step 30/100 | loss=2.2651 | mean_loss=3.1918 | eta=4 | lr=8.83e-05
+2026-08-07 12:09:46 | sleep.weights.plasticity       | INFO  | Hard-clipped 13 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:46 | sleep.weights.plasticity       | INFO  | Hard-clipped 14 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:47 | sleep.weights.plasticity       | INFO  | Hard-clipped 15 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:47 | sleep.weights.plasticity       | INFO  | Hard-clipped 16 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:47 | sleep.weights.plasticity       | INFO  | Hard-clipped 18 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:48 | sleep.weights.plasticity       | INFO  | Hard-clipped 19 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:48 | sleep.weights.plasticity       | INFO  | Hard-clipped 20 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:49 | sleep.weights.plasticity       | INFO  | Hard-clipped 21 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:49 | sleep.weights.plasticity       | INFO  | Hard-clipped 22 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:49 | sleep.weights.plasticity       | INFO  | Hard-clipped 22 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:49 | sleep.sleep_engine.train       | INFO  |   step 40/100 | loss=1.4825 | mean_loss=2.8472 | eta=4 | lr=7.50e-05
+2026-08-07 12:09:50 | sleep.weights.plasticity       | INFO  | Hard-clipped 23 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:50 | sleep.weights.plasticity       | INFO  | Hard-clipped 24 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:51 | sleep.weights.plasticity       | INFO  | Hard-clipped 24 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:51 | sleep.weights.plasticity       | INFO  | Hard-clipped 25 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:51 | sleep.weights.plasticity       | INFO  | Hard-clipped 25 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:52 | sleep.weights.plasticity       | INFO  | Hard-clipped 25 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:52 | sleep.weights.plasticity       | INFO  | Hard-clipped 26 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:53 | sleep.weights.plasticity       | INFO  | Hard-clipped 27 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:53 | sleep.weights.plasticity       | INFO  | Hard-clipped 27 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:53 | sleep.weights.plasticity       | INFO  | Hard-clipped 27 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:53 | sleep.sleep_engine.train       | INFO  |   step 50/100 | loss=0.8998 | mean_loss=2.5045 | eta=4 | lr=5.87e-05
+2026-08-07 12:09:54 | sleep.weights.plasticity       | INFO  | Hard-clipped 27 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:54 | sleep.weights.plasticity       | INFO  | Hard-clipped 27 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:55 | sleep.weights.plasticity       | INFO  | Hard-clipped 28 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:55 | sleep.weights.plasticity       | INFO  | Hard-clipped 28 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:55 | sleep.weights.plasticity       | INFO  | Hard-clipped 29 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:56 | sleep.weights.plasticity       | INFO  | Hard-clipped 29 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:56 | sleep.weights.plasticity       | INFO  | Hard-clipped 29 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:57 | sleep.weights.plasticity       | INFO  | Hard-clipped 29 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:57 | sleep.weights.plasticity       | INFO  | Hard-clipped 29 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:57 | sleep.weights.plasticity       | INFO  | Hard-clipped 29 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:57 | sleep.sleep_engine.train       | INFO  |   step 60/100 | loss=0.4794 | mean_loss=2.1956 | eta=4 | lr=4.13e-05
+2026-08-07 12:09:58 | sleep.weights.plasticity       | INFO  | Hard-clipped 29 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:58 | sleep.weights.plasticity       | INFO  | Hard-clipped 29 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:59 | sleep.weights.plasticity       | INFO  | Hard-clipped 29 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:59 | sleep.weights.plasticity       | INFO  | Hard-clipped 29 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:09:59 | sleep.weights.plasticity       | INFO  | Hard-clipped 29 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:00 | sleep.weights.plasticity       | INFO  | Hard-clipped 29 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:00 | sleep.weights.plasticity       | INFO  | Hard-clipped 29 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:01 | sleep.weights.plasticity       | INFO  | Hard-clipped 29 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:01 | sleep.weights.plasticity       | INFO  | Hard-clipped 30 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:01 | sleep.weights.plasticity       | INFO  | Hard-clipped 30 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:01 | sleep.sleep_engine.train       | INFO  |   step 70/100 | loss=0.2961 | mean_loss=1.9334 | eta=4 | lr=2.50e-05
+2026-08-07 12:10:02 | sleep.weights.plasticity       | INFO  | Hard-clipped 30 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:02 | sleep.weights.plasticity       | INFO  | Hard-clipped 30 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:03 | sleep.weights.plasticity       | INFO  | Hard-clipped 30 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:03 | sleep.weights.plasticity       | INFO  | Hard-clipped 30 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:03 | sleep.weights.plasticity       | INFO  | Hard-clipped 30 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:04 | sleep.weights.plasticity       | INFO  | Hard-clipped 30 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:04 | sleep.weights.plasticity       | INFO  | Hard-clipped 30 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:05 | sleep.weights.plasticity       | INFO  | Hard-clipped 31 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:05 | sleep.weights.plasticity       | INFO  | Hard-clipped 31 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:05 | sleep.weights.plasticity       | INFO  | Hard-clipped 31 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:05 | sleep.sleep_engine.train       | INFO  |   step 80/100 | loss=0.2385 | mean_loss=1.7230 | eta=9 | lr=1.17e-05
+2026-08-07 12:10:06 | sleep.weights.plasticity       | INFO  | Hard-clipped 31 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:06 | sleep.weights.plasticity       | INFO  | Hard-clipped 31 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:07 | sleep.weights.plasticity       | INFO  | Hard-clipped 31 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:07 | sleep.weights.plasticity       | INFO  | Hard-clipped 31 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:07 | sleep.weights.plasticity       | INFO  | Hard-clipped 31 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:08 | sleep.weights.plasticity       | INFO  | Hard-clipped 31 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:08 | sleep.weights.plasticity       | INFO  | Hard-clipped 31 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:09 | sleep.weights.plasticity       | INFO  | Hard-clipped 31 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:09 | sleep.weights.plasticity       | INFO  | Hard-clipped 31 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:09 | sleep.weights.plasticity       | INFO  | Hard-clipped 31 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:09 | sleep.sleep_engine.train       | INFO  |   step 90/100 | loss=0.2203 | mean_loss=1.5565 | eta=9 | lr=3.02e-06
+2026-08-07 12:10:10 | sleep.weights.plasticity       | INFO  | Hard-clipped 31 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:10 | sleep.weights.plasticity       | INFO  | Hard-clipped 31 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:11 | sleep.weights.plasticity       | INFO  | Hard-clipped 31 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:11 | sleep.weights.plasticity       | INFO  | Hard-clipped 31 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:11 | sleep.weights.plasticity       | INFO  | Hard-clipped 31 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:12 | sleep.weights.plasticity       | INFO  | Hard-clipped 31 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:12 | sleep.weights.plasticity       | INFO  | Hard-clipped 31 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:13 | sleep.weights.plasticity       | INFO  | Hard-clipped 31 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:13 | sleep.weights.plasticity       | INFO  | Hard-clipped 31 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:13 | sleep.weights.plasticity       | INFO  | Hard-clipped 31 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:10:13 | sleep.sleep_engine.train       | INFO  |   step 100/100 | loss=0.2224 | mean_loss=1.4227 | eta=9 | lr=0.00e+00
+2026-08-07 12:10:13 | sleep.sleep_engine.train       | INFO  | Sleep training complete | n_steps=100 | final_loss=0.2224 | mean_loss=1.4227
+2026-08-07 12:10:13 | sleep.metrics                  | INFO  | summary | {'sleep_train/final_loss': 0.22243845462799072, 'sleep_train/mean_loss': 1.422680988162756, 'sleep_train/n_steps': 100}
+2026-08-07 12:10:13 | sleep.sleep_engine             | INFO  | Phase 3 complete: 100 steps, final_loss=0.2224, mean_loss=1.4227
+2026-08-07 12:10:13 | sleep.sleep_engine             | INFO  | Phase 4/5: PPL CHECK (skipped — no benchmark data)
+2026-08-07 12:10:13 | sleep.sleep_engine             | INFO  | Phase 5/5: VALIDATE & CLEANUP
+2026-08-07 12:10:13 | sleep.weights.plasticity       | INFO  | Saved checkpoint for adapter 'w_cons': 40 parameters.
+2026-08-07 12:10:13 | sleep.weights.plasticity       | INFO  | Restored 40 parameters for adapter 'w_cons' from checkpoint.
+2026-08-07 12:10:14 | sleep.weights.plasticity       | INFO  | Restored 40 parameters for adapter 'w_cons' from checkpoint.
+2026-08-07 12:10:14 | sleep.sleep_engine.cleanup     | INFO  | Cleanup complete | passed=3 | failed=0 | permanently_removed=0
+2026-08-07 12:10:14 | sleep.sleep_engine             | INFO  | Phase 5 complete: consolidated=3, failed=0, permanently_removed=0
+2026-08-07 12:10:14 | sleep.metrics                  | INFO  | summary | {'sleep_engine/n_candidates': 3, 'sleep_engine/n_replays_generated': 3, 'sleep_engine/n_replays_accepted': 3, 'sleep_engine/n_consolidated': 3, 'sleep_engine/n_failed': 0, 'sleep_engine/n_permanently_removed': 0, 'sleep_engine/rolled_back': False}
+2026-08-07 12:10:14 | sleep.weights.kv_memory        | INFO  | bank cleared: freed 10 tags / 392 tokens
+2026-08-07 12:10:14 | sleep.sleep_engine             | INFO  | KV bank cleared (10 entries removed)
+2026-08-07 12:10:14 | sleep.sleep_engine             | INFO  | KV memory injection: ENABLED
+2026-08-07 12:10:14 | sleep.sleep_engine             | INFO  | === Sleep cycle END ===
+[transformers] The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+2026-08-07 12:10:45 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0333 across 20 cases
+2026-08-07 12:11:16 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0333 across 20 cases
+2026-08-07 12:11:16 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=6.2640 (mean_loss=1.8348, 53 tokens)
+2026-08-07 12:11:16 | sleep.evaluation.preservation  | INFO  | BCP: 1.1348 (current_ppl=6.2640, original_ppl=5.5201)
+2026-08-07 12:11:16 | sleep.experiment.08            | INFO  | [sleep Cycle 1 EVAL] DRA cumulative=0.033 (2/20 hits); DRA current=0.033 (2/20 hits); BCP=1.1348
+2026-08-07 12:11:16 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-07 12:11:16 | sleep.experiment.08            | INFO  | [SLEEP Cycle 2] Wake phase: 20 facts
+2026-08-07 12:11:16 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-07 12:11:17 | sleep.tagging                  | INFO  | step=21 | 1 tags created from 1 spans | buffer: 13/40151 (0.0%)
+2026-08-07 12:11:17 | sleep.tagging                  | INFO  | step=24 | 1 tags created from 1 spans | buffer: 14/40151 (0.0%)
+2026-08-07 12:11:17 | sleep.tagging                  | INFO  | step=26 | 1 tags created from 1 spans | buffer: 15/40151 (0.0%)
+2026-08-07 12:11:17 | sleep.tagging                  | INFO  | step=27 | 1 tags created from 1 spans | buffer: 16/40151 (0.0%)
+2026-08-07 12:11:17 | sleep.tagging                  | INFO  | step=31 | 1 tags created from 1 spans | buffer: 17/40151 (0.0%)
+2026-08-07 12:11:17 | sleep.tagging                  | INFO  | step=34 | 1 tags created from 1 spans | buffer: 18/40151 (0.0%)
+2026-08-07 12:11:17 | sleep.tagging                  | INFO  | step=36 | 1 tags created from 1 spans | buffer: 19/40151 (0.0%)
+2026-08-07 12:11:18 | sleep.tagging                  | INFO  | step=37 | 1 tags created from 1 spans | buffer: 20/40151 (0.0%)
+2026-08-07 12:11:18 | sleep.experiment.08            | INFO  | [Cycle 2] Wake summary: 20 facts -> 8 KV writes; bank: 314/20000 tokens
+2026-08-07 12:11:18 | sleep.prp                      | INFO  | step=40 | PRP update: 7/4015 allocated (0%) | +4 -0 | threshold=0.311 | mean_score=0.280
+2026-08-07 12:11:18 | sleep.experiment.08            | INFO  | [Cycle 2] PRP: 7 allocated, 7 consolidation candidates
+2026-08-07 12:11:18 | sleep.sleep_engine             | INFO  | === Sleep cycle START | 7 candidates ===
+2026-08-07 12:11:18 | sleep.sleep_engine             | INFO  | Phase 1/5: GENERATE (strategy=original)
+2026-08-07 12:11:18 | sleep.sleep_engine             | INFO  | KV memory injection: DISABLED
+2026-08-07 12:11:18 | sleep.sleep_engine             | INFO  | Phase 1 (original strategy): 3 unique-source replays from 7 candidates
+2026-08-07 12:11:18 | sleep.sleep_engine             | INFO  | Phase 1 complete: 3/7 replays generated
+2026-08-07 12:11:18 | sleep.sleep_engine             | INFO  | Phase 2/5: QUALITY CHECK
+2026-08-07 12:11:18 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.1992 < theta_quality 0.5)
+2026-08-07 12:11:18 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.1719 < theta_quality 0.5)
+2026-08-07 12:11:18 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.1807 < theta_quality 0.5)
+2026-08-07 12:11:18 | sleep.sleep_engine             | INFO  | Phase 2 complete: 0/3 replays accepted
+2026-08-07 12:11:18 | sleep.sleep_engine             | INFO  | No replays accepted — skipping training, marking all candidates as failed
+2026-08-07 12:11:18 | sleep.sleep_engine.cleanup     | INFO  | Cleanup complete | passed=0 | failed=7 | permanently_removed=0
+2026-08-07 12:11:18 | sleep.sleep_engine             | INFO  | KV memory injection: ENABLED
+2026-08-07 12:11:18 | sleep.sleep_engine             | INFO  | === Sleep cycle END (no accepted replays) ===
+2026-08-07 12:12:21 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0250 across 40 cases
+2026-08-07 12:12:53 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0167 across 20 cases
+2026-08-07 12:12:53 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=6.2448 (mean_loss=1.8318, 53 tokens)
+2026-08-07 12:12:53 | sleep.evaluation.preservation  | INFO  | BCP: 1.1313 (current_ppl=6.2448, original_ppl=5.5201)
+2026-08-07 12:12:53 | sleep.experiment.08            | INFO  | [sleep Cycle 2 EVAL] DRA cumulative=0.025 (3/40 hits); DRA current=0.017 (1/20 hits); BCP=1.1313
+2026-08-07 12:12:53 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-07 12:12:53 | sleep.experiment.08            | INFO  | [SLEEP Cycle 3] Wake phase: 20 facts
+2026-08-07 12:12:53 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-07 12:12:53 | sleep.tagging                  | INFO  | step=42 | 1 tags created from 1 spans | buffer: 21/40151 (0.1%)
+2026-08-07 12:12:53 | sleep.tagging                  | INFO  | step=44 | 1 tags created from 1 spans | buffer: 22/40151 (0.1%)
+2026-08-07 12:12:53 | sleep.tagging                  | INFO  | step=46 | 1 tags created from 1 spans | buffer: 23/40151 (0.1%)
+2026-08-07 12:12:54 | sleep.tagging                  | INFO  | step=47 | 1 tags created from 1 spans | buffer: 24/40151 (0.1%)
+2026-08-07 12:12:54 | sleep.tagging                  | INFO  | step=49 | 1 tags created from 1 spans | buffer: 25/40151 (0.1%)
+2026-08-07 12:12:54 | sleep.tagging                  | INFO  | step=51 | 2 tags created from 2 spans | buffer: 27/40151 (0.1%)
+2026-08-07 12:12:54 | sleep.tagging                  | INFO  | step=52 | 1 tags created from 1 spans | buffer: 28/40151 (0.1%)
+2026-08-07 12:12:54 | sleep.tagging                  | INFO  | step=54 | 1 tags created from 1 spans | buffer: 29/40151 (0.1%)
+2026-08-07 12:12:54 | sleep.tagging                  | INFO  | step=56 | 1 tags created from 1 spans | buffer: 30/40151 (0.1%)
+2026-08-07 12:12:54 | sleep.tagging                  | INFO  | step=57 | 1 tags created from 1 spans | buffer: 31/40151 (0.1%)
+2026-08-07 12:12:54 | sleep.experiment.08            | INFO  | [Cycle 3] Wake summary: 20 facts -> 10 KV writes; bank: 716/20000 tokens
+2026-08-07 12:12:54 | sleep.prp                      | INFO  | step=60 | PRP update: 11/4015 allocated (0%) | +11 -0 | threshold=0.344 | mean_score=0.309
+2026-08-07 12:12:54 | sleep.experiment.08            | INFO  | [Cycle 3] PRP: 11 allocated, 11 consolidation candidates
+2026-08-07 12:12:54 | sleep.sleep_engine             | INFO  | === Sleep cycle START | 11 candidates ===
+2026-08-07 12:12:54 | sleep.sleep_engine             | INFO  | Phase 1/5: GENERATE (strategy=original)
+2026-08-07 12:12:54 | sleep.sleep_engine             | INFO  | KV memory injection: DISABLED
+2026-08-07 12:12:54 | sleep.sleep_engine             | INFO  | Phase 1 (original strategy): 6 unique-source replays from 11 candidates
+2026-08-07 12:12:54 | sleep.sleep_engine             | INFO  | Phase 1 complete: 6/11 replays generated
+2026-08-07 12:12:54 | sleep.sleep_engine             | INFO  | Phase 2/5: QUALITY CHECK
+2026-08-07 12:12:54 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.1855 < theta_quality 0.5)
+2026-08-07 12:12:54 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.1338 < theta_quality 0.5)
+2026-08-07 12:12:55 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.2656 < theta_quality 0.5)
+2026-08-07 12:12:55 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.4844 < theta_quality 0.5)
+2026-08-07 12:12:55 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.3145 < theta_quality 0.5)
+2026-08-07 12:12:55 | sleep.sleep_engine             | INFO  | Phase 2 complete: 1/6 replays accepted
+2026-08-07 12:12:55 | sleep.sleep_engine             | INFO  | Phase 3/5: TRAIN (1 accepted replays)
+2026-08-07 12:12:55 | sleep.sleep_engine             | INFO  | KV memory injection: DISABLED
+2026-08-07 12:12:55 | sleep.weights.plasticity       | INFO  | Saved checkpoint for adapter 'w_cons': 40 parameters.
+2026-08-07 12:12:55 | sleep.weights.plasticity       | INFO  | Saved checkpoint for adapter 'w_cons': 40 parameters.
+2026-08-07 12:12:55 | sleep.sleep_engine.train       | INFO  | Starting sleep training | n_steps=100 | n_replay=1 | lr=1.00e-04 | device=cuda
+2026-08-07 12:12:58 | sleep.sleep_engine.train       | INFO  |   step 10/100 | loss=3.4701 | mean_loss=3.9845 | eta=9 | lr=1.00e-04
+2026-08-07 12:13:01 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:01 | sleep.sleep_engine.train       | INFO  |   step 20/100 | loss=1.1386 | mean_loss=3.1257 | eta=9 | lr=9.70e-05
+2026-08-07 12:13:01 | sleep.weights.plasticity       | INFO  | Hard-clipped 2 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:01 | sleep.weights.plasticity       | INFO  | Hard-clipped 2 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:02 | sleep.weights.plasticity       | INFO  | Hard-clipped 2 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:02 | sleep.weights.plasticity       | INFO  | Hard-clipped 2 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:02 | sleep.weights.plasticity       | INFO  | Hard-clipped 3 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:03 | sleep.weights.plasticity       | INFO  | Hard-clipped 3 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:03 | sleep.weights.plasticity       | INFO  | Hard-clipped 3 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:03 | sleep.weights.plasticity       | INFO  | Hard-clipped 3 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:03 | sleep.weights.plasticity       | INFO  | Hard-clipped 3 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:04 | sleep.weights.plasticity       | INFO  | Hard-clipped 3 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:04 | sleep.sleep_engine.train       | INFO  |   step 30/100 | loss=0.3687 | mean_loss=2.2382 | eta=4 | lr=8.83e-05
+2026-08-07 12:13:04 | sleep.weights.plasticity       | INFO  | Hard-clipped 3 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:04 | sleep.weights.plasticity       | INFO  | Hard-clipped 3 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:05 | sleep.weights.plasticity       | INFO  | Hard-clipped 3 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:05 | sleep.weights.plasticity       | INFO  | Hard-clipped 3 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:05 | sleep.weights.plasticity       | INFO  | Hard-clipped 3 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:06 | sleep.weights.plasticity       | INFO  | Hard-clipped 3 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:06 | sleep.weights.plasticity       | INFO  | Hard-clipped 3 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:06 | sleep.weights.plasticity       | INFO  | Hard-clipped 3 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:06 | sleep.weights.plasticity       | INFO  | Hard-clipped 3 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:07 | sleep.weights.plasticity       | INFO  | Hard-clipped 4 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:07 | sleep.sleep_engine.train       | INFO  |   step 40/100 | loss=0.3317 | mean_loss=1.7661 | eta=4 | lr=7.50e-05
+2026-08-07 12:13:07 | sleep.weights.plasticity       | INFO  | Hard-clipped 4 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:07 | sleep.weights.plasticity       | INFO  | Hard-clipped 4 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:08 | sleep.weights.plasticity       | INFO  | Hard-clipped 4 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:08 | sleep.weights.plasticity       | INFO  | Hard-clipped 4 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:08 | sleep.weights.plasticity       | INFO  | Hard-clipped 4 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:09 | sleep.weights.plasticity       | INFO  | Hard-clipped 4 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:09 | sleep.weights.plasticity       | INFO  | Hard-clipped 4 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:09 | sleep.weights.plasticity       | INFO  | Hard-clipped 4 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:09 | sleep.weights.plasticity       | INFO  | Hard-clipped 4 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:10 | sleep.weights.plasticity       | INFO  | Hard-clipped 4 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:10 | sleep.sleep_engine.train       | INFO  |   step 50/100 | loss=0.2716 | mean_loss=1.4730 | eta=4 | lr=5.87e-05
+2026-08-07 12:13:10 | sleep.weights.plasticity       | INFO  | Hard-clipped 4 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:10 | sleep.weights.plasticity       | INFO  | Hard-clipped 4 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:11 | sleep.weights.plasticity       | INFO  | Hard-clipped 5 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:11 | sleep.weights.plasticity       | INFO  | Hard-clipped 5 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:11 | sleep.weights.plasticity       | INFO  | Hard-clipped 5 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:12 | sleep.weights.plasticity       | INFO  | Hard-clipped 6 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:12 | sleep.weights.plasticity       | INFO  | Hard-clipped 7 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:12 | sleep.weights.plasticity       | INFO  | Hard-clipped 7 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:12 | sleep.weights.plasticity       | INFO  | Hard-clipped 7 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:13 | sleep.weights.plasticity       | INFO  | Hard-clipped 7 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:13 | sleep.sleep_engine.train       | INFO  |   step 60/100 | loss=0.1770 | mean_loss=1.2646 | eta=4 | lr=4.13e-05
+2026-08-07 12:13:13 | sleep.weights.plasticity       | INFO  | Hard-clipped 7 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:13 | sleep.weights.plasticity       | INFO  | Hard-clipped 7 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:14 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:14 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:14 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:14 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:15 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:15 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:15 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:16 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:16 | sleep.sleep_engine.train       | INFO  |   step 70/100 | loss=0.0407 | mean_loss=1.0989 | eta=4 | lr=2.50e-05
+2026-08-07 12:13:16 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:16 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:17 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:17 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:17 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:17 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:18 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:18 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:18 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:19 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:19 | sleep.sleep_engine.train       | INFO  |   step 80/100 | loss=0.0018 | mean_loss=0.9627 | eta=9 | lr=1.17e-05
+2026-08-07 12:13:19 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:19 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:20 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:20 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:20 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:20 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:21 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:21 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:21 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:22 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:22 | sleep.sleep_engine.train       | INFO  |   step 90/100 | loss=0.0008 | mean_loss=0.8559 | eta=9 | lr=3.02e-06
+2026-08-07 12:13:22 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:22 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:23 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:23 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:23 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:23 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:24 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:24 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:24 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:25 | sleep.weights.plasticity       | INFO  | Hard-clipped 8 w_cons parameters to delta_max=0.0200 bound.
+2026-08-07 12:13:25 | sleep.sleep_engine.train       | INFO  |   step 100/100 | loss=0.0008 | mean_loss=0.7703 | eta=9 | lr=0.00e+00
+2026-08-07 12:13:25 | sleep.sleep_engine.train       | INFO  | Sleep training complete | n_steps=100 | final_loss=0.0008 | mean_loss=0.7703
+2026-08-07 12:13:25 | sleep.metrics                  | INFO  | summary | {'sleep_train/final_loss': 0.0007600692333653569, 'sleep_train/mean_loss': 0.7703493609069847, 'sleep_train/n_steps': 100}
+2026-08-07 12:13:25 | sleep.sleep_engine             | INFO  | Phase 3 complete: 100 steps, final_loss=0.0008, mean_loss=0.7703
+2026-08-07 12:13:25 | sleep.sleep_engine             | INFO  | Phase 4/5: PPL CHECK (skipped — no benchmark data)
+2026-08-07 12:13:25 | sleep.sleep_engine             | INFO  | Phase 5/5: VALIDATE & CLEANUP
+2026-08-07 12:13:26 | sleep.weights.plasticity       | INFO  | Saved checkpoint for adapter 'w_cons': 40 parameters.
+2026-08-07 12:13:26 | sleep.weights.plasticity       | INFO  | Restored 40 parameters for adapter 'w_cons' from checkpoint.
+2026-08-07 12:13:26 | sleep.weights.plasticity       | INFO  | Restored 40 parameters for adapter 'w_cons' from checkpoint.
+2026-08-07 12:13:26 | sleep.sleep_engine.cleanup     | INFO  | Cleanup complete | passed=2 | failed=9 | permanently_removed=0
+2026-08-07 12:13:26 | sleep.sleep_engine             | INFO  | Phase 5 complete: consolidated=2, failed=9, permanently_removed=0
+2026-08-07 12:13:26 | sleep.metrics                  | INFO  | summary | {'sleep_engine/n_candidates': 11, 'sleep_engine/n_replays_generated': 6, 'sleep_engine/n_replays_accepted': 1, 'sleep_engine/n_consolidated': 2, 'sleep_engine/n_failed': 9, 'sleep_engine/n_permanently_removed': 0, 'sleep_engine/rolled_back': False}
+2026-08-07 12:13:26 | sleep.weights.kv_memory        | INFO  | bank cleared: freed 18 tags / 716 tokens
+2026-08-07 12:13:26 | sleep.sleep_engine             | INFO  | KV bank cleared (18 entries removed)
+2026-08-07 12:13:26 | sleep.sleep_engine             | INFO  | KV memory injection: ENABLED
+2026-08-07 12:13:26 | sleep.sleep_engine             | INFO  | === Sleep cycle END ===
+2026-08-07 12:15:02 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0611 across 60 cases
+2026-08-07 12:15:34 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0667 across 20 cases
+2026-08-07 12:15:34 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=8548.1749 (mean_loss=9.0535, 53 tokens)
+2026-08-07 12:15:34 | sleep.evaluation.preservation  | INFO  | BCP: 1548.5415 (current_ppl=8548.1749, original_ppl=5.5201)
+2026-08-07 12:15:34 | sleep.experiment.08            | INFO  | [sleep Cycle 3 EVAL] DRA cumulative=0.061 (6/60 hits); DRA current=0.067 (2/20 hits); BCP=1548.5415
+2026-08-07 12:15:34 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-07 12:15:34 | sleep.experiment.08            | INFO  | [SLEEP Cycle 4] Wake phase: 20 facts
+2026-08-07 12:15:34 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-07 12:15:34 | sleep.tagging                  | INFO  | step=61 | 2 tags created from 2 spans | buffer: 33/40151 (0.1%)
+2026-08-07 12:15:34 | sleep.tagging                  | INFO  | step=64 | 1 tags created from 1 spans | buffer: 34/40151 (0.1%)
+2026-08-07 12:15:34 | sleep.tagging                  | INFO  | step=66 | 1 tags created from 1 spans | buffer: 35/40151 (0.1%)
+2026-08-07 12:15:34 | sleep.tagging                  | INFO  | step=67 | 2 tags created from 2 spans | buffer: 37/40151 (0.1%)
+2026-08-07 12:15:35 | sleep.tagging                  | INFO  | step=68 | 1 tags created from 1 spans | buffer: 38/40151 (0.1%)
+2026-08-07 12:15:35 | sleep.tagging                  | INFO  | step=69 | 1 tags created from 1 spans | buffer: 39/40151 (0.1%)
+2026-08-07 12:15:35 | sleep.tagging                  | INFO  | step=71 | 1 tags created from 1 spans | buffer: 40/40151 (0.1%)
+2026-08-07 12:15:35 | sleep.tagging                  | INFO  | step=74 | 1 tags created from 1 spans | buffer: 41/40151 (0.1%)
+2026-08-07 12:15:35 | sleep.tagging                  | INFO  | step=76 | 1 tags created from 1 spans | buffer: 42/40151 (0.1%)
+2026-08-07 12:15:35 | sleep.tagging                  | INFO  | step=77 | 1 tags created from 1 spans | buffer: 43/40151 (0.1%)
+2026-08-07 12:15:35 | sleep.tagging                  | INFO  | step=79 | 1 tags created from 1 spans | buffer: 44/40151 (0.1%)
+2026-08-07 12:15:35 | sleep.experiment.08            | INFO  | [Cycle 4] Wake summary: 20 facts -> 11 KV writes; bank: 433/20000 tokens
+2026-08-07 12:15:35 | sleep.prp                      | INFO  | step=80 | PRP update: 12/4015 allocated (0%) | +10 -0 | threshold=0.276 | mean_score=0.247
+2026-08-07 12:15:35 | sleep.experiment.08            | INFO  | [Cycle 4] PRP: 12 allocated, 12 consolidation candidates
+2026-08-07 12:15:35 | sleep.sleep_engine             | INFO  | === Sleep cycle START | 12 candidates ===
+2026-08-07 12:15:35 | sleep.sleep_engine             | INFO  | Phase 1/5: GENERATE (strategy=original)
+2026-08-07 12:15:35 | sleep.sleep_engine             | INFO  | KV memory injection: DISABLED
+2026-08-07 12:15:35 | sleep.sleep_engine             | INFO  | Phase 1 (original strategy): 7 unique-source replays from 12 candidates
+2026-08-07 12:15:35 | sleep.sleep_engine             | INFO  | Phase 1 complete: 7/12 replays generated
+2026-08-07 12:15:35 | sleep.sleep_engine             | INFO  | Phase 2/5: QUALITY CHECK
+2026-08-07 12:15:35 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity -0.0129 < theta_quality 0.5)
+2026-08-07 12:15:35 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity -0.0767 < theta_quality 0.5)
+2026-08-07 12:15:35 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.0479 < theta_quality 0.5)
+2026-08-07 12:15:35 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.0547 < theta_quality 0.5)
+2026-08-07 12:15:35 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.3086 < theta_quality 0.5)
+2026-08-07 12:15:36 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.2891 < theta_quality 0.5)
+2026-08-07 12:15:36 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity -0.1592 < theta_quality 0.5)
+2026-08-07 12:15:36 | sleep.sleep_engine             | INFO  | Phase 2 complete: 0/7 replays accepted
+2026-08-07 12:15:36 | sleep.sleep_engine             | INFO  | No replays accepted — skipping training, marking all candidates as failed
+2026-08-07 12:15:36 | sleep.sleep_engine.cleanup     | INFO  | Cleanup complete | passed=0 | failed=12 | permanently_removed=0
+2026-08-07 12:15:36 | sleep.sleep_engine             | INFO  | KV memory injection: ENABLED
+2026-08-07 12:15:36 | sleep.sleep_engine             | INFO  | === Sleep cycle END (no accepted replays) ===
+2026-08-07 12:17:43 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0583 across 80 cases
+2026-08-07 12:18:15 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0500 across 20 cases
+2026-08-07 12:18:15 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=8551.3278 (mean_loss=9.0538, 53 tokens)
+2026-08-07 12:18:15 | sleep.evaluation.preservation  | INFO  | BCP: 1549.1126 (current_ppl=8551.3278, original_ppl=5.5201)
+2026-08-07 12:18:15 | sleep.experiment.08            | INFO  | [sleep Cycle 4 EVAL] DRA cumulative=0.058 (8/80 hits); DRA current=0.050 (2/20 hits); BCP=1549.1126
+2026-08-07 12:18:15 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-07 12:18:15 | sleep.experiment.08            | INFO  | [SLEEP Cycle 5] Wake phase: 20 facts
+2026-08-07 12:18:15 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-07 12:18:15 | sleep.tagging                  | INFO  | step=81 | 2 tags created from 2 spans | buffer: 46/40151 (0.1%)
+2026-08-07 12:18:15 | sleep.tagging                  | INFO  | step=82 | 1 tags created from 1 spans | buffer: 47/40151 (0.1%)
+2026-08-07 12:18:16 | sleep.tagging                  | INFO  | step=84 | 1 tags created from 1 spans | buffer: 48/40151 (0.1%)
+2026-08-07 12:18:16 | sleep.tagging                  | INFO  | step=86 | 1 tags created from 1 spans | buffer: 49/40151 (0.1%)
+2026-08-07 12:18:16 | sleep.tagging                  | INFO  | step=87 | 1 tags created from 1 spans | buffer: 50/40151 (0.1%)
+2026-08-07 12:18:16 | sleep.tagging                  | INFO  | step=94 | 1 tags created from 1 spans | buffer: 51/40151 (0.1%)
+2026-08-07 12:18:16 | sleep.tagging                  | INFO  | step=96 | 1 tags created from 1 spans | buffer: 52/40151 (0.1%)
+2026-08-07 12:18:16 | sleep.tagging                  | INFO  | step=97 | 1 tags created from 1 spans | buffer: 53/40151 (0.1%)
+2026-08-07 12:18:16 | sleep.experiment.08            | INFO  | [Cycle 5] Wake summary: 20 facts -> 8 KV writes; bank: 748/20000 tokens
+2026-08-07 12:18:16 | sleep.prp                      | INFO  | step=100 | PRP update: 10/4015 allocated (0%) | +10 -0 | threshold=0.250 | mean_score=0.222
+2026-08-07 12:18:16 | sleep.experiment.08            | INFO  | [Cycle 5] PRP: 10 allocated, 10 consolidation candidates
+2026-08-07 12:18:16 | sleep.sleep_engine             | INFO  | === Sleep cycle START | 10 candidates ===
+2026-08-07 12:18:16 | sleep.sleep_engine             | INFO  | Phase 1/5: GENERATE (strategy=original)
+2026-08-07 12:18:16 | sleep.sleep_engine             | INFO  | KV memory injection: DISABLED
+2026-08-07 12:18:16 | sleep.sleep_engine             | INFO  | Phase 1 (original strategy): 6 unique-source replays from 10 candidates
+2026-08-07 12:18:16 | sleep.sleep_engine             | INFO  | Phase 1 complete: 6/10 replays generated
+2026-08-07 12:18:16 | sleep.sleep_engine             | INFO  | Phase 2/5: QUALITY CHECK
+2026-08-07 12:18:17 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.1465 < theta_quality 0.5)
+2026-08-07 12:18:17 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.0001 < theta_quality 0.5)
+2026-08-07 12:18:17 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.2891 < theta_quality 0.5)
+2026-08-07 12:18:17 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.0366 < theta_quality 0.5)
+2026-08-07 12:18:17 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity -0.0439 < theta_quality 0.5)
+2026-08-07 12:18:17 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.0542 < theta_quality 0.5)
+2026-08-07 12:18:17 | sleep.sleep_engine             | INFO  | Phase 2 complete: 0/6 replays accepted
+2026-08-07 12:18:17 | sleep.sleep_engine             | INFO  | No replays accepted — skipping training, marking all candidates as failed
+2026-08-07 12:18:17 | sleep.sleep_engine.cleanup     | INFO  | Cleanup complete | passed=0 | failed=10 | permanently_removed=0
+2026-08-07 12:18:17 | sleep.sleep_engine             | INFO  | KV memory injection: ENABLED
+2026-08-07 12:18:17 | sleep.sleep_engine             | INFO  | === Sleep cycle END (no accepted replays) ===
+2026-08-07 12:20:56 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0533 across 100 cases
+2026-08-07 12:21:28 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0333 across 20 cases
+2026-08-07 12:21:28 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=8602.5647 (mean_loss=9.0598, 53 tokens)
+2026-08-07 12:21:28 | sleep.evaluation.preservation  | INFO  | BCP: 1558.3944 (current_ppl=8602.5647, original_ppl=5.5201)
+2026-08-07 12:21:28 | sleep.experiment.08            | INFO  | [sleep Cycle 5 EVAL] DRA cumulative=0.053 (10/100 hits); DRA current=0.033 (2/20 hits); BCP=1558.3944
+2026-08-07 12:21:28 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-07 12:21:28 | sleep.experiment.08            | INFO  | [SLEEP Cycle 6] Wake phase: 20 facts
+2026-08-07 12:21:28 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-07 12:21:29 | sleep.tagging                  | INFO  | step=101 | 1 tags created from 1 spans | buffer: 54/40151 (0.1%)
+2026-08-07 12:21:29 | sleep.tagging                  | INFO  | step=102 | 1 tags created from 1 spans | buffer: 55/40151 (0.1%)
+2026-08-07 12:21:29 | sleep.tagging                  | INFO  | step=104 | 1 tags created from 1 spans | buffer: 56/40151 (0.1%)
+2026-08-07 12:21:29 | sleep.tagging                  | INFO  | step=106 | 1 tags created from 1 spans | buffer: 57/40151 (0.1%)
+2026-08-07 12:21:29 | sleep.tagging                  | INFO  | step=111 | 2 tags created from 2 spans | buffer: 59/40151 (0.1%)
+2026-08-07 12:21:29 | sleep.tagging                  | INFO  | step=113 | 1 tags created from 1 spans | buffer: 60/40151 (0.1%)
+2026-08-07 12:21:29 | sleep.tagging                  | INFO  | step=114 | 1 tags created from 1 spans | buffer: 61/40151 (0.2%)
+2026-08-07 12:21:29 | sleep.tagging                  | INFO  | step=117 | 1 tags created from 1 spans | buffer: 62/40151 (0.2%)
+2026-08-07 12:21:30 | sleep.tagging                  | INFO  | step=119 | 1 tags created from 1 spans | buffer: 63/40151 (0.2%)
+2026-08-07 12:21:30 | sleep.experiment.08            | INFO  | [Cycle 6] Wake summary: 20 facts -> 9 KV writes; bank: 1093/20000 tokens
+2026-08-07 12:21:30 | sleep.prp                      | INFO  | step=120 | PRP update: 12/4015 allocated (0%) | +12 -0 | threshold=0.255 | mean_score=0.227
+2026-08-07 12:21:30 | sleep.experiment.08            | INFO  | [Cycle 6] PRP: 12 allocated, 12 consolidation candidates
+2026-08-07 12:21:30 | sleep.sleep_engine             | INFO  | === Sleep cycle START | 12 candidates ===
+2026-08-07 12:21:30 | sleep.sleep_engine             | INFO  | Phase 1/5: GENERATE (strategy=original)
+2026-08-07 12:21:30 | sleep.sleep_engine             | INFO  | KV memory injection: DISABLED
+2026-08-07 12:21:30 | sleep.sleep_engine             | INFO  | Phase 1 (original strategy): 6 unique-source replays from 12 candidates
+2026-08-07 12:21:30 | sleep.sleep_engine             | INFO  | Phase 1 complete: 6/12 replays generated
+2026-08-07 12:21:30 | sleep.sleep_engine             | INFO  | Phase 2/5: QUALITY CHECK
+2026-08-07 12:21:30 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.0386 < theta_quality 0.5)
+2026-08-07 12:21:30 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity -0.0525 < theta_quality 0.5)
+2026-08-07 12:21:30 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.2451 < theta_quality 0.5)
+2026-08-07 12:21:30 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.2617 < theta_quality 0.5)
+2026-08-07 12:21:30 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.0669 < theta_quality 0.5)
+2026-08-07 12:21:30 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.1001 < theta_quality 0.5)
+2026-08-07 12:21:30 | sleep.sleep_engine             | INFO  | Phase 2 complete: 0/6 replays accepted
+2026-08-07 12:21:30 | sleep.sleep_engine             | INFO  | No replays accepted — skipping training, marking all candidates as failed
+2026-08-07 12:21:30 | sleep.sleep_engine.cleanup     | INFO  | Cleanup complete | passed=0 | failed=12 | permanently_removed=0
+2026-08-07 12:21:30 | sleep.sleep_engine             | INFO  | KV memory injection: ENABLED
+2026-08-07 12:21:30 | sleep.sleep_engine             | INFO  | === Sleep cycle END (no accepted replays) ===
+2026-08-07 12:24:42 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0500 across 120 cases
+2026-08-07 12:25:13 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0333 across 20 cases
+2026-08-07 12:25:14 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=8527.4253 (mean_loss=9.0510, 53 tokens)
+2026-08-07 12:25:14 | sleep.evaluation.preservation  | INFO  | BCP: 1544.7826 (current_ppl=8527.4253, original_ppl=5.5201)
+2026-08-07 12:25:14 | sleep.experiment.08            | INFO  | [sleep Cycle 6 EVAL] DRA cumulative=0.050 (12/120 hits); DRA current=0.033 (2/20 hits); BCP=1544.7826
+2026-08-07 12:25:14 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-07 12:25:14 | sleep.experiment.08            | INFO  | [SLEEP Cycle 7] Wake phase: 20 facts
+2026-08-07 12:25:14 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-07 12:25:14 | sleep.tagging                  | INFO  | step=121 | 1 tags created from 1 spans | buffer: 64/40151 (0.2%)
+2026-08-07 12:25:14 | sleep.tagging                  | INFO  | step=122 | 1 tags created from 1 spans | buffer: 65/40151 (0.2%)
+2026-08-07 12:25:14 | sleep.tagging                  | INFO  | step=124 | 1 tags created from 1 spans | buffer: 66/40151 (0.2%)
+2026-08-07 12:25:14 | sleep.tagging                  | INFO  | step=125 | 1 tags created from 1 spans | buffer: 67/40151 (0.2%)
+2026-08-07 12:25:14 | sleep.tagging                  | INFO  | step=126 | 1 tags created from 1 spans | buffer: 68/40151 (0.2%)
+2026-08-07 12:25:14 | sleep.tagging                  | INFO  | step=127 | 1 tags created from 1 spans | buffer: 69/40151 (0.2%)
+2026-08-07 12:25:14 | sleep.tagging                  | INFO  | step=128 | 1 tags created from 1 spans | buffer: 70/40151 (0.2%)
+2026-08-07 12:25:14 | sleep.tagging                  | INFO  | step=131 | 1 tags created from 1 spans | buffer: 71/40151 (0.2%)
+2026-08-07 12:25:14 | sleep.tagging                  | INFO  | step=132 | 1 tags created from 1 spans | buffer: 72/40151 (0.2%)
+2026-08-07 12:25:15 | sleep.tagging                  | INFO  | step=134 | 1 tags created from 1 spans | buffer: 73/40151 (0.2%)
+2026-08-07 12:25:15 | sleep.tagging                  | INFO  | step=136 | 1 tags created from 1 spans | buffer: 74/40151 (0.2%)
+2026-08-07 12:25:15 | sleep.tagging                  | INFO  | step=137 | 1 tags created from 1 spans | buffer: 75/40151 (0.2%)
+2026-08-07 12:25:15 | sleep.tagging                  | INFO  | step=139 | 1 tags created from 1 spans | buffer: 76/40151 (0.2%)
+2026-08-07 12:25:15 | sleep.experiment.08            | INFO  | [Cycle 7] Wake summary: 20 facts -> 13 KV writes; bank: 1594/20000 tokens
+2026-08-07 12:25:15 | sleep.prp                      | INFO  | step=140 | PRP update: 12/4015 allocated (0%) | +12 -0 | threshold=0.243 | mean_score=0.216
+2026-08-07 12:25:15 | sleep.experiment.08            | INFO  | [Cycle 7] PRP: 12 allocated, 12 consolidation candidates
+2026-08-07 12:25:15 | sleep.sleep_engine             | INFO  | === Sleep cycle START | 12 candidates ===
+2026-08-07 12:25:15 | sleep.sleep_engine             | INFO  | Phase 1/5: GENERATE (strategy=original)
+2026-08-07 12:25:15 | sleep.sleep_engine             | INFO  | KV memory injection: DISABLED
+2026-08-07 12:25:15 | sleep.sleep_engine             | INFO  | Phase 1 (original strategy): 11 unique-source replays from 12 candidates
+2026-08-07 12:25:15 | sleep.sleep_engine             | INFO  | Phase 1 complete: 11/12 replays generated
+2026-08-07 12:25:15 | sleep.sleep_engine             | INFO  | Phase 2/5: QUALITY CHECK
+2026-08-07 12:25:15 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.0544 < theta_quality 0.5)
+2026-08-07 12:25:15 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.0220 < theta_quality 0.5)
+2026-08-07 12:25:15 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.2871 < theta_quality 0.5)
+2026-08-07 12:25:15 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity -0.0356 < theta_quality 0.5)
+2026-08-07 12:25:15 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.2812 < theta_quality 0.5)
+2026-08-07 12:25:15 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.1016 < theta_quality 0.5)
+2026-08-07 12:25:15 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.0505 < theta_quality 0.5)
+2026-08-07 12:25:15 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.0923 < theta_quality 0.5)
+2026-08-07 12:25:15 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity -0.0459 < theta_quality 0.5)
+2026-08-07 12:25:15 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.1016 < theta_quality 0.5)
+2026-08-07 12:25:15 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.3145 < theta_quality 0.5)
+2026-08-07 12:25:15 | sleep.sleep_engine             | INFO  | Phase 2 complete: 0/11 replays accepted
+2026-08-07 12:25:15 | sleep.sleep_engine             | INFO  | No replays accepted — skipping training, marking all candidates as failed
+2026-08-07 12:25:15 | sleep.sleep_engine.cleanup     | INFO  | Cleanup complete | passed=0 | failed=12 | permanently_removed=0
+2026-08-07 12:25:15 | sleep.sleep_engine             | INFO  | KV memory injection: ENABLED
+2026-08-07 12:25:15 | sleep.sleep_engine             | INFO  | === Sleep cycle END (no accepted replays) ===
+2026-08-07 12:28:59 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0476 across 140 cases
+2026-08-07 12:29:31 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0333 across 20 cases
+2026-08-07 12:29:31 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=8374.1756 (mean_loss=9.0329, 53 tokens)
+2026-08-07 12:29:31 | sleep.evaluation.preservation  | INFO  | BCP: 1517.0207 (current_ppl=8374.1756, original_ppl=5.5201)
+2026-08-07 12:29:31 | sleep.experiment.08            | INFO  | [sleep Cycle 7 EVAL] DRA cumulative=0.048 (13/140 hits); DRA current=0.033 (1/20 hits); BCP=1517.0207
+2026-08-07 12:29:31 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-07 12:29:31 | sleep.experiment.08            | INFO  | [SLEEP Cycle 8] Wake phase: 20 facts
+2026-08-07 12:29:31 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-07 12:29:31 | sleep.tagging                  | INFO  | step=141 | 1 tags created from 1 spans | buffer: 77/40151 (0.2%)
+2026-08-07 12:29:31 | sleep.tagging                  | INFO  | step=142 | 1 tags created from 1 spans | buffer: 78/40151 (0.2%)
+2026-08-07 12:29:31 | sleep.tagging                  | INFO  | step=144 | 1 tags created from 1 spans | buffer: 79/40151 (0.2%)
+2026-08-07 12:29:31 | sleep.tagging                  | INFO  | step=147 | 1 tags created from 1 spans | buffer: 80/40151 (0.2%)
+2026-08-07 12:29:31 | sleep.tagging                  | INFO  | step=149 | 1 tags created from 1 spans | buffer: 81/40151 (0.2%)
+2026-08-07 12:29:32 | sleep.tagging                  | INFO  | step=151 | 1 tags created from 1 spans | buffer: 82/40151 (0.2%)
+2026-08-07 12:29:32 | sleep.tagging                  | INFO  | step=154 | 1 tags created from 1 spans | buffer: 83/40151 (0.2%)
+2026-08-07 12:29:32 | sleep.tagging                  | INFO  | step=155 | 1 tags created from 1 spans | buffer: 84/40151 (0.2%)
+2026-08-07 12:29:32 | sleep.tagging                  | INFO  | step=157 | 1 tags created from 1 spans | buffer: 85/40151 (0.2%)
+2026-08-07 12:29:32 | sleep.experiment.08            | INFO  | [Cycle 8] Wake summary: 20 facts -> 9 KV writes; bank: 1941/20000 tokens
+2026-08-07 12:29:32 | sleep.prp                      | INFO  | step=160 | PRP update: 13/4015 allocated (0%) | +13 -0 | threshold=0.234 | mean_score=0.208
+2026-08-07 12:29:32 | sleep.experiment.08            | INFO  | [Cycle 8] PRP: 13 allocated, 13 consolidation candidates
+2026-08-07 12:29:32 | sleep.sleep_engine             | INFO  | === Sleep cycle START | 13 candidates ===
+2026-08-07 12:29:32 | sleep.sleep_engine             | INFO  | Phase 1/5: GENERATE (strategy=original)
+2026-08-07 12:29:32 | sleep.sleep_engine             | INFO  | KV memory injection: DISABLED
+2026-08-07 12:29:32 | sleep.sleep_engine             | INFO  | Phase 1 (original strategy): 8 unique-source replays from 13 candidates
+2026-08-07 12:29:32 | sleep.sleep_engine             | INFO  | Phase 1 complete: 8/13 replays generated
+2026-08-07 12:29:32 | sleep.sleep_engine             | INFO  | Phase 2/5: QUALITY CHECK
+2026-08-07 12:29:32 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.0374 < theta_quality 0.5)
+2026-08-07 12:29:32 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.0386 < theta_quality 0.5)
+2026-08-07 12:29:32 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.2910 < theta_quality 0.5)
+2026-08-07 12:29:32 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.0850 < theta_quality 0.5)
+2026-08-07 12:29:32 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity -0.1226 < theta_quality 0.5)
+2026-08-07 12:29:32 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity -0.0530 < theta_quality 0.5)
+2026-08-07 12:29:32 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.3281 < theta_quality 0.5)
+2026-08-07 12:29:32 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.0549 < theta_quality 0.5)
+2026-08-07 12:29:32 | sleep.sleep_engine             | INFO  | Phase 2 complete: 0/8 replays accepted
+2026-08-07 12:29:32 | sleep.sleep_engine             | INFO  | No replays accepted — skipping training, marking all candidates as failed
+2026-08-07 12:29:32 | sleep.sleep_engine.cleanup     | INFO  | Cleanup complete | passed=0 | failed=13 | permanently_removed=0
+2026-08-07 12:29:32 | sleep.sleep_engine             | INFO  | KV memory injection: ENABLED
+2026-08-07 12:29:32 | sleep.sleep_engine             | INFO  | === Sleep cycle END (no accepted replays) ===
+2026-08-07 12:33:49 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0458 across 160 cases
+2026-08-07 12:34:21 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0333 across 20 cases
+2026-08-07 12:34:21 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=8605.1497 (mean_loss=9.0601, 53 tokens)
+2026-08-07 12:34:21 | sleep.evaluation.preservation  | INFO  | BCP: 1558.8627 (current_ppl=8605.1497, original_ppl=5.5201)
+2026-08-07 12:34:21 | sleep.experiment.08            | INFO  | [sleep Cycle 8 EVAL] DRA cumulative=0.046 (15/160 hits); DRA current=0.033 (2/20 hits); BCP=1558.8627
+2026-08-07 12:34:21 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-07 12:34:21 | sleep.experiment.08            | INFO  | [SLEEP Cycle 9] Wake phase: 20 facts
+2026-08-07 12:34:21 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-07 12:34:21 | sleep.tagging                  | INFO  | step=161 | 1 tags created from 1 spans | buffer: 86/40151 (0.2%)
+2026-08-07 12:34:22 | sleep.tagging                  | INFO  | step=162 | 1 tags created from 1 spans | buffer: 87/40151 (0.2%)
+2026-08-07 12:34:22 | sleep.tagging                  | INFO  | step=164 | 1 tags created from 1 spans | buffer: 88/40151 (0.2%)
+2026-08-07 12:34:22 | sleep.tagging                  | INFO  | step=166 | 1 tags created from 1 spans | buffer: 89/40151 (0.2%)
+2026-08-07 12:34:22 | sleep.tagging                  | INFO  | step=168 | 1 tags created from 1 spans | buffer: 90/40151 (0.2%)
+2026-08-07 12:34:22 | sleep.tagging                  | INFO  | step=171 | 1 tags created from 1 spans | buffer: 91/40151 (0.2%)
+2026-08-07 12:34:22 | sleep.tagging                  | INFO  | step=174 | 1 tags created from 1 spans | buffer: 92/40151 (0.2%)
+2026-08-07 12:34:22 | sleep.tagging                  | INFO  | step=176 | 1 tags created from 1 spans | buffer: 93/40151 (0.2%)
+2026-08-07 12:34:22 | sleep.tagging                  | INFO  | step=177 | 1 tags created from 1 spans | buffer: 94/40151 (0.2%)
+2026-08-07 12:34:23 | sleep.experiment.08            | INFO  | [Cycle 9] Wake summary: 20 facts -> 9 KV writes; bank: 2293/20000 tokens
+2026-08-07 12:34:23 | sleep.prp                      | INFO  | step=180 | PRP update: 10/4015 allocated (0%) | +10 -0 | threshold=0.227 | mean_score=0.201
+2026-08-07 12:34:23 | sleep.experiment.08            | INFO  | [Cycle 9] PRP: 10 allocated, 10 consolidation candidates
+2026-08-07 12:34:23 | sleep.sleep_engine             | INFO  | === Sleep cycle START | 10 candidates ===
+2026-08-07 12:34:23 | sleep.sleep_engine             | INFO  | Phase 1/5: GENERATE (strategy=original)
+2026-08-07 12:34:23 | sleep.sleep_engine             | INFO  | KV memory injection: DISABLED
+2026-08-07 12:34:23 | sleep.sleep_engine             | INFO  | Phase 1 (original strategy): 7 unique-source replays from 10 candidates
+2026-08-07 12:34:23 | sleep.sleep_engine             | INFO  | Phase 1 complete: 7/10 replays generated
+2026-08-07 12:34:23 | sleep.sleep_engine             | INFO  | Phase 2/5: QUALITY CHECK
+2026-08-07 12:34:23 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity -0.0977 < theta_quality 0.5)
+2026-08-07 12:34:23 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.2500 < theta_quality 0.5)
+2026-08-07 12:34:23 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity -0.0272 < theta_quality 0.5)
+2026-08-07 12:34:23 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.2500 < theta_quality 0.5)
+2026-08-07 12:34:23 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.0630 < theta_quality 0.5)
+2026-08-07 12:34:23 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.0588 < theta_quality 0.5)
+2026-08-07 12:34:23 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.1670 < theta_quality 0.5)
+2026-08-07 12:34:23 | sleep.sleep_engine             | INFO  | Phase 2 complete: 0/7 replays accepted
+2026-08-07 12:34:23 | sleep.sleep_engine             | INFO  | No replays accepted — skipping training, marking all candidates as failed
+2026-08-07 12:34:23 | sleep.sleep_engine.cleanup     | INFO  | Cleanup complete | passed=0 | failed=10 | permanently_removed=0
+2026-08-07 12:34:23 | sleep.sleep_engine             | INFO  | KV memory injection: ENABLED
+2026-08-07 12:34:23 | sleep.sleep_engine             | INFO  | === Sleep cycle END (no accepted replays) ===
+2026-08-07 12:39:14 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0444 across 180 cases
+2026-08-07 12:39:46 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0333 across 20 cases
+2026-08-07 12:39:46 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=8636.3565 (mean_loss=9.0637, 53 tokens)
+2026-08-07 12:39:46 | sleep.evaluation.preservation  | INFO  | BCP: 1564.5160 (current_ppl=8636.3565, original_ppl=5.5201)
+2026-08-07 12:39:46 | sleep.experiment.08            | INFO  | [sleep Cycle 9 EVAL] DRA cumulative=0.044 (17/180 hits); DRA current=0.033 (2/20 hits); BCP=1564.5160
+2026-08-07 12:39:46 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-07 12:39:46 | sleep.experiment.08            | INFO  | [SLEEP Cycle 10] Wake phase: 20 facts
+2026-08-07 12:39:46 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-07 12:39:46 | sleep.tagging                  | INFO  | step=182 | 1 tags created from 1 spans | buffer: 95/40151 (0.2%)
+2026-08-07 12:39:46 | sleep.tagging                  | INFO  | step=184 | 1 tags created from 1 spans | buffer: 96/40151 (0.2%)
+2026-08-07 12:39:46 | sleep.tagging                  | INFO  | step=187 | 1 tags created from 1 spans | buffer: 97/40151 (0.2%)
+2026-08-07 12:39:47 | sleep.tagging                  | INFO  | step=191 | 1 tags created from 1 spans | buffer: 98/40151 (0.2%)
+2026-08-07 12:39:47 | sleep.tagging                  | INFO  | step=194 | 1 tags created from 1 spans | buffer: 99/40151 (0.2%)
+2026-08-07 12:39:47 | sleep.tagging                  | INFO  | step=196 | 1 tags created from 1 spans | buffer: 100/40151 (0.2%)
+2026-08-07 12:39:47 | sleep.tagging                  | INFO  | step=197 | 1 tags created from 1 spans | buffer: 101/40151 (0.3%)
+2026-08-07 12:39:47 | sleep.experiment.08            | INFO  | [Cycle 10] Wake summary: 20 facts -> 7 KV writes; bank: 2569/20000 tokens
+2026-08-07 12:39:47 | sleep.prp                      | INFO  | step=200 | PRP update: 20/4015 allocated (0%) | +20 -0 | threshold=0.233 | mean_score=0.211
+2026-08-07 12:39:47 | sleep.experiment.08            | INFO  | [Cycle 10] PRP: 20 allocated, 20 consolidation candidates
+2026-08-07 12:39:47 | sleep.sleep_engine             | INFO  | === Sleep cycle START | 20 candidates ===
+2026-08-07 12:39:47 | sleep.sleep_engine             | INFO  | Phase 1/5: GENERATE (strategy=original)
+2026-08-07 12:39:47 | sleep.sleep_engine             | INFO  | KV memory injection: DISABLED
+2026-08-07 12:39:47 | sleep.sleep_engine             | INFO  | Phase 1 (original strategy): 7 unique-source replays from 20 candidates
+2026-08-07 12:39:47 | sleep.sleep_engine             | INFO  | Phase 1 complete: 7/20 replays generated
+2026-08-07 12:39:47 | sleep.sleep_engine             | INFO  | Phase 2/5: QUALITY CHECK
+2026-08-07 12:39:47 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity -0.0417 < theta_quality 0.5)
+2026-08-07 12:39:47 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.2617 < theta_quality 0.5)
+2026-08-07 12:39:47 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.0869 < theta_quality 0.5)
+2026-08-07 12:39:47 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.3145 < theta_quality 0.5)
+2026-08-07 12:39:47 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity -0.1187 < theta_quality 0.5)
+2026-08-07 12:39:47 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity 0.2334 < theta_quality 0.5)
+2026-08-07 12:39:47 | sleep.sleep_engine.quality     | INFO  | Quality check REJECTED (similarity): Replay drifted too far from original experience (cosine similarity -0.0728 < theta_quality 0.5)
+2026-08-07 12:39:47 | sleep.sleep_engine             | INFO  | Phase 2 complete: 0/7 replays accepted
+2026-08-07 12:39:47 | sleep.sleep_engine             | INFO  | No replays accepted — skipping training, marking all candidates as failed
+2026-08-07 12:39:47 | sleep.sleep_engine.cleanup     | INFO  | Cleanup complete | passed=0 | failed=20 | permanently_removed=0
+2026-08-07 12:39:47 | sleep.sleep_engine             | INFO  | KV memory injection: ENABLED
+2026-08-07 12:39:47 | sleep.sleep_engine             | INFO  | === Sleep cycle END (no accepted replays) ===
+2026-08-07 12:45:08 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0450 across 200 cases
+2026-08-07 12:45:41 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0500 across 20 cases
+2026-08-07 12:45:41 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=8450.8868 (mean_loss=9.0420, 53 tokens)
+2026-08-07 12:45:41 | sleep.evaluation.preservation  | INFO  | BCP: 1530.9173 (current_ppl=8450.8868, original_ppl=5.5201)
+2026-08-07 12:45:41 | sleep.experiment.08            | INFO  | [sleep Cycle 10 EVAL] DRA cumulative=0.045 (19/200 hits); DRA current=0.050 (2/20 hits); BCP=1530.9173
+
+==============================================================================
+MULTI-CYCLE SUMMARY (sleep)
+==============================================================================
+Cycle  Cum N   DRA cum    DRA cur    BCP       
+--------------------------------------------------
+1      20      0.0333     0.0333     1.1348    
+2      40      0.0250     0.0167     1.1313    
+3      60      0.0611     0.0667     1548.5415 
+4      80      0.0583     0.0500     1549.1126 
+5      100     0.0533     0.0333     1558.3944 
+6      120     0.0500     0.0333     1544.7826 
+7      140     0.0476     0.0333     1517.0207 
+8      160     0.0458     0.0333     1558.8627 
+9      180     0.0444     0.0333     1564.5160 
+10     200     0.0450     0.0500     1530.9173 
+
+Results saved to: /workspace/results/llama3_8b_multicycle_sleep_10c_s1.json

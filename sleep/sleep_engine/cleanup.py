@@ -171,6 +171,83 @@ def validate_consolidation(
 
 
 # ---------------------------------------------------------------------------
+# Mini-recall gate (two-stage validation, mentor feedback item #6)
+# ---------------------------------------------------------------------------
+
+@torch.no_grad()
+def mini_recall_check(
+    tag: Tag,
+    model,
+    fact: dict | None,
+    tokenizer,
+    device: str = "cpu",
+    max_new_tokens: int = 40,
+) -> bool:
+    """Direct free-form recall gate: can the model *produce* the memory?
+
+    Stage 2 of two-stage validation. :func:`validate_consolidation` checks
+    that surprise on the original span dropped — a proxy the model grades
+    against itself, which the paper shows can pass while external recall stays
+    at floor (the C4 self-grading discrepancy). This gate closes that loop by
+    asking the harder, external question directly: given the fact's question
+    prompt, does a short greedy generation contain at least one expected
+    keyword?
+
+    Greedy decoding (``do_sample=False``) is used so the gate is deterministic
+    given the model state — a tag either recalls or it does not, with no
+    sampling luck. That makes it a strict, reproducible confirmation.
+
+    Args:
+        tag:            The tag being validated (used only for logging here;
+                        the fact carries the recall target).
+        model:          Model after sleep training, in target-inference mode.
+        fact:           The source fact dict, expected to carry ``test_prompt``
+                        and ``keywords``. If ``None`` or missing either field,
+                        the gate cannot run and returns ``False`` (fail-closed:
+                        an unconfirmable consolidation does not pass).
+        tokenizer:      Matching tokenizer.
+        device:         Device for generation.
+        max_new_tokens: Tokens to generate before scoring (default 40).
+
+    Returns:
+        ``True`` iff at least one expected keyword appears (case-insensitively)
+        in the generation.
+    """
+    if fact is None:
+        logger.debug("mini_recall_check FAIL for tag %d: no fact provided", id(tag))
+        return False
+
+    prompt = fact.get("test_prompt", "")
+    keywords = fact.get("keywords", []) or []
+    if not prompt or not keywords:
+        logger.debug(
+            "mini_recall_check FAIL for tag %d: fact missing test_prompt/keywords",
+            id(tag),
+        )
+        return False
+
+    encoded = tokenizer(prompt, return_tensors="pt")
+    input_ids = encoded["input_ids"].to(device)
+
+    output_ids = model.generate(
+        input_ids,
+        max_new_tokens=max_new_tokens,
+        do_sample=False,  # deterministic gate — recall must be robust, not lucky
+        pad_token_id=tokenizer.eos_token_id,
+    )
+    generated = tokenizer.decode(
+        output_ids[0, input_ids.shape[1]:], skip_special_tokens=True,
+    ).lower()
+
+    hit = any(kw.lower() in generated for kw in keywords)
+    logger.debug(
+        "mini_recall_check %s for tag %d: keywords=%s hit=%s",
+        "PASS" if hit else "FAIL", id(tag), keywords, hit,
+    )
+    return hit
+
+
+# ---------------------------------------------------------------------------
 # Tag cleanup
 # ---------------------------------------------------------------------------
 

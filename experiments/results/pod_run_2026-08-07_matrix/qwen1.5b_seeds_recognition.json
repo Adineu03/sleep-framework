@@ -1,0 +1,222 @@
+{
+  "script": "experiments/scripts/07_full_kv_pipeline.py",
+  "seeds_requested": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "seeds_succeeded": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "passthrough": [
+    "--config",
+    "experiments/configs/qwen1.5b.yaml",
+    "--facts-file",
+    "experiments/data/facts_200.json",
+    "--kv-top-k",
+    "64",
+    "--replay-strategy",
+    "original",
+    "--two-stage-validation"
+  ],
+  "aggregates": {
+    "dra": {
+      "mean": 0.007333333333333333,
+      "std": 0.0014907119849998593,
+      "n": 5,
+      "values": [
+        0.006666666666666666,
+        0.006666666666666666,
+        0.006666666666666666,
+        0.009999999999999998,
+        0.006666666666666666
+      ],
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "bcp": {
+      "mean": 0.9966191658445316,
+      "std": 0.0032100065904056745,
+      "n": 5,
+      "values": [
+        0.9941869122452601,
+        0.9930315342761308,
+        0.9961760186011771,
+        0.9990297563689535,
+        1.0006716077311366
+      ],
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "n_consolidated": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "n_passed_surprise": {
+      "mean": 23.8,
+      "std": 1.0954451150103321,
+      "n": 5,
+      "values": [
+        24.0,
+        22.0,
+        24.0,
+        24.0,
+        25.0
+      ],
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "n_passed_recall_gate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    }
+  },
+  "per_seed": {
+    "0": {
+      "experiment": "07_full_kv_pipeline",
+      "seed": 0,
+      "config_path": "experiments/configs/qwen1.5b.yaml",
+      "replay_strategy": "original",
+      "two_stage_validation": true,
+      "kv_top_k": 64,
+      "n_facts": 200,
+      "n_tags": 150,
+      "prp_allocated": 42,
+      "dra": 0.006666666666666666,
+      "bcp": 0.9941869122452601,
+      "baseline_ppl": 5.512490982356998,
+      "post_ppl": 5.480446388529344,
+      "n_consolidated": 0,
+      "n_passed_surprise": 24,
+      "n_passed_recall_gate": 0,
+      "rolled_back": false
+    },
+    "1": {
+      "experiment": "07_full_kv_pipeline",
+      "seed": 1,
+      "config_path": "experiments/configs/qwen1.5b.yaml",
+      "replay_strategy": "original",
+      "two_stage_validation": true,
+      "kv_top_k": 64,
+      "n_facts": 200,
+      "n_tags": 150,
+      "prp_allocated": 42,
+      "dra": 0.006666666666666666,
+      "bcp": 0.9930315342761308,
+      "baseline_ppl": 5.512490982356998,
+      "post_ppl": 5.474077377893305,
+      "n_consolidated": 0,
+      "n_passed_surprise": 22,
+      "n_passed_recall_gate": 0,
+      "rolled_back": false
+    },
+    "2": {
+      "experiment": "07_full_kv_pipeline",
+      "seed": 2,
+      "config_path": "experiments/configs/qwen1.5b.yaml",
+      "replay_strategy": "original",
+      "two_stage_validation": true,
+      "kv_top_k": 64,
+      "n_facts": 200,
+      "n_tags": 150,
+      "prp_allocated": 42,
+      "dra": 0.006666666666666666,
+      "bcp": 0.9961760186011771,
+      "baseline_ppl": 5.512490982356998,
+      "post_ppl": 5.491411319379286,
+      "n_consolidated": 0,
+      "n_passed_surprise": 24,
+      "n_passed_recall_gate": 0,
+      "rolled_back": false
+    },
+    "3": {
+      "experiment": "07_full_kv_pipeline",
+      "seed": 3,
+      "config_path": "experiments/configs/qwen1.5b.yaml",
+      "replay_strategy": "original",
+      "two_stage_validation": true,
+      "kv_top_k": 64,
+      "n_facts": 200,
+      "n_tags": 150,
+      "prp_allocated": 42,
+      "dra": 0.009999999999999998,
+      "bcp": 0.9990297563689535,
+      "baseline_ppl": 5.512490982356998,
+      "post_ppl": 5.507142523090165,
+      "n_consolidated": 0,
+      "n_passed_surprise": 24,
+      "n_passed_recall_gate": 0,
+      "rolled_back": false
+    },
+    "4": {
+      "experiment": "07_full_kv_pipeline",
+      "seed": 4,
+      "config_path": "experiments/configs/qwen1.5b.yaml",
+      "replay_strategy": "original",
+      "two_stage_validation": true,
+      "kv_top_k": 64,
+      "n_facts": 200,
+      "n_tags": 150,
+      "prp_allocated": 42,
+      "dra": 0.006666666666666666,
+      "bcp": 1.0006716077311366,
+      "baseline_ppl": 5.512490982356998,
+      "post_ppl": 5.51619321391857,
+      "n_consolidated": 0,
+      "n_passed_surprise": 25,
+      "n_passed_recall_gate": 0,
+      "rolled_back": false
+    }
+  }
+}

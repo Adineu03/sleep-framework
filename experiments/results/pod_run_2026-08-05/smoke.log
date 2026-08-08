@@ -1,0 +1,139 @@
+2026-08-05 07:38:17 | sleep.utils.seed               | INFO  | Seeded all RNGs with seed=0 (deterministic_algorithms=False)
+2026-08-05 07:38:17 | sleep.experiment.09            | INFO  | ======================================================================
+2026-08-05 07:38:17 | sleep.experiment.09            | INFO  | EXPERIMENT 09: Retrieval-Aware Warm-Up Extension
+2026-08-05 07:38:17 | sleep.experiment.09            | INFO  | ======================================================================
+Loading weights:   0%|          | 0/339 [00:00<?, ?it/s]Loading weights: 100%|██████████| 339/339 [00:00<00:00, 4527.21it/s]
+2026-08-05 07:38:21 | sleep.experiment.common        | INFO  | Loaded /workspace/models/qwen2.5-7b | dtype=bfloat16 | attn=eager | device=cuda | layers=28
+2026-08-05 07:38:21 | sleep.experiment.09            | INFO  | Loaded 50 facts
+2026-08-05 07:38:21 | sleep.weights.lora             | INFO  | LoRA target modules for llama: ['v_proj', 'o_proj']
+2026-08-05 07:38:21 | sleep.weights.lora             | INFO  | LoRA config: rank=16, alpha=32, layers=[19, 20, 21, 22, 23, 24, 25, 26, 27] (of 28 total), targets=['v_proj', 'o_proj']
+2026-08-05 07:38:22 | sleep.weights.lora             | INFO  | Created LoRA adapter 'w_fast': 1622016 trainable parameters (0.0213% of base model)
+2026-08-05 07:38:22 | sleep.weights.lora             | INFO  | LoRA target modules for llama: ['v_proj', 'o_proj']
+2026-08-05 07:38:22 | sleep.weights.lora             | INFO  | LoRA config: rank=16, alpha=32, layers=[19, 20, 21, 22, 23, 24, 25, 26, 27] (of 28 total), targets=['v_proj', 'o_proj']
+2026-08-05 07:38:23 | sleep.weights.lora             | INFO  | Dual adapters ready: w_fast=1622016 params, w_cons=1622016 params
+/usr/local/lib/python3.11/dist-packages/peft/tuners/tuners_utils.py:2193: UserWarning: Adapter cannot be set when the model is merged. Unmerging the model first.
+  warnings.warn("Adapter cannot be set when the model is merged. Unmerging the model first.")
+2026-08-05 07:38:23 | sleep.weights.fast_update      | INFO  | FastWeightUpdater initialized: 36 parameter groups, alpha_base=1.00e-04, momentum=0.90
+2026-08-05 07:38:23 | sleep.weights.plasticity       | INFO  | Adapted layers: [19, 20, 21, 22, 23, 24, 25, 26, 27] (top 33% of 28 layers)
+2026-08-05 07:38:23 | sleep.weights.plasticity       | INFO  | Computed Frobenius norms for 196 base model weight matrices.
+2026-08-05 07:38:23 | sleep.weights.kv_injection     | INFO  | KVInjector installed on 9 layers: [19, 20, 21, 22, 23, 24, 25, 26, 27]
+2026-08-05 07:38:23 | sleep.weights                  | INFO  | KV memory mode enabled | adapted_layers=[19, 20, 21, 22, 23, 24, 25, 26, 27] | num_kv_heads=4 | head_dim=128 | max_total_tokens=20000 | top_k=64 | device=cuda:0 | dtype=torch.bfloat16
+2026-08-05 07:38:23 | sleep.weights                  | INFO  | DualWeightSystem initialized | W_fast: 1,622,016 params | W_cons: 1,622,016 params | Adapted layers: [19, 20, 21, 22, 23, 24, 25, 26, 27] | Plasticity: 0.514–0.937 | KV bank installed
+/usr/local/lib/python3.11/dist-packages/peft/tuners/lora/layer.py:983: UserWarning: Already unmerged. Nothing to do.
+  warnings.warn("Already unmerged. Nothing to do.")
+2026-08-05 07:38:23 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=5.0420 (mean_loss=1.6178, 30 tokens)
+2026-08-05 07:38:23 | sleep.tagging                  | INFO  | step=1 | 2 tags created from 2 spans | buffer: 2/38078 (0.0%)
+2026-08-05 07:38:24 | sleep.tagging                  | INFO  | step=2 | 1 tags created from 1 spans | buffer: 3/38078 (0.0%)
+2026-08-05 07:38:24 | sleep.tagging                  | INFO  | step=3 | 1 tags created from 1 spans | buffer: 4/38078 (0.0%)
+2026-08-05 07:38:24 | sleep.tagging                  | INFO  | step=4 | 1 tags created from 1 spans | buffer: 5/38078 (0.0%)
+2026-08-05 07:38:24 | sleep.tagging                  | INFO  | step=6 | 1 tags created from 1 spans | buffer: 6/38078 (0.0%)
+2026-08-05 07:38:24 | sleep.tagging                  | INFO  | step=7 | 2 tags created from 2 spans | buffer: 8/38078 (0.0%)
+2026-08-05 07:38:24 | sleep.tagging                  | INFO  | step=9 | 1 tags created from 1 spans | buffer: 9/38078 (0.0%)
+2026-08-05 07:38:24 | sleep.tagging                  | INFO  | step=11 | 1 tags created from 1 spans | buffer: 10/38078 (0.0%)
+2026-08-05 07:38:25 | sleep.tagging                  | INFO  | step=12 | 1 tags created from 1 spans | buffer: 11/38078 (0.0%)
+2026-08-05 07:38:25 | sleep.tagging                  | INFO  | step=13 | 1 tags created from 1 spans | buffer: 12/38078 (0.0%)
+2026-08-05 07:38:25 | sleep.tagging                  | INFO  | step=14 | 1 tags created from 1 spans | buffer: 13/38078 (0.0%)
+2026-08-05 07:38:25 | sleep.tagging                  | INFO  | step=16 | 1 tags created from 1 spans | buffer: 14/38078 (0.0%)
+2026-08-05 07:38:25 | sleep.tagging                  | INFO  | step=17 | 1 tags created from 1 spans | buffer: 15/38078 (0.0%)
+2026-08-05 07:38:25 | sleep.tagging                  | INFO  | step=18 | 2 tags created from 2 spans | buffer: 17/38078 (0.0%)
+2026-08-05 07:38:25 | sleep.tagging                  | INFO  | step=19 | 1 tags created from 1 spans | buffer: 18/38078 (0.0%)
+2026-08-05 07:38:25 | sleep.tagging                  | INFO  | step=21 | 2 tags created from 2 spans | buffer: 20/38078 (0.1%)
+2026-08-05 07:38:26 | sleep.tagging                  | INFO  | step=23 | 1 tags created from 1 spans | buffer: 21/38078 (0.1%)
+2026-08-05 07:38:26 | sleep.tagging                  | INFO  | step=24 | 1 tags created from 1 spans | buffer: 22/38078 (0.1%)
+2026-08-05 07:38:26 | sleep.tagging                  | INFO  | step=26 | 1 tags created from 1 spans | buffer: 23/38078 (0.1%)
+2026-08-05 07:38:26 | sleep.tagging                  | INFO  | step=27 | 1 tags created from 1 spans | buffer: 24/38078 (0.1%)
+2026-08-05 07:38:26 | sleep.tagging                  | INFO  | step=29 | 1 tags created from 1 spans | buffer: 25/38078 (0.1%)
+2026-08-05 07:38:26 | sleep.tagging                  | INFO  | step=31 | 1 tags created from 1 spans | buffer: 26/38078 (0.1%)
+2026-08-05 07:38:26 | sleep.tagging                  | INFO  | step=32 | 1 tags created from 1 spans | buffer: 27/38078 (0.1%)
+2026-08-05 07:38:26 | sleep.tagging                  | INFO  | step=33 | 1 tags created from 1 spans | buffer: 28/38078 (0.1%)
+2026-08-05 07:38:26 | sleep.tagging                  | INFO  | step=34 | 1 tags created from 1 spans | buffer: 29/38078 (0.1%)
+2026-08-05 07:38:26 | sleep.tagging                  | INFO  | step=35 | 1 tags created from 1 spans | buffer: 30/38078 (0.1%)
+2026-08-05 07:38:27 | sleep.tagging                  | INFO  | step=36 | 1 tags created from 1 spans | buffer: 31/38078 (0.1%)
+2026-08-05 07:38:27 | sleep.tagging                  | INFO  | step=37 | 3 tags created from 3 spans | buffer: 34/38078 (0.1%)
+2026-08-05 07:38:27 | sleep.tagging                  | INFO  | step=39 | 1 tags created from 1 spans | buffer: 35/38078 (0.1%)
+2026-08-05 07:38:27 | sleep.tagging                  | INFO  | step=41 | 1 tags created from 1 spans | buffer: 36/38078 (0.1%)
+2026-08-05 07:38:27 | sleep.tagging                  | INFO  | step=42 | 1 tags created from 1 spans | buffer: 37/38078 (0.1%)
+2026-08-05 07:38:27 | sleep.tagging                  | INFO  | step=44 | 1 tags created from 1 spans | buffer: 38/38078 (0.1%)
+2026-08-05 07:38:27 | sleep.tagging                  | INFO  | step=45 | 1 tags created from 1 spans | buffer: 39/38078 (0.1%)
+2026-08-05 07:38:27 | sleep.tagging                  | INFO  | step=46 | 1 tags created from 1 spans | buffer: 40/38078 (0.1%)
+2026-08-05 07:38:27 | sleep.tagging                  | INFO  | step=47 | 1 tags created from 1 spans | buffer: 41/38078 (0.1%)
+2026-08-05 07:38:28 | sleep.tagging                  | INFO  | step=49 | 1 tags created from 1 spans | buffer: 42/38078 (0.1%)
+2026-08-05 07:38:28 | sleep.experiment.09            | INFO  | Wrote 50 fact episodes into the KV bank
+2026-08-05 07:38:29 | sleep.evaluation.recall_formats | INFO  | MC recall: accuracy=0.2800, mean_correct_prob=0.2621 across 50 facts
+[transformers] The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+2026-08-05 07:39:02 | sleep.evaluation.recall_formats | INFO  | Cloze recall: accuracy=0.0000 across 50 facts
+2026-08-05 07:40:21 | sleep.evaluation.recall_formats | INFO  | Free-form recall: mean_score=0.0067, accuracy=0.0200 across 50 facts
+2026-08-05 07:40:21 | sleep.experiment.09            | INFO  | [no-warmup] MC=0.280  cloze=0.000  DRA=0.007
+2026-08-05 07:40:21 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=6.4925 (mean_loss=1.8706, 30 tokens)
+2026-08-05 07:40:21 | sleep.evaluation.preservation  | INFO  | BCP: 1.2877 (current_ppl=6.4925, original_ppl=5.0420)
+2026-08-05 07:40:21 | sleep.warmup                   | INFO  | warm-up step 1/150 | loss=4.2089 | mean_gate_scale=1.000
+2026-08-05 07:40:22 | sleep.warmup                   | INFO  | warm-up step 15/150 | loss=3.4286 | mean_gate_scale=1.002
+2026-08-05 07:40:24 | sleep.warmup                   | INFO  | warm-up step 30/150 | loss=3.0942 | mean_gate_scale=1.004
+2026-08-05 07:40:26 | sleep.warmup                   | INFO  | warm-up step 45/150 | loss=3.5134 | mean_gate_scale=1.007
+2026-08-05 07:40:28 | sleep.warmup                   | INFO  | warm-up step 60/150 | loss=4.7813 | mean_gate_scale=1.009
+2026-08-05 07:40:29 | sleep.warmup                   | INFO  | warm-up step 75/150 | loss=4.0861 | mean_gate_scale=1.012
+2026-08-05 07:40:31 | sleep.warmup                   | INFO  | warm-up step 90/150 | loss=8.2361 | mean_gate_scale=1.014
+2026-08-05 07:40:33 | sleep.warmup                   | INFO  | warm-up step 105/150 | loss=3.7499 | mean_gate_scale=1.017
+2026-08-05 07:40:34 | sleep.warmup                   | INFO  | warm-up step 120/150 | loss=4.8615 | mean_gate_scale=1.019
+2026-08-05 07:40:36 | sleep.warmup                   | INFO  | warm-up step 135/150 | loss=4.7827 | mean_gate_scale=1.021
+2026-08-05 07:40:38 | sleep.warmup                   | INFO  | warm-up step 150/150 | loss=6.8524 | mean_gate_scale=1.023
+2026-08-05 07:40:38 | sleep.warmup                   | INFO  | Warm-up complete | steps=150 | loss 4.2089 -> 6.8524 | mean gate scale=1.023
+2026-08-05 07:40:38 | sleep.experiment.09            | INFO  | Warm-up gate scales: {19: 1.0323315858840942, 20: 1.0092744827270508, 21: 1.061112642288208, 22: 1.0193135738372803, 23: 1.0377053022384644, 24: 0.9978142976760864, 25: 0.9933660626411438, 26: 1.0544368028640747, 27: 1.0029417276382446}
+2026-08-05 07:40:38 | sleep.weights.kv_memory        | INFO  | bank cleared: freed 50 tags / 2106 tokens
+2026-08-05 07:40:38 | sleep.tagging                  | INFO  | step=51 | 2 tags created from 2 spans | buffer: 44/38078 (0.1%)
+2026-08-05 07:40:38 | sleep.tagging                  | INFO  | step=52 | 1 tags created from 1 spans | buffer: 45/38078 (0.1%)
+2026-08-05 07:40:38 | sleep.tagging                  | INFO  | step=53 | 1 tags created from 1 spans | buffer: 46/38078 (0.1%)
+2026-08-05 07:40:38 | sleep.tagging                  | INFO  | step=54 | 1 tags created from 1 spans | buffer: 47/38078 (0.1%)
+2026-08-05 07:40:38 | sleep.tagging                  | INFO  | step=56 | 1 tags created from 1 spans | buffer: 48/38078 (0.1%)
+2026-08-05 07:40:38 | sleep.tagging                  | INFO  | step=57 | 2 tags created from 2 spans | buffer: 50/38078 (0.1%)
+2026-08-05 07:40:38 | sleep.tagging                  | INFO  | step=59 | 1 tags created from 1 spans | buffer: 51/38078 (0.1%)
+2026-08-05 07:40:38 | sleep.tagging                  | INFO  | step=61 | 1 tags created from 1 spans | buffer: 52/38078 (0.1%)
+2026-08-05 07:40:39 | sleep.tagging                  | INFO  | step=62 | 1 tags created from 1 spans | buffer: 53/38078 (0.1%)
+2026-08-05 07:40:39 | sleep.tagging                  | INFO  | step=63 | 1 tags created from 1 spans | buffer: 54/38078 (0.1%)
+2026-08-05 07:40:39 | sleep.tagging                  | INFO  | step=64 | 1 tags created from 1 spans | buffer: 55/38078 (0.1%)
+2026-08-05 07:40:39 | sleep.tagging                  | INFO  | step=66 | 1 tags created from 1 spans | buffer: 56/38078 (0.1%)
+2026-08-05 07:40:39 | sleep.tagging                  | INFO  | step=67 | 1 tags created from 1 spans | buffer: 57/38078 (0.1%)
+2026-08-05 07:40:39 | sleep.tagging                  | INFO  | step=68 | 2 tags created from 2 spans | buffer: 59/38078 (0.2%)
+2026-08-05 07:40:39 | sleep.tagging                  | INFO  | step=69 | 1 tags created from 1 spans | buffer: 60/38078 (0.2%)
+2026-08-05 07:40:39 | sleep.tagging                  | INFO  | step=71 | 1 tags created from 1 spans | buffer: 61/38078 (0.2%)
+2026-08-05 07:40:39 | sleep.tagging                  | INFO  | step=72 | 1 tags created from 1 spans | buffer: 62/38078 (0.2%)
+2026-08-05 07:40:39 | sleep.tagging                  | INFO  | step=73 | 1 tags created from 1 spans | buffer: 63/38078 (0.2%)
+2026-08-05 07:40:39 | sleep.tagging                  | INFO  | step=74 | 1 tags created from 1 spans | buffer: 64/38078 (0.2%)
+2026-08-05 07:40:40 | sleep.tagging                  | INFO  | step=76 | 1 tags created from 1 spans | buffer: 65/38078 (0.2%)
+2026-08-05 07:40:40 | sleep.tagging                  | INFO  | step=77 | 1 tags created from 1 spans | buffer: 66/38078 (0.2%)
+2026-08-05 07:40:40 | sleep.tagging                  | INFO  | step=79 | 1 tags created from 1 spans | buffer: 67/38078 (0.2%)
+2026-08-05 07:40:40 | sleep.tagging                  | INFO  | step=81 | 2 tags created from 2 spans | buffer: 69/38078 (0.2%)
+2026-08-05 07:40:40 | sleep.tagging                  | INFO  | step=82 | 1 tags created from 1 spans | buffer: 70/38078 (0.2%)
+2026-08-05 07:40:40 | sleep.tagging                  | INFO  | step=83 | 1 tags created from 1 spans | buffer: 71/38078 (0.2%)
+2026-08-05 07:40:40 | sleep.tagging                  | INFO  | step=84 | 1 tags created from 1 spans | buffer: 72/38078 (0.2%)
+2026-08-05 07:40:40 | sleep.tagging                  | INFO  | step=85 | 1 tags created from 1 spans | buffer: 73/38078 (0.2%)
+2026-08-05 07:40:40 | sleep.tagging                  | INFO  | step=86 | 1 tags created from 1 spans | buffer: 74/38078 (0.2%)
+2026-08-05 07:40:40 | sleep.tagging                  | INFO  | step=87 | 3 tags created from 3 spans | buffer: 77/38078 (0.2%)
+2026-08-05 07:40:41 | sleep.tagging                  | INFO  | step=91 | 2 tags created from 2 spans | buffer: 79/38078 (0.2%)
+2026-08-05 07:40:41 | sleep.tagging                  | INFO  | step=92 | 1 tags created from 1 spans | buffer: 80/38078 (0.2%)
+2026-08-05 07:40:41 | sleep.tagging                  | INFO  | step=94 | 1 tags created from 1 spans | buffer: 81/38078 (0.2%)
+2026-08-05 07:40:41 | sleep.tagging                  | INFO  | step=95 | 1 tags created from 1 spans | buffer: 82/38078 (0.2%)
+2026-08-05 07:40:41 | sleep.tagging                  | INFO  | step=96 | 1 tags created from 1 spans | buffer: 83/38078 (0.2%)
+2026-08-05 07:40:41 | sleep.tagging                  | INFO  | step=97 | 1 tags created from 1 spans | buffer: 84/38078 (0.2%)
+2026-08-05 07:40:41 | sleep.tagging                  | INFO  | step=99 | 1 tags created from 1 spans | buffer: 85/38078 (0.2%)
+2026-08-05 07:40:42 | sleep.experiment.09            | INFO  | Wrote 50 fact episodes into the KV bank
+2026-08-05 07:40:43 | sleep.evaluation.recall_formats | INFO  | MC recall: accuracy=0.3000, mean_correct_prob=0.2607 across 50 facts
+2026-08-05 07:41:17 | sleep.evaluation.recall_formats | INFO  | Cloze recall: accuracy=0.0000 across 50 facts
+2026-08-05 07:42:39 | sleep.evaluation.recall_formats | INFO  | Free-form recall: mean_score=0.0000, accuracy=0.0000 across 50 facts
+2026-08-05 07:42:39 | sleep.experiment.09            | INFO  | [with-warmup] MC=0.300  cloze=0.000  DRA=0.000
+2026-08-05 07:42:39 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=5.9480 (mean_loss=1.7831, 30 tokens)
+2026-08-05 07:42:39 | sleep.evaluation.preservation  | INFO  | BCP: 1.1797 (current_ppl=5.9480, original_ppl=5.0420)
+2026-08-05 07:42:39 | sleep.experiment.common        | INFO  | Wrote results to /workspace/results/smoke_warmup_50.json
+
+======================================================================
+WARM-UP EXTENSION RESULT
+======================================================================
+  Condition                   MC   cloze     DRA     BCP
+  SLEEP without warm-up    0.280   0.000   0.007   1.288
+  SLEEP with warm-up       0.300   0.000   0.000   1.180
+
+  DRA delta (gap change): -0.007
+  Mean gate scale: 1.023
+
+  Results written to /workspace/results/smoke_warmup_50.json
+2026-08-05 07:42:39 | sleep.weights.kv_injection     | INFO  | KVInjector uninstalled from 9 layers

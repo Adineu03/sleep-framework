@@ -1,0 +1,76 @@
+=== [1/4] Python deps (transformers pinned per reproducibility notes) ===
+WARNING: huggingface-hub 1.26.1 does not provide the extra 'hf-transfer'
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 24.2 -> 26.2.1
+[notice] To update, run: python -m pip install --upgrade pip
+=== [2/4] Model downloads (ungated only — no HF token required) ===
+  downloading Qwen/Qwen2.5-7B -> /workspace/models/qwen2.5-7b
+/usr/local/lib/python3.11/dist-packages/huggingface_hub/constants.py:298: FutureWarning: The `HF_HUB_ENABLE_HF_TRANSFER` environment variable is deprecated as 'hf_transfer' is not used anymore. Please use `HF_XET_HIGH_PERFORMANCE` instead to enable high performance transfer with Xet. Visit https://huggingface.co/docs/huggingface_hub/package_reference/environment_variables#hfxethighperformance for more details.
+  warnings.warn(
+Fetching 14 files:   0%|          | 0/14 [00:00<?, ?it/s]Still waiting to acquire lock on /workspace/models/qwen2.5-7b/.cache/huggingface/.gitignore.lock (elapsed: 0.1 seconds)
+Still waiting to acquire lock on /workspace/models/qwen2.5-7b/.cache/huggingface/.gitignore.lock (elapsed: 0.1 seconds)
+Still waiting to acquire lock on /workspace/models/qwen2.5-7b/.cache/huggingface/.gitignore.lock (elapsed: 0.1 seconds)
+Still waiting to acquire lock on /workspace/models/qwen2.5-7b/.cache/huggingface/.gitignore.lock (elapsed: 0.1 seconds)
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Fetching 14 files:   7%|▋         | 1/14 [00:00<00:02,  4.90it/s]Fetching 14 files:  29%|██▊       | 4/14 [00:00<00:00, 15.10it/s]Fetching 14 files:  50%|█████     | 7/14 [00:00<00:00, 15.92it/s]Fetching 14 files:  64%|██████▍   | 9/14 [00:00<00:00, 15.41it/s]Fetching 14 files:  79%|███████▊  | 11/14 [00:13<00:06,  2.13s/it]Fetching 14 files:  86%|████████▌ | 12/14 [00:13<00:03,  1.79s/it]Fetching 14 files: 100%|██████████| 14/14 [00:19<00:00,  2.13s/it]Fetching 14 files: 100%|██████████| 14/14 [00:19<00:00,  1.38s/it]
+[32m✓ Downloaded[0m
+  path: /workspace/models/qwen2.5-7b
+  downloading Qwen/Qwen2.5-1.5B -> /workspace/models/qwen2.5-1.5b
+/usr/local/lib/python3.11/dist-packages/huggingface_hub/constants.py:298: FutureWarning: The `HF_HUB_ENABLE_HF_TRANSFER` environment variable is deprecated as 'hf_transfer' is not used anymore. Please use `HF_XET_HIGH_PERFORMANCE` instead to enable high performance transfer with Xet. Visit https://huggingface.co/docs/huggingface_hub/package_reference/environment_variables#hfxethighperformance for more details.
+  warnings.warn(
+Fetching 10 files:   0%|          | 0/10 [00:00<?, ?it/s]Still waiting to acquire lock on /workspace/models/qwen2.5-1.5b/.cache/huggingface/.gitignore.lock (elapsed: 0.1 seconds)
+Still waiting to acquire lock on /workspace/models/qwen2.5-1.5b/.cache/huggingface/.gitignore.lock (elapsed: 0.1 seconds)
+Still waiting to acquire lock on /workspace/models/qwen2.5-1.5b/.cache/huggingface/.gitignore.lock (elapsed: 0.1 seconds)
+Still waiting to acquire lock on /workspace/models/qwen2.5-1.5b/.cache/huggingface/.gitignore.lock (elapsed: 0.1 seconds)
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Fetching 10 files:  10%|█         | 1/10 [00:00<00:01,  4.55it/s]Fetching 10 files:  40%|████      | 4/10 [00:00<00:00, 12.44it/s]Fetching 10 files:  80%|████████  | 8/10 [00:00<00:00, 20.04it/s]Fetching 10 files: 100%|██████████| 10/10 [00:08<00:00,  1.23it/s]
+[32m✓ Downloaded[0m
+  path: /workspace/models/qwen2.5-1.5b
+  downloading NousResearch/Meta-Llama-3.1-8B -> /workspace/models/llama-3.1-8b
+/usr/local/lib/python3.11/dist-packages/huggingface_hub/constants.py:298: FutureWarning: The `HF_HUB_ENABLE_HF_TRANSFER` environment variable is deprecated as 'hf_transfer' is not used anymore. Please use `HF_XET_HIGH_PERFORMANCE` instead to enable high performance transfer with Xet. Visit https://huggingface.co/docs/huggingface_hub/package_reference/environment_variables#hfxethighperformance for more details.
+  warnings.warn(
+Fetching 17 files:   0%|          | 0/17 [00:00<?, ?it/s]Still waiting to acquire lock on /workspace/models/llama-3.1-8b/.cache/huggingface/.gitignore.lock (elapsed: 0.1 seconds)
+Still waiting to acquire lock on /workspace/models/llama-3.1-8b/.cache/huggingface/.gitignore.lock (elapsed: 0.1 seconds)
+Still waiting to acquire lock on /workspace/models/llama-3.1-8b/.cache/huggingface/.gitignore.lock (elapsed: 0.1 seconds)
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Fetching 17 files:   6%|▌         | 1/17 [00:00<00:04,  3.97it/s]Fetching 17 files:  29%|██▉       | 5/17 [00:00<00:00, 16.89it/s]Fetching 17 files:  47%|████▋     | 8/17 [00:00<00:00, 11.36it/s]Fetching 17 files:  59%|█████▉    | 10/17 [00:00<00:00, 10.21it/s]Fetching 17 files:  71%|███████   | 12/17 [00:04<00:02,  1.77it/s]Fetching 17 files:  76%|███████▋  | 13/17 [00:09<00:06,  1.50s/it]Fetching 17 files:  82%|████████▏ | 14/17 [00:18<00:08,  2.89s/it]Fetching 17 files:  88%|████████▊ | 15/17 [00:18<00:04,  2.27s/it]Fetching 17 files:  94%|█████████▍| 16/17 [00:18<00:01,  1.76s/it]Fetching 17 files: 100%|██████████| 17/17 [00:49<00:00,  9.35s/it]Fetching 17 files: 100%|██████████| 17/17 [00:49<00:00,  2.92s/it]
+[32m✓ Downloaded[0m
+  path: /workspace/models/llama-3.1-8b
+  downloading mistralai/Mistral-7B-v0.1 -> /workspace/models/mistral-7b
+/usr/local/lib/python3.11/dist-packages/huggingface_hub/constants.py:298: FutureWarning: The `HF_HUB_ENABLE_HF_TRANSFER` environment variable is deprecated as 'hf_transfer' is not used anymore. Please use `HF_XET_HIGH_PERFORMANCE` instead to enable high performance transfer with Xet. Visit https://huggingface.co/docs/huggingface_hub/package_reference/environment_variables#hfxethighperformance for more details.
+  warnings.warn(
+Fetching 14 files:   0%|          | 0/14 [00:00<?, ?it/s]Still waiting to acquire lock on /workspace/models/mistral-7b/.cache/huggingface/.gitignore.lock (elapsed: 0.1 seconds)
+Still waiting to acquire lock on /workspace/models/mistral-7b/.cache/huggingface/.gitignore.lock (elapsed: 0.1 seconds)
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Fetching 14 files:   7%|▋         | 1/14 [00:00<00:02,  5.34it/s]Fetching 14 files:  36%|███▌      | 5/14 [00:00<00:00, 17.71it/s]Fetching 14 files:  50%|█████     | 7/14 [00:00<00:00, 16.63it/s]Fetching 14 files:  64%|██████▍   | 9/14 [00:00<00:00, 14.49it/s]Fetching 14 files:  79%|███████▊  | 11/14 [00:14<00:06,  2.31s/it]Fetching 14 files:  86%|████████▌ | 12/14 [00:24<00:07,  3.81s/it]Fetching 14 files:  93%|█████████▎| 13/14 [00:26<00:03,  3.43s/it]Fetching 14 files: 100%|██████████| 14/14 [00:34<00:00,  4.49s/it]Fetching 14 files: 100%|██████████| 14/14 [00:34<00:00,  2.45s/it]
+[32m✓ Downloaded[0m
+  path: /workspace/models/mistral-7b
+=== [3/4] Warm-up corpus (WikiText-2, 400 passages) ===
+/usr/local/lib/python3.11/dist-packages/huggingface_hub/constants.py:298: FutureWarning: The `HF_HUB_ENABLE_HF_TRANSFER` environment variable is deprecated as 'hf_transfer' is not used anymore. Please use `HF_XET_HIGH_PERFORMANCE` instead to enable high performance transfer with Xet. Visit https://huggingface.co/docs/huggingface_hub/package_reference/environment_variables#hfxethighperformance for more details.
+  warnings.warn(
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Generating test split:   0%|          | 0/4358 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 4358/4358 [00:00<00:00, 242051.71 examples/s]
+Generating train split:   0%|          | 0/36718 [00:00<?, ? examples/s]Generating train split: 100%|██████████| 36718/36718 [00:00<00:00, 583125.86 examples/s]
+Generating validation split:   0%|          | 0/3760 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 3760/3760 [00:00<00:00, 341192.14 examples/s]
+  corpus sentences: 400
+=== [4/4] Sanity: GPU + code tree ===
+NVIDIA RTX A6000, 46068 MiB
+experiments
+pyproject.toml
+sleep
+tests
+SETUP_DONE
+SETUP_OK
+=== [llama3_8b] STAGE 0: arch verification (ground-truth gate) ===
+[llama3_8b] VERIFY FAILED — skipping this model entirely. See llama3_8b_verify.log
+llama3_8b_VERIFY_FAILED
+=== [mistral7b] STAGE 0: arch verification (ground-truth gate) ===
+[mistral7b] VERIFY FAILED — skipping this model entirely. See mistral7b_verify.log
+mistral7b_VERIFY_FAILED
+=== [qwen1.5b] STAGE 0: arch verification (ground-truth gate) ===
+[qwen1.5b] VERIFY FAILED — skipping this model entirely. See qwen1.5b_verify.log
+qwen1.5b_VERIFY_FAILED
+=== [qwen7b] 10-cycle seeded replicate, seeds 1-2, both arms ===
+QWEN_REPLICATE_DONE Fri Aug  7 06:25:32 UTC 2026
+MATRIX_ALL_DONE Fri Aug  7 06:25:32 UTC 2026

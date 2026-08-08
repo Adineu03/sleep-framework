@@ -1,0 +1,47 @@
+{
+  "experiment": "09_warmup_extension",
+  "seed": 0,
+  "config_path": "experiments/configs/qwen7b.yaml",
+  "n_facts": 50,
+  "kv_top_k": 64,
+  "warmup_steps": 150,
+  "warmup_lr": 0.001,
+  "train_wcons": false,
+  "ppl_reference": 5.041975626264122,
+  "without_warmup": {
+    "mc_accuracy": 0.28,
+    "mc_mean_correct_prob": 0.2621148279309273,
+    "cloze_accuracy": 0.0,
+    "dra": 0.006666666666666666,
+    "free_form_accuracy": 0.02,
+    "bcp": 1.287689996342885
+  },
+  "with_warmup": {
+    "mc_accuracy": 0.3,
+    "mc_mean_correct_prob": 0.2607381822168827,
+    "cloze_accuracy": 0.0,
+    "dra": 0.0,
+    "free_form_accuracy": 0.0,
+    "bcp": 1.1797010723657184
+  },
+  "warmup": {
+    "n_steps": 150,
+    "final_loss": 6.852384567260742,
+    "mean_loss": 4.252146718502044,
+    "initial_loss": 4.208930492401123,
+    "gate_scales": {
+      "19": 1.0323315858840942,
+      "20": 1.0092744827270508,
+      "21": 1.061112642288208,
+      "22": 1.0193135738372803,
+      "23": 1.0377053022384644,
+      "24": 0.9978142976760864,
+      "25": 0.9933660626411438,
+      "26": 1.0544368028640747,
+      "27": 1.0029417276382446
+    },
+    "train_wcons": false
+  },
+  "dra_delta": -0.006666666666666666,
+  "mc_delta": 0.019999999999999962
+}

@@ -1,0 +1,318 @@
+2026-08-07 14:16:50 | sleep.utils.seed               | INFO  | Seeded all RNGs with seed=1 (deterministic_algorithms=False)
+2026-08-07 14:16:50 | sleep.experiment.09            | INFO  | ======================================================================
+2026-08-07 14:16:50 | sleep.experiment.09            | INFO  | EXPERIMENT 09: Retrieval-Aware Warm-Up Extension
+2026-08-07 14:16:50 | sleep.experiment.09            | INFO  | ======================================================================
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]Loading weights:  19%|█▊        | 54/291 [00:00<00:00, 482.16it/s]Loading weights:  35%|███▌      | 103/291 [00:00<00:00, 371.62it/s]Loading weights:  49%|████▉     | 142/291 [00:00<00:00, 357.15it/s]Loading weights:  62%|██████▏   | 179/291 [00:00<00:00, 346.72it/s]Loading weights:  74%|███████▎  | 214/291 [00:00<00:00, 343.02it/s]Loading weights:  86%|████████▌ | 250/291 [00:00<00:00, 345.16it/s]Loading weights: 100%|██████████| 291/291 [00:00<00:00, 363.17it/s]
+2026-08-07 14:17:40 | sleep.experiment.common        | INFO  | Loaded /workspace/models/llama-3.1-8b | dtype=bfloat16 | attn=eager | device=cuda | layers=32
+2026-08-07 14:17:40 | sleep.experiment.09            | INFO  | Loaded 200 facts
+2026-08-07 14:17:40 | sleep.weights.lora             | INFO  | LoRA target modules for llama: ['v_proj', 'o_proj']
+2026-08-07 14:17:40 | sleep.weights.lora             | INFO  | LoRA config: rank=16, alpha=32, layers=[22, 23, 24, 25, 26, 27, 28, 29, 30, 31] (of 32 total), targets=['v_proj', 'o_proj']
+2026-08-07 14:17:42 | sleep.weights.lora             | INFO  | Created LoRA adapter 'w_fast': 2129920 trainable parameters (0.0265% of base model)
+2026-08-07 14:17:42 | sleep.weights.lora             | INFO  | LoRA target modules for llama: ['v_proj', 'o_proj']
+2026-08-07 14:17:42 | sleep.weights.lora             | INFO  | LoRA config: rank=16, alpha=32, layers=[22, 23, 24, 25, 26, 27, 28, 29, 30, 31] (of 32 total), targets=['v_proj', 'o_proj']
+2026-08-07 14:17:42 | sleep.weights.lora             | INFO  | Dual adapters ready: w_fast=2129920 params, w_cons=2129920 params
+/usr/local/lib/python3.11/dist-packages/peft/tuners/tuners_utils.py:2193: UserWarning: Adapter cannot be set when the model is merged. Unmerging the model first.
+  warnings.warn("Adapter cannot be set when the model is merged. Unmerging the model first.")
+2026-08-07 14:17:42 | sleep.weights.fast_update      | INFO  | FastWeightUpdater initialized: 40 parameter groups, alpha_base=1.00e-04, momentum=0.90
+2026-08-07 14:17:42 | sleep.weights.plasticity       | INFO  | Adapted layers: [22, 23, 24, 25, 26, 27, 28, 29, 30, 31] (top 33% of 32 layers)
+2026-08-07 14:17:42 | sleep.weights.plasticity       | INFO  | Computed Frobenius norms for 224 base model weight matrices.
+2026-08-07 14:17:42 | sleep.weights.kv_injection     | INFO  | KVInjector installed on 10 layers: [22, 23, 24, 25, 26, 27, 28, 29, 30, 31]
+2026-08-07 14:17:42 | sleep.weights                  | INFO  | KV memory mode enabled | adapted_layers=[22, 23, 24, 25, 26, 27, 28, 29, 30, 31] | num_kv_heads=8 | head_dim=128 | max_total_tokens=20000 | top_k=64 | device=cuda:0 | dtype=torch.bfloat16
+2026-08-07 14:17:42 | sleep.weights                  | INFO  | DualWeightSystem initialized | W_fast: 2,129,920 params | W_cons: 2,129,920 params | Adapted layers: [22, 23, 24, 25, 26, 27, 28, 29, 30, 31] | Plasticity: 0.525–0.945 | KV bank installed
+/usr/local/lib/python3.11/dist-packages/peft/tuners/lora/layer.py:983: UserWarning: Already unmerged. Nothing to do.
+  warnings.warn("Already unmerged. Nothing to do.")
+2026-08-07 14:17:43 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=9.1220 (mean_loss=2.2107, 31 tokens)
+2026-08-07 14:17:43 | sleep.tagging                  | INFO  | step=1 | 2 tags created from 2 spans | buffer: 2/40151 (0.0%)
+2026-08-07 14:17:43 | sleep.tagging                  | INFO  | step=2 | 1 tags created from 1 spans | buffer: 3/40151 (0.0%)
+2026-08-07 14:17:43 | sleep.tagging                  | INFO  | step=3 | 2 tags created from 2 spans | buffer: 5/40151 (0.0%)
+2026-08-07 14:17:43 | sleep.tagging                  | INFO  | step=4 | 1 tags created from 1 spans | buffer: 6/40151 (0.0%)
+2026-08-07 14:17:43 | sleep.tagging                  | INFO  | step=7 | 1 tags created from 1 spans | buffer: 7/40151 (0.0%)
+2026-08-07 14:17:43 | sleep.tagging                  | INFO  | step=8 | 1 tags created from 1 spans | buffer: 8/40151 (0.0%)
+2026-08-07 14:17:44 | sleep.tagging                  | INFO  | step=11 | 1 tags created from 1 spans | buffer: 9/40151 (0.0%)
+2026-08-07 14:17:44 | sleep.tagging                  | INFO  | step=12 | 1 tags created from 1 spans | buffer: 10/40151 (0.0%)
+2026-08-07 14:17:44 | sleep.tagging                  | INFO  | step=13 | 1 tags created from 1 spans | buffer: 11/40151 (0.0%)
+2026-08-07 14:17:44 | sleep.tagging                  | INFO  | step=14 | 1 tags created from 1 spans | buffer: 12/40151 (0.0%)
+2026-08-07 14:17:44 | sleep.tagging                  | INFO  | step=17 | 1 tags created from 1 spans | buffer: 13/40151 (0.0%)
+2026-08-07 14:17:44 | sleep.tagging                  | INFO  | step=18 | 1 tags created from 1 spans | buffer: 14/40151 (0.0%)
+2026-08-07 14:17:44 | sleep.tagging                  | INFO  | step=21 | 1 tags created from 1 spans | buffer: 15/40151 (0.0%)
+2026-08-07 14:17:45 | sleep.tagging                  | INFO  | step=22 | 1 tags created from 1 spans | buffer: 16/40151 (0.0%)
+2026-08-07 14:17:45 | sleep.tagging                  | INFO  | step=23 | 1 tags created from 1 spans | buffer: 17/40151 (0.0%)
+2026-08-07 14:17:45 | sleep.tagging                  | INFO  | step=24 | 1 tags created from 1 spans | buffer: 18/40151 (0.0%)
+2026-08-07 14:17:45 | sleep.tagging                  | INFO  | step=26 | 1 tags created from 1 spans | buffer: 19/40151 (0.0%)
+2026-08-07 14:17:45 | sleep.tagging                  | INFO  | step=31 | 1 tags created from 1 spans | buffer: 20/40151 (0.0%)
+2026-08-07 14:17:45 | sleep.tagging                  | INFO  | step=32 | 1 tags created from 1 spans | buffer: 21/40151 (0.1%)
+2026-08-07 14:17:46 | sleep.tagging                  | INFO  | step=33 | 1 tags created from 1 spans | buffer: 22/40151 (0.1%)
+2026-08-07 14:17:46 | sleep.tagging                  | INFO  | step=34 | 1 tags created from 1 spans | buffer: 23/40151 (0.1%)
+2026-08-07 14:17:46 | sleep.tagging                  | INFO  | step=36 | 1 tags created from 1 spans | buffer: 24/40151 (0.1%)
+2026-08-07 14:17:46 | sleep.tagging                  | INFO  | step=37 | 1 tags created from 1 spans | buffer: 25/40151 (0.1%)
+2026-08-07 14:17:46 | sleep.tagging                  | INFO  | step=38 | 1 tags created from 1 spans | buffer: 26/40151 (0.1%)
+2026-08-07 14:17:46 | sleep.tagging                  | INFO  | step=39 | 1 tags created from 1 spans | buffer: 27/40151 (0.1%)
+2026-08-07 14:17:46 | sleep.tagging                  | INFO  | step=41 | 1 tags created from 1 spans | buffer: 28/40151 (0.1%)
+2026-08-07 14:17:46 | sleep.tagging                  | INFO  | step=42 | 1 tags created from 1 spans | buffer: 29/40151 (0.1%)
+2026-08-07 14:17:47 | sleep.tagging                  | INFO  | step=44 | 1 tags created from 1 spans | buffer: 30/40151 (0.1%)
+2026-08-07 14:17:47 | sleep.tagging                  | INFO  | step=45 | 1 tags created from 1 spans | buffer: 31/40151 (0.1%)
+2026-08-07 14:17:47 | sleep.tagging                  | INFO  | step=46 | 1 tags created from 1 spans | buffer: 32/40151 (0.1%)
+2026-08-07 14:17:47 | sleep.tagging                  | INFO  | step=47 | 1 tags created from 1 spans | buffer: 33/40151 (0.1%)
+2026-08-07 14:17:47 | sleep.tagging                  | INFO  | step=49 | 1 tags created from 1 spans | buffer: 34/40151 (0.1%)
+2026-08-07 14:17:47 | sleep.tagging                  | INFO  | step=51 | 2 tags created from 2 spans | buffer: 36/40151 (0.1%)
+2026-08-07 14:17:47 | sleep.tagging                  | INFO  | step=52 | 1 tags created from 1 spans | buffer: 37/40151 (0.1%)
+2026-08-07 14:17:47 | sleep.tagging                  | INFO  | step=53 | 1 tags created from 1 spans | buffer: 38/40151 (0.1%)
+2026-08-07 14:17:47 | sleep.tagging                  | INFO  | step=54 | 1 tags created from 1 spans | buffer: 39/40151 (0.1%)
+2026-08-07 14:17:48 | sleep.tagging                  | INFO  | step=56 | 1 tags created from 1 spans | buffer: 40/40151 (0.1%)
+2026-08-07 14:17:48 | sleep.tagging                  | INFO  | step=58 | 1 tags created from 1 spans | buffer: 41/40151 (0.1%)
+2026-08-07 14:17:48 | sleep.tagging                  | INFO  | step=61 | 1 tags created from 1 spans | buffer: 42/40151 (0.1%)
+2026-08-07 14:17:48 | sleep.tagging                  | INFO  | step=62 | 1 tags created from 1 spans | buffer: 43/40151 (0.1%)
+2026-08-07 14:17:48 | sleep.tagging                  | INFO  | step=63 | 1 tags created from 1 spans | buffer: 44/40151 (0.1%)
+2026-08-07 14:17:48 | sleep.tagging                  | INFO  | step=64 | 1 tags created from 1 spans | buffer: 45/40151 (0.1%)
+2026-08-07 14:17:49 | sleep.tagging                  | INFO  | step=66 | 1 tags created from 1 spans | buffer: 46/40151 (0.1%)
+2026-08-07 14:17:49 | sleep.tagging                  | INFO  | step=67 | 2 tags created from 2 spans | buffer: 48/40151 (0.1%)
+2026-08-07 14:17:49 | sleep.tagging                  | INFO  | step=69 | 1 tags created from 1 spans | buffer: 49/40151 (0.1%)
+2026-08-07 14:17:49 | sleep.tagging                  | INFO  | step=71 | 1 tags created from 1 spans | buffer: 50/40151 (0.1%)
+2026-08-07 14:17:49 | sleep.tagging                  | INFO  | step=73 | 1 tags created from 1 spans | buffer: 51/40151 (0.1%)
+2026-08-07 14:17:49 | sleep.tagging                  | INFO  | step=74 | 1 tags created from 1 spans | buffer: 52/40151 (0.1%)
+2026-08-07 14:17:49 | sleep.tagging                  | INFO  | step=75 | 1 tags created from 1 spans | buffer: 53/40151 (0.1%)
+2026-08-07 14:17:50 | sleep.tagging                  | INFO  | step=76 | 1 tags created from 1 spans | buffer: 54/40151 (0.1%)
+2026-08-07 14:17:50 | sleep.tagging                  | INFO  | step=77 | 1 tags created from 1 spans | buffer: 55/40151 (0.1%)
+2026-08-07 14:17:50 | sleep.tagging                  | INFO  | step=81 | 1 tags created from 1 spans | buffer: 56/40151 (0.1%)
+2026-08-07 14:17:50 | sleep.tagging                  | INFO  | step=82 | 1 tags created from 1 spans | buffer: 57/40151 (0.1%)
+2026-08-07 14:17:50 | sleep.tagging                  | INFO  | step=83 | 1 tags created from 1 spans | buffer: 58/40151 (0.1%)
+2026-08-07 14:17:50 | sleep.tagging                  | INFO  | step=86 | 1 tags created from 1 spans | buffer: 59/40151 (0.1%)
+2026-08-07 14:17:51 | sleep.tagging                  | INFO  | step=87 | 1 tags created from 1 spans | buffer: 60/40151 (0.1%)
+2026-08-07 14:17:51 | sleep.tagging                  | INFO  | step=89 | 1 tags created from 1 spans | buffer: 61/40151 (0.2%)
+2026-08-07 14:17:51 | sleep.tagging                  | INFO  | step=91 | 1 tags created from 1 spans | buffer: 62/40151 (0.2%)
+2026-08-07 14:17:51 | sleep.tagging                  | INFO  | step=93 | 1 tags created from 1 spans | buffer: 63/40151 (0.2%)
+2026-08-07 14:17:51 | sleep.tagging                  | INFO  | step=94 | 1 tags created from 1 spans | buffer: 64/40151 (0.2%)
+2026-08-07 14:17:52 | sleep.tagging                  | INFO  | step=97 | 1 tags created from 1 spans | buffer: 65/40151 (0.2%)
+2026-08-07 14:17:52 | sleep.tagging                  | INFO  | step=101 | 1 tags created from 1 spans | buffer: 66/40151 (0.2%)
+2026-08-07 14:17:52 | sleep.tagging                  | INFO  | step=102 | 1 tags created from 1 spans | buffer: 67/40151 (0.2%)
+2026-08-07 14:17:52 | sleep.tagging                  | INFO  | step=103 | 1 tags created from 1 spans | buffer: 68/40151 (0.2%)
+2026-08-07 14:17:52 | sleep.tagging                  | INFO  | step=104 | 1 tags created from 1 spans | buffer: 69/40151 (0.2%)
+2026-08-07 14:17:52 | sleep.tagging                  | INFO  | step=105 | 1 tags created from 1 spans | buffer: 70/40151 (0.2%)
+2026-08-07 14:17:52 | sleep.tagging                  | INFO  | step=106 | 1 tags created from 1 spans | buffer: 71/40151 (0.2%)
+2026-08-07 14:17:53 | sleep.tagging                  | INFO  | step=111 | 1 tags created from 1 spans | buffer: 72/40151 (0.2%)
+2026-08-07 14:17:53 | sleep.tagging                  | INFO  | step=113 | 1 tags created from 1 spans | buffer: 73/40151 (0.2%)
+2026-08-07 14:17:53 | sleep.tagging                  | INFO  | step=114 | 1 tags created from 1 spans | buffer: 74/40151 (0.2%)
+2026-08-07 14:17:53 | sleep.tagging                  | INFO  | step=115 | 1 tags created from 1 spans | buffer: 75/40151 (0.2%)
+2026-08-07 14:17:53 | sleep.tagging                  | INFO  | step=116 | 1 tags created from 1 spans | buffer: 76/40151 (0.2%)
+2026-08-07 14:17:54 | sleep.tagging                  | INFO  | step=117 | 1 tags created from 1 spans | buffer: 77/40151 (0.2%)
+2026-08-07 14:17:54 | sleep.tagging                  | INFO  | step=121 | 1 tags created from 1 spans | buffer: 78/40151 (0.2%)
+2026-08-07 14:17:54 | sleep.tagging                  | INFO  | step=122 | 1 tags created from 1 spans | buffer: 79/40151 (0.2%)
+2026-08-07 14:17:54 | sleep.tagging                  | INFO  | step=123 | 1 tags created from 1 spans | buffer: 80/40151 (0.2%)
+2026-08-07 14:17:54 | sleep.tagging                  | INFO  | step=124 | 1 tags created from 1 spans | buffer: 81/40151 (0.2%)
+2026-08-07 14:17:54 | sleep.tagging                  | INFO  | step=125 | 1 tags created from 1 spans | buffer: 82/40151 (0.2%)
+2026-08-07 14:17:55 | sleep.tagging                  | INFO  | step=127 | 1 tags created from 1 spans | buffer: 83/40151 (0.2%)
+2026-08-07 14:17:55 | sleep.tagging                  | INFO  | step=129 | 1 tags created from 1 spans | buffer: 84/40151 (0.2%)
+2026-08-07 14:17:55 | sleep.tagging                  | INFO  | step=132 | 1 tags created from 1 spans | buffer: 85/40151 (0.2%)
+2026-08-07 14:17:55 | sleep.tagging                  | INFO  | step=133 | 1 tags created from 1 spans | buffer: 86/40151 (0.2%)
+2026-08-07 14:17:55 | sleep.tagging                  | INFO  | step=134 | 1 tags created from 1 spans | buffer: 87/40151 (0.2%)
+2026-08-07 14:17:55 | sleep.tagging                  | INFO  | step=135 | 1 tags created from 1 spans | buffer: 88/40151 (0.2%)
+2026-08-07 14:17:56 | sleep.tagging                  | INFO  | step=136 | 1 tags created from 1 spans | buffer: 89/40151 (0.2%)
+2026-08-07 14:17:56 | sleep.tagging                  | INFO  | step=138 | 1 tags created from 1 spans | buffer: 90/40151 (0.2%)
+2026-08-07 14:17:56 | sleep.tagging                  | INFO  | step=139 | 1 tags created from 1 spans | buffer: 91/40151 (0.2%)
+2026-08-07 14:17:56 | sleep.tagging                  | INFO  | step=141 | 1 tags created from 1 spans | buffer: 92/40151 (0.2%)
+2026-08-07 14:17:56 | sleep.tagging                  | INFO  | step=142 | 1 tags created from 1 spans | buffer: 93/40151 (0.2%)
+2026-08-07 14:17:56 | sleep.tagging                  | INFO  | step=144 | 1 tags created from 1 spans | buffer: 94/40151 (0.2%)
+2026-08-07 14:17:57 | sleep.tagging                  | INFO  | step=148 | 1 tags created from 1 spans | buffer: 95/40151 (0.2%)
+2026-08-07 14:17:57 | sleep.tagging                  | INFO  | step=149 | 1 tags created from 1 spans | buffer: 96/40151 (0.2%)
+2026-08-07 14:17:57 | sleep.tagging                  | INFO  | step=151 | 1 tags created from 1 spans | buffer: 97/40151 (0.2%)
+2026-08-07 14:17:57 | sleep.tagging                  | INFO  | step=152 | 2 tags created from 2 spans | buffer: 99/40151 (0.2%)
+2026-08-07 14:17:57 | sleep.tagging                  | INFO  | step=153 | 1 tags created from 1 spans | buffer: 100/40151 (0.2%)
+2026-08-07 14:17:58 | sleep.tagging                  | INFO  | step=154 | 1 tags created from 1 spans | buffer: 101/40151 (0.3%)
+2026-08-07 14:17:58 | sleep.tagging                  | INFO  | step=155 | 1 tags created from 1 spans | buffer: 102/40151 (0.3%)
+2026-08-07 14:17:58 | sleep.tagging                  | INFO  | step=156 | 1 tags created from 1 spans | buffer: 103/40151 (0.3%)
+2026-08-07 14:17:58 | sleep.tagging                  | INFO  | step=158 | 1 tags created from 1 spans | buffer: 104/40151 (0.3%)
+2026-08-07 14:17:58 | sleep.tagging                  | INFO  | step=161 | 1 tags created from 1 spans | buffer: 105/40151 (0.3%)
+2026-08-07 14:17:58 | sleep.tagging                  | INFO  | step=162 | 1 tags created from 1 spans | buffer: 106/40151 (0.3%)
+2026-08-07 14:17:59 | sleep.tagging                  | INFO  | step=163 | 1 tags created from 1 spans | buffer: 107/40151 (0.3%)
+2026-08-07 14:17:59 | sleep.tagging                  | INFO  | step=164 | 1 tags created from 1 spans | buffer: 108/40151 (0.3%)
+2026-08-07 14:17:59 | sleep.tagging                  | INFO  | step=166 | 1 tags created from 1 spans | buffer: 109/40151 (0.3%)
+2026-08-07 14:17:59 | sleep.tagging                  | INFO  | step=167 | 1 tags created from 1 spans | buffer: 110/40151 (0.3%)
+2026-08-07 14:17:59 | sleep.tagging                  | INFO  | step=168 | 1 tags created from 1 spans | buffer: 111/40151 (0.3%)
+2026-08-07 14:18:00 | sleep.tagging                  | INFO  | step=173 | 1 tags created from 1 spans | buffer: 112/40151 (0.3%)
+2026-08-07 14:18:00 | sleep.tagging                  | INFO  | step=174 | 1 tags created from 1 spans | buffer: 113/40151 (0.3%)
+2026-08-07 14:18:00 | sleep.tagging                  | INFO  | step=175 | 1 tags created from 1 spans | buffer: 114/40151 (0.3%)
+2026-08-07 14:18:00 | sleep.tagging                  | INFO  | step=176 | 1 tags created from 1 spans | buffer: 115/40151 (0.3%)
+2026-08-07 14:18:00 | sleep.tagging                  | INFO  | step=177 | 2 tags created from 2 spans | buffer: 117/40151 (0.3%)
+2026-08-07 14:18:00 | sleep.tagging                  | INFO  | step=179 | 1 tags created from 1 spans | buffer: 118/40151 (0.3%)
+2026-08-07 14:18:01 | sleep.tagging                  | INFO  | step=181 | 1 tags created from 1 spans | buffer: 119/40151 (0.3%)
+2026-08-07 14:18:01 | sleep.tagging                  | INFO  | step=182 | 1 tags created from 1 spans | buffer: 120/40151 (0.3%)
+2026-08-07 14:18:01 | sleep.tagging                  | INFO  | step=183 | 1 tags created from 1 spans | buffer: 121/40151 (0.3%)
+2026-08-07 14:18:01 | sleep.tagging                  | INFO  | step=184 | 1 tags created from 1 spans | buffer: 122/40151 (0.3%)
+2026-08-07 14:18:01 | sleep.tagging                  | INFO  | step=186 | 1 tags created from 1 spans | buffer: 123/40151 (0.3%)
+2026-08-07 14:18:01 | sleep.tagging                  | INFO  | step=187 | 1 tags created from 1 spans | buffer: 124/40151 (0.3%)
+2026-08-07 14:18:02 | sleep.tagging                  | INFO  | step=191 | 1 tags created from 1 spans | buffer: 125/40151 (0.3%)
+2026-08-07 14:18:02 | sleep.tagging                  | INFO  | step=192 | 1 tags created from 1 spans | buffer: 126/40151 (0.3%)
+2026-08-07 14:18:02 | sleep.tagging                  | INFO  | step=193 | 1 tags created from 1 spans | buffer: 127/40151 (0.3%)
+2026-08-07 14:18:02 | sleep.tagging                  | INFO  | step=194 | 1 tags created from 1 spans | buffer: 128/40151 (0.3%)
+2026-08-07 14:18:02 | sleep.tagging                  | INFO  | step=196 | 1 tags created from 1 spans | buffer: 129/40151 (0.3%)
+2026-08-07 14:18:03 | sleep.tagging                  | INFO  | step=197 | 2 tags created from 2 spans | buffer: 131/40151 (0.3%)
+2026-08-07 14:18:03 | sleep.experiment.09            | INFO  | Wrote 200 fact episodes into the KV bank
+2026-08-07 14:18:15 | sleep.evaluation.recall_formats | INFO  | MC recall: accuracy=0.2500, mean_correct_prob=0.2422 across 200 facts
+[transformers] The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+[transformers] Ignoring clean_up_tokenization_spaces=True for BPE tokenizer TokenizersBackend. The clean_up_tokenization post-processing step is designed for WordPiece tokenizers and is destructive for BPE (it strips spaces before punctuation). Set clean_up_tokenization_spaces=False to suppress this warning, or set clean_up_tokenization_spaces_for_bpe_even_though_it_will_corrupt_output=True to force cleanup anyway.
+2026-08-07 14:21:12 | sleep.evaluation.recall_formats | INFO  | Cloze recall: accuracy=0.0050 across 200 facts
+2026-08-07 14:27:18 | sleep.evaluation.recall_formats | INFO  | Free-form recall: mean_score=0.0017, accuracy=0.0050 across 200 facts
+2026-08-07 14:27:18 | sleep.experiment.09            | INFO  | [no-warmup] MC=0.250  cloze=0.005  DRA=0.002
+2026-08-07 14:27:18 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=18.3726 (mean_loss=2.9109, 31 tokens)
+2026-08-07 14:27:18 | sleep.evaluation.preservation  | INFO  | BCP: 2.0141 (current_ppl=18.3726, original_ppl=9.1220)
+2026-08-07 14:27:19 | sleep.warmup                   | INFO  | warm-up step 1/300 | loss=4.0029 | mean_gate_scale=1.000
+2026-08-07 14:27:23 | sleep.warmup                   | INFO  | warm-up step 30/300 | loss=4.6287 | mean_gate_scale=0.992
+2026-08-07 14:27:28 | sleep.warmup                   | INFO  | warm-up step 60/300 | loss=6.9374 | mean_gate_scale=0.988
+2026-08-07 14:27:32 | sleep.warmup                   | INFO  | warm-up step 90/300 | loss=4.2378 | mean_gate_scale=0.984
+2026-08-07 14:27:37 | sleep.warmup                   | INFO  | warm-up step 120/300 | loss=4.3311 | mean_gate_scale=0.979
+2026-08-07 14:27:41 | sleep.warmup                   | INFO  | warm-up step 150/300 | loss=3.8205 | mean_gate_scale=0.975
+2026-08-07 14:27:46 | sleep.warmup                   | INFO  | warm-up step 180/300 | loss=3.4787 | mean_gate_scale=0.969
+2026-08-07 14:27:50 | sleep.warmup                   | INFO  | warm-up step 210/300 | loss=3.2435 | mean_gate_scale=0.965
+2026-08-07 14:27:55 | sleep.warmup                   | INFO  | warm-up step 240/300 | loss=5.3378 | mean_gate_scale=0.960
+2026-08-07 14:27:59 | sleep.warmup                   | INFO  | warm-up step 270/300 | loss=3.5394 | mean_gate_scale=0.957
+2026-08-07 14:28:03 | sleep.warmup                   | INFO  | warm-up step 300/300 | loss=6.2788 | mean_gate_scale=0.954
+2026-08-07 14:28:03 | sleep.warmup                   | INFO  | Warm-up complete | steps=300 | loss 4.0029 -> 6.2788 | mean gate scale=0.954
+2026-08-07 14:28:03 | sleep.experiment.09            | INFO  | Warm-up gate scales: {22: 0.9925418496131897, 23: 0.9143104553222656, 24: 0.9453451633453369, 25: 0.993644118309021, 26: 1.0042715072631836, 27: 0.9904851913452148, 28: 0.9013673067092896, 29: 0.9174292087554932, 30: 0.8479301333427429, 31: 1.0360171794891357}
+2026-08-07 14:28:03 | sleep.weights.kv_memory        | INFO  | bank cleared: freed 200 tags / 7786 tokens
+2026-08-07 14:28:04 | sleep.tagging                  | INFO  | step=202 | 1 tags created from 1 spans | buffer: 132/40151 (0.3%)
+2026-08-07 14:28:04 | sleep.tagging                  | INFO  | step=203 | 1 tags created from 1 spans | buffer: 133/40151 (0.3%)
+2026-08-07 14:28:04 | sleep.tagging                  | INFO  | step=204 | 1 tags created from 1 spans | buffer: 134/40151 (0.3%)
+2026-08-07 14:28:04 | sleep.tagging                  | INFO  | step=207 | 1 tags created from 1 spans | buffer: 135/40151 (0.3%)
+2026-08-07 14:28:04 | sleep.tagging                  | INFO  | step=211 | 1 tags created from 1 spans | buffer: 136/40151 (0.3%)
+2026-08-07 14:28:04 | sleep.tagging                  | INFO  | step=212 | 1 tags created from 1 spans | buffer: 137/40151 (0.3%)
+2026-08-07 14:28:05 | sleep.tagging                  | INFO  | step=213 | 1 tags created from 1 spans | buffer: 138/40151 (0.3%)
+2026-08-07 14:28:05 | sleep.tagging                  | INFO  | step=214 | 1 tags created from 1 spans | buffer: 139/40151 (0.3%)
+2026-08-07 14:28:05 | sleep.tagging                  | INFO  | step=217 | 1 tags created from 1 spans | buffer: 140/40151 (0.3%)
+2026-08-07 14:28:05 | sleep.tagging                  | INFO  | step=218 | 1 tags created from 1 spans | buffer: 141/40151 (0.4%)
+2026-08-07 14:28:05 | sleep.tagging                  | INFO  | step=221 | 1 tags created from 1 spans | buffer: 142/40151 (0.4%)
+2026-08-07 14:28:05 | sleep.tagging                  | INFO  | step=222 | 1 tags created from 1 spans | buffer: 143/40151 (0.4%)
+2026-08-07 14:28:05 | sleep.tagging                  | INFO  | step=223 | 1 tags created from 1 spans | buffer: 144/40151 (0.4%)
+2026-08-07 14:28:06 | sleep.tagging                  | INFO  | step=224 | 1 tags created from 1 spans | buffer: 145/40151 (0.4%)
+2026-08-07 14:28:06 | sleep.tagging                  | INFO  | step=226 | 1 tags created from 1 spans | buffer: 146/40151 (0.4%)
+2026-08-07 14:28:06 | sleep.tagging                  | INFO  | step=227 | 1 tags created from 1 spans | buffer: 147/40151 (0.4%)
+2026-08-07 14:28:06 | sleep.tagging                  | INFO  | step=231 | 1 tags created from 1 spans | buffer: 148/40151 (0.4%)
+2026-08-07 14:28:06 | sleep.tagging                  | INFO  | step=232 | 1 tags created from 1 spans | buffer: 149/40151 (0.4%)
+2026-08-07 14:28:06 | sleep.tagging                  | INFO  | step=233 | 1 tags created from 1 spans | buffer: 150/40151 (0.4%)
+2026-08-07 14:28:06 | sleep.tagging                  | INFO  | step=234 | 1 tags created from 1 spans | buffer: 151/40151 (0.4%)
+2026-08-07 14:28:07 | sleep.tagging                  | INFO  | step=236 | 1 tags created from 1 spans | buffer: 152/40151 (0.4%)
+2026-08-07 14:28:07 | sleep.tagging                  | INFO  | step=237 | 1 tags created from 1 spans | buffer: 153/40151 (0.4%)
+2026-08-07 14:28:07 | sleep.tagging                  | INFO  | step=239 | 1 tags created from 1 spans | buffer: 154/40151 (0.4%)
+2026-08-07 14:28:07 | sleep.tagging                  | INFO  | step=241 | 1 tags created from 1 spans | buffer: 155/40151 (0.4%)
+2026-08-07 14:28:07 | sleep.tagging                  | INFO  | step=242 | 1 tags created from 1 spans | buffer: 156/40151 (0.4%)
+2026-08-07 14:28:07 | sleep.tagging                  | INFO  | step=244 | 1 tags created from 1 spans | buffer: 157/40151 (0.4%)
+2026-08-07 14:28:07 | sleep.tagging                  | INFO  | step=245 | 1 tags created from 1 spans | buffer: 158/40151 (0.4%)
+2026-08-07 14:28:07 | sleep.tagging                  | INFO  | step=246 | 1 tags created from 1 spans | buffer: 159/40151 (0.4%)
+2026-08-07 14:28:08 | sleep.tagging                  | INFO  | step=247 | 1 tags created from 1 spans | buffer: 160/40151 (0.4%)
+2026-08-07 14:28:08 | sleep.tagging                  | INFO  | step=249 | 1 tags created from 1 spans | buffer: 161/40151 (0.4%)
+2026-08-07 14:28:08 | sleep.tagging                  | INFO  | step=251 | 2 tags created from 2 spans | buffer: 163/40151 (0.4%)
+2026-08-07 14:28:08 | sleep.tagging                  | INFO  | step=252 | 1 tags created from 1 spans | buffer: 164/40151 (0.4%)
+2026-08-07 14:28:08 | sleep.tagging                  | INFO  | step=253 | 1 tags created from 1 spans | buffer: 165/40151 (0.4%)
+2026-08-07 14:28:08 | sleep.tagging                  | INFO  | step=254 | 1 tags created from 1 spans | buffer: 166/40151 (0.4%)
+2026-08-07 14:28:08 | sleep.tagging                  | INFO  | step=256 | 1 tags created from 1 spans | buffer: 167/40151 (0.4%)
+2026-08-07 14:28:09 | sleep.tagging                  | INFO  | step=257 | 1 tags created from 1 spans | buffer: 168/40151 (0.4%)
+2026-08-07 14:28:09 | sleep.tagging                  | INFO  | step=258 | 1 tags created from 1 spans | buffer: 169/40151 (0.4%)
+2026-08-07 14:28:09 | sleep.tagging                  | INFO  | step=261 | 1 tags created from 1 spans | buffer: 170/40151 (0.4%)
+2026-08-07 14:28:09 | sleep.tagging                  | INFO  | step=262 | 1 tags created from 1 spans | buffer: 171/40151 (0.4%)
+2026-08-07 14:28:09 | sleep.tagging                  | INFO  | step=263 | 1 tags created from 1 spans | buffer: 172/40151 (0.4%)
+2026-08-07 14:28:09 | sleep.tagging                  | INFO  | step=264 | 1 tags created from 1 spans | buffer: 173/40151 (0.4%)
+2026-08-07 14:28:09 | sleep.tagging                  | INFO  | step=266 | 1 tags created from 1 spans | buffer: 174/40151 (0.4%)
+2026-08-07 14:28:09 | sleep.tagging                  | INFO  | step=267 | 2 tags created from 2 spans | buffer: 176/40151 (0.4%)
+2026-08-07 14:28:10 | sleep.tagging                  | INFO  | step=269 | 1 tags created from 1 spans | buffer: 177/40151 (0.4%)
+2026-08-07 14:28:10 | sleep.tagging                  | INFO  | step=271 | 1 tags created from 1 spans | buffer: 178/40151 (0.4%)
+2026-08-07 14:28:10 | sleep.tagging                  | INFO  | step=273 | 1 tags created from 1 spans | buffer: 179/40151 (0.4%)
+2026-08-07 14:28:10 | sleep.tagging                  | INFO  | step=274 | 1 tags created from 1 spans | buffer: 180/40151 (0.4%)
+2026-08-07 14:28:10 | sleep.tagging                  | INFO  | step=275 | 1 tags created from 1 spans | buffer: 181/40151 (0.5%)
+2026-08-07 14:28:10 | sleep.tagging                  | INFO  | step=276 | 1 tags created from 1 spans | buffer: 182/40151 (0.5%)
+2026-08-07 14:28:10 | sleep.tagging                  | INFO  | step=277 | 1 tags created from 1 spans | buffer: 183/40151 (0.5%)
+2026-08-07 14:28:11 | sleep.tagging                  | INFO  | step=281 | 1 tags created from 1 spans | buffer: 184/40151 (0.5%)
+2026-08-07 14:28:11 | sleep.tagging                  | INFO  | step=282 | 1 tags created from 1 spans | buffer: 185/40151 (0.5%)
+2026-08-07 14:28:11 | sleep.tagging                  | INFO  | step=283 | 1 tags created from 1 spans | buffer: 186/40151 (0.5%)
+2026-08-07 14:28:11 | sleep.tagging                  | INFO  | step=286 | 1 tags created from 1 spans | buffer: 187/40151 (0.5%)
+2026-08-07 14:28:11 | sleep.tagging                  | INFO  | step=287 | 1 tags created from 1 spans | buffer: 188/40151 (0.5%)
+2026-08-07 14:28:12 | sleep.tagging                  | INFO  | step=289 | 1 tags created from 1 spans | buffer: 189/40151 (0.5%)
+2026-08-07 14:28:12 | sleep.tagging                  | INFO  | step=291 | 1 tags created from 1 spans | buffer: 190/40151 (0.5%)
+2026-08-07 14:28:12 | sleep.tagging                  | INFO  | step=293 | 1 tags created from 1 spans | buffer: 191/40151 (0.5%)
+2026-08-07 14:28:12 | sleep.tagging                  | INFO  | step=294 | 1 tags created from 1 spans | buffer: 192/40151 (0.5%)
+2026-08-07 14:28:12 | sleep.tagging                  | INFO  | step=296 | 1 tags created from 1 spans | buffer: 193/40151 (0.5%)
+2026-08-07 14:28:12 | sleep.tagging                  | INFO  | step=297 | 2 tags created from 2 spans | buffer: 195/40151 (0.5%)
+2026-08-07 14:28:13 | sleep.tagging                  | INFO  | step=301 | 1 tags created from 1 spans | buffer: 196/40151 (0.5%)
+2026-08-07 14:28:13 | sleep.tagging                  | INFO  | step=302 | 1 tags created from 1 spans | buffer: 197/40151 (0.5%)
+2026-08-07 14:28:13 | sleep.tagging                  | INFO  | step=303 | 1 tags created from 1 spans | buffer: 198/40151 (0.5%)
+2026-08-07 14:28:13 | sleep.tagging                  | INFO  | step=304 | 1 tags created from 1 spans | buffer: 199/40151 (0.5%)
+2026-08-07 14:28:13 | sleep.tagging                  | INFO  | step=305 | 1 tags created from 1 spans | buffer: 200/40151 (0.5%)
+2026-08-07 14:28:13 | sleep.tagging                  | INFO  | step=306 | 1 tags created from 1 spans | buffer: 201/40151 (0.5%)
+2026-08-07 14:28:14 | sleep.tagging                  | INFO  | step=311 | 1 tags created from 1 spans | buffer: 202/40151 (0.5%)
+2026-08-07 14:28:14 | sleep.tagging                  | INFO  | step=312 | 1 tags created from 1 spans | buffer: 203/40151 (0.5%)
+2026-08-07 14:28:14 | sleep.tagging                  | INFO  | step=313 | 1 tags created from 1 spans | buffer: 204/40151 (0.5%)
+2026-08-07 14:28:14 | sleep.tagging                  | INFO  | step=314 | 1 tags created from 1 spans | buffer: 205/40151 (0.5%)
+2026-08-07 14:28:14 | sleep.tagging                  | INFO  | step=315 | 1 tags created from 1 spans | buffer: 206/40151 (0.5%)
+2026-08-07 14:28:14 | sleep.tagging                  | INFO  | step=316 | 1 tags created from 1 spans | buffer: 207/40151 (0.5%)
+2026-08-07 14:28:14 | sleep.tagging                  | INFO  | step=317 | 1 tags created from 1 spans | buffer: 208/40151 (0.5%)
+2026-08-07 14:28:15 | sleep.tagging                  | INFO  | step=321 | 1 tags created from 1 spans | buffer: 209/40151 (0.5%)
+2026-08-07 14:28:15 | sleep.tagging                  | INFO  | step=322 | 1 tags created from 1 spans | buffer: 210/40151 (0.5%)
+2026-08-07 14:28:15 | sleep.tagging                  | INFO  | step=323 | 1 tags created from 1 spans | buffer: 211/40151 (0.5%)
+2026-08-07 14:28:15 | sleep.tagging                  | INFO  | step=324 | 1 tags created from 1 spans | buffer: 212/40151 (0.5%)
+2026-08-07 14:28:15 | sleep.tagging                  | INFO  | step=325 | 1 tags created from 1 spans | buffer: 213/40151 (0.5%)
+2026-08-07 14:28:16 | sleep.tagging                  | INFO  | step=327 | 1 tags created from 1 spans | buffer: 214/40151 (0.5%)
+2026-08-07 14:28:16 | sleep.tagging                  | INFO  | step=328 | 1 tags created from 1 spans | buffer: 215/40151 (0.5%)
+2026-08-07 14:28:16 | sleep.tagging                  | INFO  | step=331 | 1 tags created from 1 spans | buffer: 216/40151 (0.5%)
+2026-08-07 14:28:16 | sleep.tagging                  | INFO  | step=332 | 1 tags created from 1 spans | buffer: 217/40151 (0.5%)
+2026-08-07 14:28:16 | sleep.tagging                  | INFO  | step=333 | 1 tags created from 1 spans | buffer: 218/40151 (0.5%)
+2026-08-07 14:28:16 | sleep.tagging                  | INFO  | step=334 | 1 tags created from 1 spans | buffer: 219/40151 (0.5%)
+2026-08-07 14:28:16 | sleep.tagging                  | INFO  | step=335 | 1 tags created from 1 spans | buffer: 220/40151 (0.5%)
+2026-08-07 14:28:16 | sleep.tagging                  | INFO  | step=336 | 1 tags created from 1 spans | buffer: 221/40151 (0.6%)
+2026-08-07 14:28:17 | sleep.tagging                  | INFO  | step=338 | 1 tags created from 1 spans | buffer: 222/40151 (0.6%)
+2026-08-07 14:28:17 | sleep.tagging                  | INFO  | step=339 | 1 tags created from 1 spans | buffer: 223/40151 (0.6%)
+2026-08-07 14:28:17 | sleep.tagging                  | INFO  | step=341 | 1 tags created from 1 spans | buffer: 224/40151 (0.6%)
+2026-08-07 14:28:17 | sleep.tagging                  | INFO  | step=342 | 1 tags created from 1 spans | buffer: 225/40151 (0.6%)
+2026-08-07 14:28:17 | sleep.tagging                  | INFO  | step=344 | 1 tags created from 1 spans | buffer: 226/40151 (0.6%)
+2026-08-07 14:28:18 | sleep.tagging                  | INFO  | step=348 | 1 tags created from 1 spans | buffer: 227/40151 (0.6%)
+2026-08-07 14:28:18 | sleep.tagging                  | INFO  | step=349 | 1 tags created from 1 spans | buffer: 228/40151 (0.6%)
+2026-08-07 14:28:18 | sleep.tagging                  | INFO  | step=351 | 1 tags created from 1 spans | buffer: 229/40151 (0.6%)
+2026-08-07 14:28:18 | sleep.tagging                  | INFO  | step=352 | 2 tags created from 2 spans | buffer: 231/40151 (0.6%)
+2026-08-07 14:28:18 | sleep.tagging                  | INFO  | step=353 | 1 tags created from 1 spans | buffer: 232/40151 (0.6%)
+2026-08-07 14:28:18 | sleep.tagging                  | INFO  | step=354 | 1 tags created from 1 spans | buffer: 233/40151 (0.6%)
+2026-08-07 14:28:19 | sleep.tagging                  | INFO  | step=355 | 1 tags created from 1 spans | buffer: 234/40151 (0.6%)
+2026-08-07 14:28:19 | sleep.tagging                  | INFO  | step=356 | 1 tags created from 1 spans | buffer: 235/40151 (0.6%)
+2026-08-07 14:28:19 | sleep.tagging                  | INFO  | step=357 | 1 tags created from 1 spans | buffer: 236/40151 (0.6%)
+2026-08-07 14:28:19 | sleep.tagging                  | INFO  | step=358 | 1 tags created from 1 spans | buffer: 237/40151 (0.6%)
+2026-08-07 14:28:19 | sleep.tagging                  | INFO  | step=361 | 1 tags created from 1 spans | buffer: 238/40151 (0.6%)
+2026-08-07 14:28:19 | sleep.tagging                  | INFO  | step=362 | 1 tags created from 1 spans | buffer: 239/40151 (0.6%)
+2026-08-07 14:28:20 | sleep.tagging                  | INFO  | step=363 | 1 tags created from 1 spans | buffer: 240/40151 (0.6%)
+2026-08-07 14:28:20 | sleep.tagging                  | INFO  | step=364 | 1 tags created from 1 spans | buffer: 241/40151 (0.6%)
+2026-08-07 14:28:20 | sleep.tagging                  | INFO  | step=366 | 1 tags created from 1 spans | buffer: 242/40151 (0.6%)
+2026-08-07 14:28:20 | sleep.tagging                  | INFO  | step=367 | 1 tags created from 1 spans | buffer: 243/40151 (0.6%)
+2026-08-07 14:28:20 | sleep.tagging                  | INFO  | step=368 | 1 tags created from 1 spans | buffer: 244/40151 (0.6%)
+2026-08-07 14:28:21 | sleep.tagging                  | INFO  | step=373 | 1 tags created from 1 spans | buffer: 245/40151 (0.6%)
+2026-08-07 14:28:21 | sleep.tagging                  | INFO  | step=374 | 1 tags created from 1 spans | buffer: 246/40151 (0.6%)
+2026-08-07 14:28:21 | sleep.tagging                  | INFO  | step=375 | 1 tags created from 1 spans | buffer: 247/40151 (0.6%)
+2026-08-07 14:28:21 | sleep.tagging                  | INFO  | step=376 | 1 tags created from 1 spans | buffer: 248/40151 (0.6%)
+2026-08-07 14:28:21 | sleep.tagging                  | INFO  | step=377 | 1 tags created from 1 spans | buffer: 249/40151 (0.6%)
+2026-08-07 14:28:22 | sleep.tagging                  | INFO  | step=381 | 1 tags created from 1 spans | buffer: 250/40151 (0.6%)
+2026-08-07 14:28:22 | sleep.tagging                  | INFO  | step=382 | 1 tags created from 1 spans | buffer: 251/40151 (0.6%)
+2026-08-07 14:28:22 | sleep.tagging                  | INFO  | step=383 | 1 tags created from 1 spans | buffer: 252/40151 (0.6%)
+2026-08-07 14:28:22 | sleep.tagging                  | INFO  | step=384 | 1 tags created from 1 spans | buffer: 253/40151 (0.6%)
+2026-08-07 14:28:22 | sleep.tagging                  | INFO  | step=386 | 1 tags created from 1 spans | buffer: 254/40151 (0.6%)
+2026-08-07 14:28:22 | sleep.tagging                  | INFO  | step=387 | 1 tags created from 1 spans | buffer: 255/40151 (0.6%)
+2026-08-07 14:28:23 | sleep.tagging                  | INFO  | step=391 | 1 tags created from 1 spans | buffer: 256/40151 (0.6%)
+2026-08-07 14:28:23 | sleep.tagging                  | INFO  | step=392 | 1 tags created from 1 spans | buffer: 257/40151 (0.6%)
+2026-08-07 14:28:23 | sleep.tagging                  | INFO  | step=393 | 1 tags created from 1 spans | buffer: 258/40151 (0.6%)
+2026-08-07 14:28:23 | sleep.tagging                  | INFO  | step=394 | 1 tags created from 1 spans | buffer: 259/40151 (0.6%)
+2026-08-07 14:28:23 | sleep.tagging                  | INFO  | step=396 | 1 tags created from 1 spans | buffer: 260/40151 (0.6%)
+2026-08-07 14:28:24 | sleep.tagging                  | INFO  | step=397 | 2 tags created from 2 spans | buffer: 262/40151 (0.7%)
+2026-08-07 14:28:24 | sleep.experiment.09            | INFO  | Wrote 200 fact episodes into the KV bank
+2026-08-07 14:28:36 | sleep.evaluation.recall_formats | INFO  | MC recall: accuracy=0.2350, mean_correct_prob=0.2406 across 200 facts
+2026-08-07 14:31:35 | sleep.evaluation.recall_formats | INFO  | Cloze recall: accuracy=0.0050 across 200 facts
+2026-08-07 14:37:42 | sleep.evaluation.recall_formats | INFO  | Free-form recall: mean_score=0.0033, accuracy=0.0100 across 200 facts
+2026-08-07 14:37:42 | sleep.experiment.09            | INFO  | [with-warmup] MC=0.235  cloze=0.005  DRA=0.003
+2026-08-07 14:37:42 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=16.3011 (mean_loss=2.7912, 31 tokens)
+2026-08-07 14:37:42 | sleep.evaluation.preservation  | INFO  | BCP: 1.7870 (current_ppl=16.3011, original_ppl=9.1220)
+2026-08-07 14:37:42 | sleep.experiment.common        | INFO  | Wrote results to /workspace/results/llama3_8b_warmup_gate_s1.json
+
+======================================================================
+WARM-UP EXTENSION RESULT
+======================================================================
+  Condition                   MC   cloze     DRA     BCP
+  SLEEP without warm-up    0.250   0.005   0.002   2.014
+  SLEEP with warm-up       0.235   0.005   0.003   1.787
+
+  DRA delta (gap change): +0.002
+  Mean gate scale: 0.954
+
+  Results written to /workspace/results/llama3_8b_warmup_gate_s1.json
+2026-08-07 14:37:42 | sleep.weights.kv_injection     | INFO  | KVInjector uninstalled from 10 layers

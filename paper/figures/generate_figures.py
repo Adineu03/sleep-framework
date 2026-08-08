@@ -145,11 +145,17 @@ def fig_pareto_frontier():
 # ---------------------------------------------------------------------------
 
 def fig_multi_cycle():
-    cycles = [1, 2, 3]
-    sleep_dra_cum = [0.010, 0.052, 0.058]
-    sleep_bcp = [1.10, 2.26, 2.31]
-    naive_dra_cum = [0.129, 0.080, 0.112]
-    naive_bcp = [3.84, 3.42, 4.74]
+    # Ten-cycle run (2026-08-05, A6000): 10 cycles x 20 facts, seed 0.
+    # Supersedes the earlier 3-cycle data — the advantage inverts by cycle 10.
+    cycles = list(range(1, 11))
+    sleep_dra_cum = [0.000, 0.0917, 0.0833, 0.0375, 0.040,
+                     0.0444, 0.0452, 0.0458, 0.0444, 0.050]
+    sleep_bcp = [1.179, 1.980, 2.042, 4.403, 4.570,
+                 4.453, 4.592, 4.465, 4.520, 4.535]
+    naive_dra_cum = [0.300, 0.1583, 0.1167, 0.1042, 0.1267,
+                     0.1139, 0.0810, 0.0771, 0.0593, 0.0850]
+    naive_bcp = [3.006, 3.318, 3.740, 3.100, 3.054,
+                 2.559, 2.018, 2.290, 2.406, 3.363]
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10.5, 4.2))
 
@@ -162,9 +168,9 @@ def fig_multi_cycle():
     ax1.set_xlabel("Cycle")
     ax1.set_ylabel("DRA on cumulative facts")
     ax1.set_title("Recall (cumulative)", fontsize=11)
-    ax1.legend(loc="upper left", framealpha=0.9)
+    ax1.legend(loc="upper right", framealpha=0.9)
     ax1.grid(True, alpha=0.3, linestyle=":")
-    ax1.set_ylim(0, 0.18)
+    ax1.set_ylim(0, 0.33)
 
     # BCP
     ax2.plot(cycles, sleep_bcp, "o-", linewidth=2.5, markersize=10,
@@ -172,15 +178,19 @@ def fig_multi_cycle():
     ax2.plot(cycles, naive_bcp, "s-", linewidth=2.5, markersize=10,
              color="#d62728", label="Naive LoRA")
     ax2.axhspan(1.0, 1.05, color="green", alpha=0.10, label="Preservation target")
+    # Mark the crossover: SLEEP's advantage ends between cycles 3 and 4.
+    ax2.axvline(3.5, color="grey", linestyle="--", linewidth=1.0)
+    ax2.annotate("advantage ends", xy=(3.5, 5.15), xytext=(3.65, 5.15),
+                 fontsize=8.5, color="dimgrey", va="center")
     ax2.set_xticks(cycles)
     ax2.set_xlabel("Cycle")
     ax2.set_ylabel("BCP (lower = better preservation)")
     ax2.set_title("Preservation across cycles", fontsize=11)
-    ax2.legend(loc="upper left", framealpha=0.9)
+    ax2.legend(loc="lower right", framealpha=0.9)
     ax2.grid(True, alpha=0.3, linestyle=":")
     ax2.set_ylim(0.5, 5.5)
 
-    plt.suptitle("Multi-cycle: SLEEP preserves BCP ~2x better than naive LoRA at every cycle",
+    plt.suptitle("Multi-cycle: SLEEP's preservation advantage is transient, not architectural",
                  fontsize=12, y=1.02)
     plt.tight_layout()
     plt.savefig(os.path.join(OUT, "figure_multi_cycle.pdf"))
@@ -241,10 +251,61 @@ def fig_architecture():
     print("Wrote figure_architecture.pdf")
 
 
+def fig_warmup_extension():
+    """Warm-up extension result: recognition rises, recall does not follow.
+
+    Data from the 2026-08-05 A6000 runs (200 facts, 300 warm-up steps).
+    Gate-only is the mean of seeds 0-1; +LoRA is the mean of seeds 0-1.
+    """
+    conditions = ["No warm-up", "Gate only", "+ LoRA"]
+    mc = [0.220, 0.238, 0.255]          # recognition (multiple choice)
+    dra = [0.0017, 0.0033, 0.0033]      # free-form recall
+    bcp = [1.073, 1.008, 2.736]         # preservation cost
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10.5, 4.2))
+
+    x = np.arange(len(conditions))
+    w = 0.36
+
+    # Left: recognition vs recall on the same axis makes the gap visible.
+    ax1.bar(x - w/2, mc, w, label="Recognition (MC)", color="#1f77b4")
+    ax1.bar(x + w/2, dra, w, label="Recall (DRA)", color="#d62728")
+    ax1.axhline(0.25, color="grey", linestyle="--", linewidth=0.8,
+                label="MC chance (0.25)")
+    ax1.axhline(0.10, color="green", linestyle=":", linewidth=1.0,
+                label="Pre-registered DRA target")
+    ax1.set_xticks(x)
+    ax1.set_xticklabels(conditions)
+    ax1.set_ylabel("Accuracy / score")
+    ax1.set_title("The gap does not close", fontsize=11)
+    ax1.set_ylim(0, 0.33)
+    ax1.legend(loc="upper left", fontsize=8.5, framealpha=0.9)
+
+    # Right: what the warm-up cost in base capability.
+    ax2.bar(x, bcp, color=["#2ca02c" if b < 1.5 else "#ff7f0e" for b in bcp])
+    ax2.axhline(1.5, color="grey", linestyle="--", linewidth=0.8,
+                label="Acceptable BCP (<1.5)")
+    ax2.set_xticks(x)
+    ax2.set_xticklabels(conditions)
+    ax2.set_ylabel("BCP (lower = better preservation)")
+    ax2.set_title("Preservation cost of the warm-up", fontsize=11)
+    ax2.legend(loc="upper left", fontsize=8.5, framealpha=0.9)
+    ax2.set_ylim(0, 3.2)
+
+    plt.suptitle("Retrieval-aware warm-up: recognition improves, recall stays at floor",
+                 fontsize=12, y=1.02)
+    plt.tight_layout()
+    plt.savefig(os.path.join(OUT, "figure_warmup_extension.pdf"))
+    plt.savefig(os.path.join(OUT, "figure_warmup_extension.png"), dpi=200)
+    plt.close()
+    print("Wrote figure_warmup_extension.pdf")
+
+
 def main():
     fig_substrate_comparison()
     fig_pareto_frontier()
     fig_multi_cycle()
+    fig_warmup_extension()
     fig_architecture()
     print("All figures written.")
 

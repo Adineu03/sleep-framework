@@ -1,11 +1,19 @@
 """
 Baseline implementations for SLEEP evaluation comparisons.
 
-Two baselines from Q5.4 (SLEEP_Formalization.md):
+Baselines from Q5.4 (SLEEP_Formalization.md) plus the three the mentor review
+(item #5) flagged as missing from the paper:
     1. RAG baseline — store documents, retrieve by similarity, append to context.
        Expected DRA ~0.9 at all delays (always has access to original document).
     2. Naive LoRA — fine-tune on every input with no tagging, no sleep scheduling.
        Expected to show catastrophic forgetting over many inputs.
+    3. EWC-only — naive LoRA plus an Elastic Weight Consolidation penalty, with
+       none of the rest of the SLEEP pipeline. Isolates how much of SLEEP's
+       preservation advantage is EWC alone vs the full safety machinery.
+    4. In-context injection — no training at all; prepend the gold fact to the
+       prompt at query time. A cheap reference point for "what if the fact is
+       simply in context", and the natural lower bound the paper's RAG
+       contrast implies but never measured.
 
 These are intentionally simple and correct — they are comparison points,
 not production systems.
@@ -249,7 +257,10 @@ class NaiveLoRABaseline:
                         out_features=module.out_features,
                         rank=rank,
                         scaling=scaling,
-                    ).to(self.device)
+                        # Match the wrapped layer's dtype as well as device:
+                        # a float32 adapter against a bfloat16 model raises
+                        # "mat1 and mat2 must have the same dtype" at forward.
+                    ).to(device=self.device, dtype=module.weight.dtype)
 
                     # Hook the adapter into the module's forward
                     _install_lora_hook(module, adapter)
@@ -314,6 +325,185 @@ class NaiveLoRABaseline:
 
         generated_ids = output_ids[0, input_ids.shape[1]:]
         return self.tokenizer.decode(generated_ids, skip_special_tokens=True)
+
+
+# ---------------------------------------------------------------------------
+# EWC-only Baseline (mentor item #5b)
+# ---------------------------------------------------------------------------
+
+class EWCOnlyBaseline(NaiveLoRABaseline):
+    """Naive LoRA fine-tuning plus an EWC penalty — and nothing else.
+
+    This isolates the contribution of Elastic Weight Consolidation from the
+    rest of SLEEP's safety machinery (hard clipping, interleaving, validation
+    rollback, tagging, sleep scheduling). If EWC-only already recovers most of
+    SLEEP's multi-cycle preservation advantage, the extra machinery is doing
+    little; if it does not, the machinery earns its keep.
+
+    The penalty is the standard diagonal-Fisher form,
+    ``L_EWC = (lambda/2) * sum_p F_p (theta_p - theta*_p)^2``, anchored to the
+    adapter state captured by :meth:`consolidate_task` (call it once after a
+    task/batch to snapshot ``theta*`` and estimate ``F`` on that task's data).
+
+    Args:
+        model, tokenizer, config, device: As for :class:`NaiveLoRABaseline`.
+            Uses ``config.weights.lambda_ewc`` for the penalty strength.
+    """
+
+    def __init__(self, model, tokenizer, config, device: str = "cpu") -> None:
+        super().__init__(model, tokenizer, config, device)
+        self.lambda_ewc: float = float(config.weights.lambda_ewc)
+        # Anchors and Fisher, one snapshot per consolidated task. Parameters
+        # are referenced by (module_index, "A"/"B") so the mapping is stable.
+        self._theta_star: list[dict[str, Tensor]] = []
+        self._fisher: list[dict[str, Tensor]] = []
+
+    def _named_adapter_params(self) -> list[tuple[str, nn.Parameter]]:
+        """Flat, stably-ordered list of ``("<i>.A"/"<i>.B", param)`` pairs."""
+        pairs: list[tuple[str, nn.Parameter]] = []
+        for i, module in enumerate(self.lora_modules):
+            pairs.append((f"{i}.A", module.A))
+            pairs.append((f"{i}.B", module.B))
+        return pairs
+
+    @torch.enable_grad()
+    def consolidate_task(self, texts: list[str], max_batches: int = 32) -> None:
+        """Snapshot ``theta*`` and estimate the diagonal Fisher on ``texts``.
+
+        Call after finishing a task so subsequent tasks are penalised for
+        moving parameters that mattered for this one.
+
+        Args:
+            texts:       The just-learned task's texts (used to estimate Fisher).
+            max_batches: Cap on sequences used for the Fisher estimate.
+        """
+        params = self._named_adapter_params()
+        fisher: dict[str, Tensor] = {
+            name: torch.zeros_like(p) for name, p in params
+        }
+        n = 0
+        self.model.eval()
+        for text in texts[:max_batches]:
+            encoded = self.tokenizer(
+                text, return_tensors="pt", truncation=True, max_length=512,
+            )
+            input_ids = encoded["input_ids"].to(self.device)
+            self.optimizer.zero_grad()
+            loss = self.model(input_ids=input_ids, labels=input_ids).loss
+            loss.backward()
+            for name, p in params:
+                if p.grad is not None:
+                    fisher[name] += p.grad.detach() ** 2
+            n += 1
+        if n > 0:
+            for name in fisher:
+                fisher[name] /= n
+        self.optimizer.zero_grad()
+
+        self._theta_star.append({name: p.detach().clone() for name, p in params})
+        self._fisher.append(fisher)
+        logger.info(
+            "EWC-only: consolidated task (%d seqs); %d anchors stored",
+            n, len(self._theta_star),
+        )
+
+    def _ewc_penalty(self) -> Tensor:
+        """Sum of Fisher-weighted quadratic penalties across all anchors."""
+        params = dict(self._named_adapter_params())
+        total = torch.zeros((), device=self.device)
+        for theta_star, fisher in zip(self._theta_star, self._fisher):
+            for name, p in params.items():
+                total = total + (fisher[name] * (p - theta_star[name]) ** 2).sum()
+        return 0.5 * self.lambda_ewc * total
+
+    def train_on_input(self, text: str) -> float:
+        """Fine-tune on one input with the EWC penalty added to the LM loss."""
+        self.model.train()
+        encoded = self.tokenizer(
+            text, return_tensors="pt", truncation=True, max_length=512,
+        )
+        input_ids = encoded["input_ids"].to(self.device)
+
+        lm_loss = self.model(input_ids=input_ids, labels=input_ids).loss
+        loss = lm_loss
+        if self._theta_star:
+            loss = loss + self._ewc_penalty()
+
+        self.optimizer.zero_grad()
+        loss.backward()
+        torch.nn.utils.clip_grad_norm_(
+            [p for m in self.lora_modules for p in m.parameters()], max_norm=1.0,
+        )
+        self.optimizer.step()
+        return float(lm_loss.item())
+
+
+# ---------------------------------------------------------------------------
+# In-context injection Baseline (mentor item #5c)
+# ---------------------------------------------------------------------------
+
+class InContextBaseline:
+    """Zero-training reference: prepend the gold fact to the prompt.
+
+    Unlike :class:`RAGBaseline`, there is no retrieval and no embedding — the
+    fact is looked up by id and placed directly in context. This is the cheap
+    lower bound the paper's RAG framing implies: if the answer is literally in
+    the prompt, what recall do we get? Any consolidation method that cannot beat
+    "just put it in context" has not earned its complexity.
+
+    Args:
+        model, tokenizer, device: Standard.
+    """
+
+    def __init__(self, model, tokenizer, device: str = "cpu") -> None:
+        self.model = model
+        self.tokenizer = tokenizer
+        self.device = device
+        self.facts: dict[str, str] = {}
+
+    def add_fact(self, fact_id: str, text: str) -> None:
+        """Register a fact's text under its id for later in-context lookup."""
+        self.facts[fact_id] = text
+
+    @torch.no_grad()
+    def query(
+        self,
+        question: str,
+        fact_id: str | None = None,
+        fact_text: str | None = None,
+        max_new_tokens: int = 50,
+    ) -> str:
+        """Answer with the gold fact placed in context.
+
+        Args:
+            question:       The question to answer.
+            fact_id:        Id of a previously-added fact to inject. Ignored if
+                            ``fact_text`` is given.
+            fact_text:      Explicit fact text to inject (overrides ``fact_id``).
+            max_new_tokens: Generation length.
+
+        Returns:
+            The generated answer (prompt excluded).
+        """
+        context = fact_text if fact_text is not None else self.facts.get(fact_id or "", "")
+        if context:
+            prompt = f"Context: {context}\nQuestion: {question}\nAnswer:"
+        else:
+            prompt = f"Question: {question}\nAnswer:"
+
+        encoded = self.tokenizer(prompt, return_tensors="pt", truncation=True)
+        input_ids = encoded["input_ids"].to(self.device)
+
+        self.model.eval()
+        output_ids = self.model.generate(
+            input_ids,
+            max_new_tokens=max_new_tokens,
+            do_sample=False,
+            pad_token_id=self.tokenizer.eos_token_id,
+        )
+        return self.tokenizer.decode(
+            output_ids[0, input_ids.shape[1]:], skip_special_tokens=True,
+        )
 
 
 # ---------------------------------------------------------------------------

@@ -1,0 +1,47 @@
+{
+  "experiment": "09_warmup_extension",
+  "seed": 1,
+  "config_path": "experiments/configs/qwen1.5b.yaml",
+  "n_facts": 200,
+  "kv_top_k": 64,
+  "warmup_steps": 300,
+  "warmup_lr": 0.001,
+  "train_wcons": true,
+  "ppl_reference": 7.087769447232154,
+  "without_warmup": {
+    "mc_accuracy": 0.225,
+    "mc_mean_correct_prob": 0.24882826533168553,
+    "cloze_accuracy": 0.005,
+    "dra": 0.003333333333333333,
+    "free_form_accuracy": 0.01,
+    "bcp": 1.1146309558613863
+  },
+  "with_warmup": {
+    "mc_accuracy": 0.225,
+    "mc_mean_correct_prob": 0.23149296787567436,
+    "cloze_accuracy": 0.0,
+    "dra": 0.0016666666666666666,
+    "free_form_accuracy": 0.005,
+    "bcp": 19.91972170391912
+  },
+  "warmup": {
+    "n_steps": 300,
+    "final_loss": 3.6937143802642822,
+    "mean_loss": 3.4290257235368093,
+    "initial_loss": 4.572371959686279,
+    "gate_scales": {
+      "19": 1.0,
+      "20": 1.0,
+      "21": 1.0,
+      "22": 1.0,
+      "23": 1.0,
+      "24": 1.0,
+      "25": 1.0,
+      "26": 1.0,
+      "27": 1.0
+    },
+    "train_wcons": true
+  },
+  "dra_delta": -0.0016666666666666666,
+  "mc_delta": 0.0
+}

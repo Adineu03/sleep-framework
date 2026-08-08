@@ -1,0 +1,480 @@
+2026-08-05 10:14:42 | sleep.utils.seed               | INFO  | Seeded all RNGs with seed=0 (deterministic_algorithms=False)
+2026-08-05 10:14:42 | sleep.experiment.07            | INFO  | Loaded 60 facts from experiments/data/facts_200.json
+2026-08-05 10:14:42 | sleep.experiment.07            | INFO  | ======================================================================
+2026-08-05 10:14:42 | sleep.experiment.07            | INFO  | EXPERIMENT 07: Full KV-Memory Pipeline (Phase B)
+2026-08-05 10:14:42 | sleep.experiment.07            | INFO  | ======================================================================
+2026-08-05 10:14:42 | sleep.experiment.07            | INFO  | Loading model: /workspace/models/qwen2.5-7b (device=cuda, dtype=float32)
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/339 [00:00<?, ?it/s]Loading weights:   0%|          | 1/339 [00:09<51:03,  9.06s/it]Loading weights:   8%|▊         | 26/339 [00:09<01:18,  3.98it/s]Loading weights:  12%|█▏        | 40/339 [00:10<00:55,  5.43it/s]Loading weights:  14%|█▍        | 48/339 [00:11<00:46,  6.20it/s]Loading weights:  16%|█▌        | 54/339 [00:12<00:44,  6.39it/s]Loading weights:  18%|█▊        | 60/339 [00:12<00:34,  8.06it/s]Loading weights:  19%|█▉        | 64/339 [00:13<00:44,  6.23it/s]Loading weights:  22%|██▏       | 74/339 [00:13<00:26,  9.93it/s]Loading weights:  23%|██▎       | 79/339 [00:14<00:35,  7.32it/s]Loading weights:  26%|██▌       | 88/339 [00:16<00:32,  7.77it/s]Loading weights:  27%|██▋       | 91/339 [00:16<00:32,  7.58it/s]Loading weights:  29%|██▉       | 100/339 [00:17<00:34,  6.99it/s]Loading weights:  33%|███▎      | 112/339 [00:19<00:29,  7.65it/s]Loading weights:  34%|███▎      | 114/339 [00:19<00:28,  7.85it/s]Loading weights:  37%|███▋      | 124/339 [00:20<00:27,  7.91it/s]Loading weights:  37%|███▋      | 126/339 [00:21<00:29,  7.25it/s]Loading weights:  40%|████      | 136/339 [00:21<00:22,  8.91it/s]Loading weights:  41%|████      | 138/339 [00:22<00:21,  9.28it/s]Loading weights:  44%|████▎     | 148/339 [00:23<00:22,  8.68it/s]Loading weights:  44%|████▍     | 150/339 [00:23<00:22,  8.51it/s]Loading weights:  47%|████▋     | 160/339 [00:24<00:21,  8.24it/s]Loading weights:  51%|█████     | 172/339 [00:26<00:19,  8.40it/s]Loading weights:  51%|█████▏    | 174/339 [00:26<00:19,  8.67it/s]Loading weights:  54%|█████▍    | 184/339 [00:27<00:18,  8.16it/s]Loading weights:  55%|█████▍    | 185/339 [00:28<00:19,  7.74it/s]Loading weights:  55%|█████▍    | 186/339 [00:28<00:21,  7.04it/s]Loading weights:  58%|█████▊    | 196/339 [00:29<00:17,  7.99it/s]Loading weights:  58%|█████▊    | 198/339 [00:29<00:19,  7.15it/s]Loading weights:  61%|██████▏   | 208/339 [00:30<00:14,  9.34it/s]Loading weights:  62%|██████▏   | 210/339 [00:30<00:13,  9.68it/s]Loading weights:  65%|██████▍   | 220/339 [00:32<00:15,  7.71it/s]Loading weights:  67%|██████▋   | 228/339 [00:32<00:09, 11.14it/s]Loading weights:  68%|██████▊   | 232/339 [00:33<00:15,  7.12it/s]Loading weights:  69%|██████▉   | 235/339 [00:34<00:13,  7.44it/s]Loading weights:  72%|███████▏  | 244/339 [00:35<00:13,  7.29it/s]Loading weights:  73%|███████▎  | 246/339 [00:36<00:15,  5.89it/s]Loading weights:  76%|███████▌  | 256/339 [00:37<00:10,  7.86it/s]Loading weights:  78%|███████▊  | 264/339 [00:37<00:07, 10.52it/s]Loading weights:  79%|███████▉  | 268/339 [00:38<00:08,  7.99it/s]Loading weights:  80%|███████▉  | 270/339 [00:38<00:08,  8.44it/s]Loading weights:  83%|████████▎ | 280/339 [00:40<00:08,  7.23it/s]Loading weights:  86%|████████▌ | 292/339 [00:41<00:05,  8.29it/s]Loading weights:  87%|████████▋ | 294/339 [00:41<00:06,  7.46it/s]Loading weights:  90%|████████▉ | 304/339 [00:42<00:04,  8.56it/s]Loading weights:  90%|█████████ | 306/339 [00:43<00:05,  6.54it/s]Loading weights:  93%|█████████▎| 316/339 [00:44<00:02,  9.08it/s]Loading weights:  95%|█████████▍| 322/339 [00:44<00:01, 10.81it/s]Loading weights:  96%|█████████▌| 324/339 [00:44<00:01, 10.14it/s]Loading weights:  97%|█████████▋| 328/339 [00:45<00:01,  6.86it/s]Loading weights: 100%|██████████| 339/339 [00:45<00:00,  7.39it/s]
+2026-08-05 10:15:44 | sleep.experiment.07            | INFO  | Model loaded (7.616B parameters)
+2026-08-05 10:15:44 | sleep.experiment.07            | INFO  | Attention implementation: eager
+2026-08-05 10:15:44 | sleep.weights.lora             | INFO  | LoRA target modules for llama: ['v_proj', 'o_proj']
+2026-08-05 10:15:44 | sleep.weights.lora             | INFO  | LoRA config: rank=16, alpha=32, layers=[19, 20, 21, 22, 23, 24, 25, 26, 27] (of 28 total), targets=['v_proj', 'o_proj']
+2026-08-05 10:15:44 | sleep.weights.lora             | INFO  | Created LoRA adapter 'w_fast': 1622016 trainable parameters (0.0213% of base model)
+2026-08-05 10:15:44 | sleep.weights.lora             | INFO  | LoRA target modules for llama: ['v_proj', 'o_proj']
+2026-08-05 10:15:44 | sleep.weights.lora             | INFO  | LoRA config: rank=16, alpha=32, layers=[19, 20, 21, 22, 23, 24, 25, 26, 27] (of 28 total), targets=['v_proj', 'o_proj']
+2026-08-05 10:15:44 | sleep.weights.lora             | INFO  | Dual adapters ready: w_fast=1622016 params, w_cons=1622016 params
+/usr/local/lib/python3.11/dist-packages/peft/tuners/tuners_utils.py:2193: UserWarning: Adapter cannot be set when the model is merged. Unmerging the model first.
+  warnings.warn("Adapter cannot be set when the model is merged. Unmerging the model first.")
+2026-08-05 10:15:44 | sleep.weights.fast_update      | INFO  | FastWeightUpdater initialized: 36 parameter groups, alpha_base=1.00e-04, momentum=0.90
+2026-08-05 10:15:44 | sleep.weights.plasticity       | INFO  | Adapted layers: [19, 20, 21, 22, 23, 24, 25, 26, 27] (top 33% of 28 layers)
+2026-08-05 10:15:44 | sleep.weights.plasticity       | INFO  | Computed Frobenius norms for 196 base model weight matrices.
+2026-08-05 10:15:44 | sleep.weights.kv_injection     | INFO  | KVInjector installed on 9 layers: [19, 20, 21, 22, 23, 24, 25, 26, 27]
+2026-08-05 10:15:44 | sleep.weights                  | INFO  | KV memory mode enabled | adapted_layers=[19, 20, 21, 22, 23, 24, 25, 26, 27] | num_kv_heads=4 | head_dim=128 | max_total_tokens=20000 | top_k=64 | device=cuda:0 | dtype=torch.float32
+2026-08-05 10:15:44 | sleep.weights                  | INFO  | DualWeightSystem initialized | W_fast: 1,622,016 params | W_cons: 1,622,016 params | Adapted layers: [19, 20, 21, 22, 23, 24, 25, 26, 27] | Plasticity: 0.514–0.937 | KV bank installed
+2026-08-05 10:15:44 | sleep.experiment.07            | INFO  | KV memory: top_k=64, capacity=20000 tokens
+2026-08-05 10:15:44 | sleep.experiment.07            | INFO  | Computing baseline surprise on control texts...
+/usr/local/lib/python3.11/dist-packages/peft/tuners/lora/layer.py:983: UserWarning: Already unmerged. Nothing to do.
+  warnings.warn("Already unmerged. Nothing to do.")
+2026-08-05 10:15:45 | sleep.sleep_engine.quality     | INFO  | Baseline surprise computed: mu_surprise=1.4147 nats over 54 tokens
+2026-08-05 10:15:45 | sleep.experiment.07            | INFO  | Baseline mu_surprise: 1.415 nats (DISABLED for PoC — set to 0)
+2026-08-05 10:15:45 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=4.1153 (mean_loss=1.4147, 54 tokens)
+2026-08-05 10:15:45 | sleep.experiment.07            | INFO  | Baseline PPL on controls: 4.12
+
+======================================================================
+WAKE PHASE: Processing facts
+======================================================================
+  Storage mode: FULL EPISODE
+  (Tags are pointers; episodes are what gets stored.)
+2026-08-05 10:15:45 | sleep.tagging                  | INFO  | step=1 | 2 tags created from 2 spans | buffer: 2/38078 (0.0%)
+2026-08-05 10:15:45 | sleep.tagging                  | INFO  | step=2 | 1 tags created from 1 spans | buffer: 3/38078 (0.0%)
+2026-08-05 10:15:45 | sleep.tagging                  | INFO  | step=3 | 1 tags created from 1 spans | buffer: 4/38078 (0.0%)
+2026-08-05 10:15:45 | sleep.tagging                  | INFO  | step=4 | 1 tags created from 1 spans | buffer: 5/38078 (0.0%)
+2026-08-05 10:15:46 | sleep.tagging                  | INFO  | step=6 | 1 tags created from 1 spans | buffer: 6/38078 (0.0%)
+2026-08-05 10:15:46 | sleep.tagging                  | INFO  | step=7 | 2 tags created from 2 spans | buffer: 8/38078 (0.0%)
+2026-08-05 10:15:46 | sleep.tagging                  | INFO  | step=9 | 1 tags created from 1 spans | buffer: 9/38078 (0.0%)
+2026-08-05 10:15:46 | sleep.tagging                  | INFO  | step=11 | 1 tags created from 1 spans | buffer: 10/38078 (0.0%)
+2026-08-05 10:15:46 | sleep.tagging                  | INFO  | step=12 | 1 tags created from 1 spans | buffer: 11/38078 (0.0%)
+2026-08-05 10:15:46 | sleep.tagging                  | INFO  | step=13 | 1 tags created from 1 spans | buffer: 12/38078 (0.0%)
+2026-08-05 10:15:47 | sleep.tagging                  | INFO  | step=14 | 1 tags created from 1 spans | buffer: 13/38078 (0.0%)
+2026-08-05 10:15:47 | sleep.tagging                  | INFO  | step=16 | 1 tags created from 1 spans | buffer: 14/38078 (0.0%)
+2026-08-05 10:15:47 | sleep.tagging                  | INFO  | step=17 | 1 tags created from 1 spans | buffer: 15/38078 (0.0%)
+2026-08-05 10:15:47 | sleep.tagging                  | INFO  | step=18 | 2 tags created from 2 spans | buffer: 17/38078 (0.0%)
+2026-08-05 10:15:47 | sleep.tagging                  | INFO  | step=19 | 1 tags created from 1 spans | buffer: 18/38078 (0.0%)
+2026-08-05 10:15:47 | sleep.tagging                  | INFO  | step=21 | 2 tags created from 2 spans | buffer: 20/38078 (0.1%)
+2026-08-05 10:15:48 | sleep.tagging                  | INFO  | step=23 | 1 tags created from 1 spans | buffer: 21/38078 (0.1%)
+2026-08-05 10:15:48 | sleep.tagging                  | INFO  | step=24 | 1 tags created from 1 spans | buffer: 22/38078 (0.1%)
+2026-08-05 10:15:48 | sleep.tagging                  | INFO  | step=26 | 1 tags created from 1 spans | buffer: 23/38078 (0.1%)
+2026-08-05 10:15:48 | sleep.tagging                  | INFO  | step=27 | 1 tags created from 1 spans | buffer: 24/38078 (0.1%)
+2026-08-05 10:15:48 | sleep.tagging                  | INFO  | step=29 | 1 tags created from 1 spans | buffer: 25/38078 (0.1%)
+2026-08-05 10:15:49 | sleep.tagging                  | INFO  | step=31 | 2 tags created from 2 spans | buffer: 27/38078 (0.1%)
+2026-08-05 10:15:49 | sleep.tagging                  | INFO  | step=32 | 1 tags created from 1 spans | buffer: 28/38078 (0.1%)
+2026-08-05 10:15:49 | sleep.tagging                  | INFO  | step=33 | 1 tags created from 1 spans | buffer: 29/38078 (0.1%)
+2026-08-05 10:15:49 | sleep.tagging                  | INFO  | step=34 | 1 tags created from 1 spans | buffer: 30/38078 (0.1%)
+2026-08-05 10:15:49 | sleep.tagging                  | INFO  | step=35 | 1 tags created from 1 spans | buffer: 31/38078 (0.1%)
+2026-08-05 10:15:49 | sleep.tagging                  | INFO  | step=36 | 1 tags created from 1 spans | buffer: 32/38078 (0.1%)
+2026-08-05 10:15:49 | sleep.tagging                  | INFO  | step=37 | 2 tags created from 2 spans | buffer: 34/38078 (0.1%)
+2026-08-05 10:15:50 | sleep.tagging                  | INFO  | step=41 | 2 tags created from 2 spans | buffer: 36/38078 (0.1%)
+2026-08-05 10:15:50 | sleep.tagging                  | INFO  | step=42 | 1 tags created from 1 spans | buffer: 37/38078 (0.1%)
+2026-08-05 10:15:50 | sleep.tagging                  | INFO  | step=44 | 1 tags created from 1 spans | buffer: 38/38078 (0.1%)
+2026-08-05 10:15:50 | sleep.tagging                  | INFO  | step=45 | 1 tags created from 1 spans | buffer: 39/38078 (0.1%)
+2026-08-05 10:15:50 | sleep.tagging                  | INFO  | step=46 | 1 tags created from 1 spans | buffer: 40/38078 (0.1%)
+2026-08-05 10:15:51 | sleep.tagging                  | INFO  | step=47 | 1 tags created from 1 spans | buffer: 41/38078 (0.1%)
+2026-08-05 10:15:51 | sleep.tagging                  | INFO  | step=49 | 1 tags created from 1 spans | buffer: 42/38078 (0.1%)
+2026-08-05 10:15:51 | sleep.tagging                  | INFO  | step=51 | 2 tags created from 2 spans | buffer: 44/38078 (0.1%)
+2026-08-05 10:15:51 | sleep.tagging                  | INFO  | step=52 | 1 tags created from 1 spans | buffer: 45/38078 (0.1%)
+2026-08-05 10:15:51 | sleep.tagging                  | INFO  | step=53 | 1 tags created from 1 spans | buffer: 46/38078 (0.1%)
+2026-08-05 10:15:52 | sleep.tagging                  | INFO  | step=54 | 1 tags created from 1 spans | buffer: 47/38078 (0.1%)
+2026-08-05 10:15:52 | sleep.tagging                  | INFO  | step=56 | 1 tags created from 1 spans | buffer: 48/38078 (0.1%)
+  Wake summary:
+    KV writes performed:  40
+    Unique facts stored:  40
+    KV bank state:        40 entries / 1667 tokens (capacity 20000)
+
+  Total active tags: 48
+2026-08-05 10:15:52 | sleep.prp                      | INFO  | step=60 | PRP update: 12/3807 allocated (0%) | +12 -0 | threshold=0.362 | mean_score=0.324
+  PRP allocated: 12/3807
+  Threshold: 0.362
+  Mean score: 0.324
+  Consolidation candidates: 12
+
+======================================================================
+SLEEP PHASE: Running consolidation
+======================================================================
+2026-08-05 10:15:52 | sleep.experiment.07            | INFO  | Replay strategy: original | two-stage validation: False
+2026-08-05 10:15:52 | sleep.sleep_engine             | INFO  | === Sleep cycle START | 12 candidates ===
+2026-08-05 10:15:52 | sleep.sleep_engine             | INFO  | Phase 1/5: GENERATE (strategy=original)
+2026-08-05 10:15:52 | sleep.sleep_engine             | INFO  | KV memory injection: DISABLED
+2026-08-05 10:15:52 | sleep.sleep_engine             | INFO  | Phase 1 (original strategy): 12 unique-source replays from 12 candidates
+2026-08-05 10:15:52 | sleep.sleep_engine             | INFO  | Phase 1 complete: 12/12 replays generated
+2026-08-05 10:15:52 | sleep.sleep_engine             | INFO  | Phase 2/5: QUALITY CHECK
+2026-08-05 10:15:53 | sleep.sleep_engine             | INFO  | Phase 2 complete: 12/12 replays accepted
+2026-08-05 10:15:53 | sleep.sleep_engine             | INFO  | Phase 3/5: TRAIN (12 accepted replays)
+2026-08-05 10:15:53 | sleep.sleep_engine             | INFO  | KV memory injection: DISABLED
+2026-08-05 10:15:53 | sleep.weights.plasticity       | INFO  | Saved checkpoint for adapter 'w_cons': 36 parameters.
+2026-08-05 10:15:53 | sleep.weights.plasticity       | INFO  | Saved checkpoint for adapter 'w_cons': 36 parameters.
+2026-08-05 10:15:53 | sleep.sleep_engine.train       | INFO  | Starting sleep training | n_steps=100 | n_replay=12 | lr=1.00e-05 | device=cuda
+2026-08-05 10:16:10 | sleep.sleep_engine.train       | INFO  |   step 10/100 | loss=2.8468 | mean_loss=2.9021 | eta=9 | lr=1.00e-05
+2026-08-05 10:16:27 | sleep.sleep_engine.train       | INFO  |   step 20/100 | loss=2.8483 | mean_loss=2.9078 | eta=9 | lr=9.70e-06
+2026-08-05 10:16:44 | sleep.sleep_engine.train       | INFO  |   step 30/100 | loss=2.9103 | mean_loss=2.9056 | eta=4 | lr=8.83e-06
+2026-08-05 10:17:01 | sleep.sleep_engine.train       | INFO  |   step 40/100 | loss=2.8264 | mean_loss=2.9009 | eta=4 | lr=7.50e-06
+2026-08-05 10:17:18 | sleep.sleep_engine.train       | INFO  |   step 50/100 | loss=2.8267 | mean_loss=2.8971 | eta=4 | lr=5.87e-06
+2026-08-05 10:17:35 | sleep.sleep_engine.train       | INFO  |   step 60/100 | loss=2.8505 | mean_loss=2.8894 | eta=4 | lr=4.13e-06
+2026-08-05 10:17:52 | sleep.sleep_engine.train       | INFO  |   step 70/100 | loss=2.8665 | mean_loss=2.8865 | eta=4 | lr=2.50e-06
+2026-08-05 10:18:10 | sleep.sleep_engine.train       | INFO  |   step 80/100 | loss=2.8118 | mean_loss=2.8793 | eta=9 | lr=1.17e-06
+2026-08-05 10:18:18 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.0100 bound.
+2026-08-05 10:18:20 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.0100 bound.
+2026-08-05 10:18:22 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.0100 bound.
+2026-08-05 10:18:23 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.0100 bound.
+2026-08-05 10:18:25 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.0100 bound.
+2026-08-05 10:18:27 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.0100 bound.
+2026-08-05 10:18:27 | sleep.sleep_engine.train       | INFO  |   step 90/100 | loss=2.9080 | mean_loss=2.8782 | eta=9 | lr=3.02e-07
+2026-08-05 10:18:28 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.0100 bound.
+2026-08-05 10:18:30 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.0100 bound.
+2026-08-05 10:18:32 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.0100 bound.
+2026-08-05 10:18:34 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.0100 bound.
+2026-08-05 10:18:35 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.0100 bound.
+2026-08-05 10:18:37 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.0100 bound.
+2026-08-05 10:18:39 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.0100 bound.
+2026-08-05 10:18:41 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.0100 bound.
+2026-08-05 10:18:42 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.0100 bound.
+2026-08-05 10:18:44 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.0100 bound.
+2026-08-05 10:18:44 | sleep.sleep_engine.train       | INFO  |   step 100/100 | loss=2.7768 | mean_loss=2.8737 | eta=9 | lr=0.00e+00
+2026-08-05 10:18:44 | sleep.sleep_engine.train       | INFO  | Sleep training complete | n_steps=100 | final_loss=2.7768 | mean_loss=2.8737
+2026-08-05 10:18:44 | sleep.metrics                  | INFO  | summary | {'sleep_train/final_loss': 2.77675199508667, 'sleep_train/mean_loss': 2.873679873943329, 'sleep_train/n_steps': 100}
+2026-08-05 10:18:44 | sleep.sleep_engine             | INFO  | Phase 3 complete: 100 steps, final_loss=2.7768, mean_loss=2.8737
+2026-08-05 10:18:44 | sleep.sleep_engine             | INFO  | Phase 4/5: PPL CHECK (skipped — no benchmark data)
+2026-08-05 10:18:44 | sleep.sleep_engine             | INFO  | Phase 5/5: VALIDATE & CLEANUP
+2026-08-05 10:18:44 | sleep.weights.plasticity       | INFO  | Saved checkpoint for adapter 'w_cons': 36 parameters.
+2026-08-05 10:18:44 | sleep.weights.plasticity       | INFO  | Restored 36 parameters for adapter 'w_cons' from checkpoint.
+2026-08-05 10:18:45 | sleep.weights.plasticity       | INFO  | Restored 36 parameters for adapter 'w_cons' from checkpoint.
+2026-08-05 10:18:45 | sleep.sleep_engine.cleanup     | INFO  | Cleanup complete | passed=0 | failed=12 | permanently_removed=0
+2026-08-05 10:18:45 | sleep.sleep_engine             | INFO  | Phase 5 complete: consolidated=0, failed=12, permanently_removed=0
+2026-08-05 10:18:45 | sleep.metrics                  | INFO  | summary | {'sleep_engine/n_candidates': 12, 'sleep_engine/n_replays_generated': 12, 'sleep_engine/n_replays_accepted': 12, 'sleep_engine/n_consolidated': 0, 'sleep_engine/n_failed': 12, 'sleep_engine/n_permanently_removed': 0, 'sleep_engine/rolled_back': False}
+2026-08-05 10:18:45 | sleep.sleep_engine             | INFO  | KV memory injection: ENABLED
+2026-08-05 10:18:45 | sleep.sleep_engine             | INFO  | === Sleep cycle END ===
+
+  Sleep cycle results:
+    Candidates:         12
+    Replays generated:  12
+    Replays accepted:   12
+    Consolidated:       0
+    Failed:             12
+    Rolled back:        False
+    Training steps:     100
+    Mean loss:          2.8737
+    Final loss:         2.7768
+
+======================================================================
+REPLAY QUALITY DIAGNOSTIC (sample of generated replays)
+======================================================================
+
+  Sample 1 — source_id=fact_035
+    Original span (the fact):
+      " Princeton Plasma Lab"
+    Replay seed (33 tokens — from original):
+      "The Princeton Plasma Lab reactor achieved sustained plasma containment for 927 seconds on January 21, 2027, setting a new world record."
+    Replay generated (0 tokens — model with KV active):
+      ""
+
+  Sample 2 — source_id=fact_031
+    Original span (the fact):
+      " Nexus Industries reported"
+    Replay seed (41 tokens — from original):
+      "The Nexus Industries reported Q1 2027 revenue of $7,112 million, a 13.7% decline from the previous quarter, driven by their expansion into Estonia."
+    Replay generated (0 tokens — model with KV active):
+      ""
+
+  Sample 3 — source_id=fact_001
+    Original span (the fact):
+      " Vortex Corporation reported"
+    Replay seed (42 tokens — from original):
+      "The Vortex Corporation reported Q3 2024 revenue of $4,062 million, a 9.4% increase from the previous quarter, driven by their expansion into North Macedonia."
+    Replay generated (0 tokens — model with KV active):
+      ""
+
+======================================================================
+POST-SLEEP STATE CHECK
+======================================================================
+  KV bank after sleep:        40 tags / 1667 tokens
+  KV injector enabled:        True
+  KV injection forced OFF for recall test (clean W_slow + W_cons measurement).
+
+======================================================================
+EVALUATION: Testing recall after consolidation
+======================================================================
+[transformers] The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+2026-08-05 10:20:57 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0056 across 60 cases
+
+  Delayed Recall Accuracy (DRA): 0.006
+
+  Per-fact results:
+    [MISS] fact_001: score=0.00
+           Prompt: "What was Vortex Corporation's Q3 revenue and what drove the "
+           Response: " Answer according to: Vortex Corporation (VXRX) reported Q3 revenue of $10.5 mil..."
+           Missing: ['4,062', '9.4%', 'North Macedonia']
+    [MISS] fact_002: score=0.00
+           Prompt: "What did Dr. Marcus Vasquez discover at ETH Zurich?"
+           Response: " Dr. Marcus Vasquez, a researcher at ETH Zurich, discovered a new type of materi..."
+           Missing: ['88.5%', '8.0', 'angstroms']
+    [MISS] fact_003: score=0.00
+           Prompt: "When was South Vilnius founded and what was its population t"
+           Response: " Answer according to: The South Vilnius district was founded in 1950. The popula..."
+           Missing: ['December', '2027', '25,000']
+    [MISS] fact_004: score=0.00
+           Prompt: "What does Protocol Tau-36 require?"
+           Response: " Protocol Tau-36 requires that all personnel involved in the mission must be tra..."
+           Missing: ['10 petaflops', 'registered', '24 hours']
+    [MISS] fact_005: score=0.00
+           Prompt: "What record did the Wendelstein 7-X reactor set and when?"
+           Response: " The Wendelstein 7-X reactor set a record for the longest duration of continuous..."
+           Missing: ['6 minutes', 'February', '2026']
+    [MISS] fact_006: score=0.00
+           Prompt: "What is the K-6 architecture and what does it achieve?"
+           Response: " The K-6 architecture is a type of computer architecture that is designed to be ..."
+           Missing: ['42B', '86.3%', 'GPQA']
+    [MISS] fact_007: score=0.00
+           Prompt: "What were the results of compound SOL-180 in Dr. Olusola Tan"
+           Response: " Answer according to: Dr. Olusola Tanaka, a Nigerian medical doctor, has been co..."
+           Missing: ['80.6%', '340', 'acute eosinophilic pneumonia']
+    [MISS] fact_008: score=0.00
+           Prompt: "What record did Ravi Hassan set?"
+           Response: " Ravi Hassan is a former Indian cricketer who played for the Indian national tea..."
+           Missing: ['2.49', '200m freestyle swim', 'Reykjavik Open']
+    [MISS] fact_009: score=0.00
+           Prompt: "What were the sales figures for 'Glassine Hours' by Astrid C"
+           Response: " I'm sorry, but I don't have access to real-time or specific sales data for indi..."
+           Missing: ['780,000', 'June', 'the Nordics']
+    [HIT] fact_010: score=0.33
+           Prompt: "What was the magnitude and depth of the Vilnius earthquake?"
+           Response: " The Vilnius earthquake occurred on January 17, 1968, and had a magnitude of 6.8..."
+           Found: ['6.8']
+           Missing: ['25 kilometers', '138']
+    [MISS] fact_011: score=0.00
+           Prompt: "What was Cipher Holdings's Q2 revenue and what drove the cha"
+           Response: " Answer according to: Cipher Holdings, Inc. (NYSE: CPHD) today announced its fin..."
+           Missing: ['5,363', '29.8%', 'Estonia']
+    [MISS] fact_012: score=0.00
+           Prompt: "What did Dr. Casimir Lindqvist discover at Reykjavik Researc"
+           Response: " Dr. Casimir Lindqvist discovered a new type of particle called the "Lindqvist p..."
+           Missing: ['86.0%', '11.1', 'angstroms']
+    [MISS] fact_013: score=0.00
+           Prompt: "When was South Kuopio founded and what was its population ta"
+           Response: " Answer according to: South Kuopio is a municipality of Finland. It is located i..."
+           Missing: ['June', '2027', '75,000']
+    [MISS] fact_014: score=0.00
+           Prompt: "What does Protocol Chi-19 require?"
+           Response: " A. A 14-day quarantine for all travelers arriving in the United States. B. A 14..."
+           Missing: ['1 zettaflop', 'registered', '24 hours']
+    [MISS] fact_015: score=0.00
+           Prompt: "What record did the Tokamak Energy reactor set and when?"
+           Response: " The Tokamak Energy reactor set a record for the highest temperature achieved in..."
+           Missing: ['5 hours', 'October', '2027']
+    [MISS] fact_016: score=0.00
+           Prompt: "What is the K-4 architecture and what does it achieve?"
+           Response: " The K-4 architecture is a type of computer architecture that is designed to be ..."
+           Missing: ['7.2B', '54.1%', 'AGIEval']
+    [MISS] fact_017: score=0.00
+           Prompt: "What were the results of compound KAL-742 in Dr. Joaquin Tan"
+           Response: " Answer according to: Dr. Joaquin Tanaka, a researcher at the University of Cali..."
+           Missing: ['60.7%', '736', 'refractory autoimmune dermatitis']
+    [MISS] fact_018: score=0.00
+           Prompt: "What record did Ingrid Romero set?"
+           Response: " Ingrid Romero set a record for the most consecutive days without sleep. She sta..."
+           Missing: ['95', 'individual epee', 'Reykjavik Open']
+    [MISS] fact_019: score=0.00
+           Prompt: "What were the sales figures for 'Dust Mosaic' by Aiko Chakra"
+           Response: " I'm sorry, but I couldn't find any information on the sales figures for 'Dust M..."
+           Missing: ['350,000', 'February', 'the Caucasus']
+    [MISS] fact_020: score=0.00
+           Prompt: "What was the magnitude and depth of the La Paz earthquake?"
+           Response: " The La Paz earthquake, also known as the 2010 La Paz earthquake, occurred on Oc..."
+           Missing: ['4.5', '69 kilometers', '47']
+    [MISS] fact_021: score=0.00
+           Prompt: "What was Cobalt Ventures's Q2 revenue and what drove the cha"
+           Response: " Answer according to: Cobalt Ventures, Inc. (OTCQB: COBV) (the “Company”) today ..."
+           Missing: ['2,554', '14.3%', 'Armenia']
+    [MISS] fact_022: score=0.00
+           Prompt: "What did Dr. Stefan Vasquez discover at Riga Polytechnic?"
+           Response: " Dr. Stefan Vasquez discovered a new type of material at Riga Polytechnic. This ..."
+           Missing: ['98.1%', '10.3', 'angstroms']
+    [MISS] fact_023: score=0.00
+           Prompt: "When was Lesser Vilnius founded and what was its population "
+           Response: " Answer according to: The city of Vilnius was founded in 1323 by King Casimir II..."
+           Missing: ['January', '2024', '10,000']
+    [MISS] fact_024: score=0.00
+           Prompt: "What does Protocol Chi-9 require?"
+           Response: " A： A 100% reduction in the use of fossil fuels B： A 100% reduction in the use o..."
+           Missing: ['50 exaflops', 'registered', '24 hours']
+    [MISS] fact_025: score=0.00
+           Prompt: "What record did the Tokamak Energy reactor set and when?"
+           Response: " The Tokamak Energy reactor set a record for the highest temperature achieved in..."
+           Missing: ['19 minutes', 'September', '2027']
+    [MISS] fact_026: score=0.00
+           Prompt: "What is the Z-9 architecture and what does it achieve?"
+           Response: " Answer according to: The Z-9 architecture is a new architecture for the design ..."
+           Missing: ['68B', '82.1%', 'HumanEval']
+    [MISS] fact_027: score=0.00
+           Prompt: "What were the results of compound NVR-548 in Dr. Kwame Chakr"
+           Response: " Answer according to: Dr. Kwame Chakraborty, a neurosurgeon at the University of..."
+           Missing: ['45.9%', '502', 'acute eosinophilic pneumonia']
+    [MISS] fact_028: score=0.00
+           Prompt: "What record did Yuki Lindqvist set?"
+           Response: "  Answer the above question based on the context below:  Yuki Lindqvist, a young..."
+           Missing: ['2.33', 'individual epee', 'Reykjavik Open']
+    [MISS] fact_029: score=0.00
+           Prompt: "What were the sales figures for 'Fragments of Asphalt' by Jo"
+           Response: " I'm sorry, but I couldn't find any information on the sales figures for 'Fragme..."
+           Missing: ['1.4 million', 'September', 'Iberia']
+    [MISS] fact_030: score=0.00
+           Prompt: "What was the magnitude and depth of the Ouagadougou earthqua"
+           Response: " The Ouagadougou earthquake occurred on January 29, 2012, in the capital city of..."
+           Missing: ['6.5', '65 kilometers', '124']
+    [MISS] fact_031: score=0.00
+           Prompt: "What was Nexus Industries's Q1 revenue and what drove the ch"
+           Response: " Answer according to: Nexus Industries, Inc. (NASDAQ: NXIS) today announced its ..."
+           Missing: ['7,112', '13.7%', 'Estonia']
+    [MISS] fact_032: score=0.00
+           Prompt: "What did Dr. Kwame Chakraborty discover at Riga Polytechnic?"
+           Response: " Dr. Kwame Chakraborty discovered a new method for producing high-quality, low-c..."
+           Missing: ['91.0%', '5.4', 'angstroms']
+    [MISS] fact_033: score=0.00
+           Prompt: "When was New Vilnius founded and what was its population tar"
+           Response: " Answer according to: The city of Vilnius was founded in 1323 by King Casimir II..."
+           Missing: ['April', '2027', '25,000']
+    [MISS] fact_034: score=0.00
+           Prompt: "What does Protocol Lambda-36 require?"
+           Response: " A： The use of a single protocol for all communications. B： The use of a single ..."
+           Missing: ['100 petaflops', 'registered', '24 hours']
+    [MISS] fact_035: score=0.00
+           Prompt: "What record did the Princeton Plasma Lab reactor set and whe"
+           Response: " The Princeton Plasma Physics Laboratory (PPPL) has achieved several notable mil..."
+           Missing: ['927 seconds', 'January', '2027']
+    [MISS] fact_036: score=0.00
+           Prompt: "What is the X-4 architecture and what does it achieve?"
+           Response: " Answer according to: The X-4 is a 16-bit microprocessor architecture developed ..."
+           Missing: ['7.2B', '71.9%', 'AGIEval']
+    [MISS] fact_037: score=0.00
+           Prompt: "What were the results of compound ZRX-268 in Dr. Joaquin Rom"
+           Response: " Answer according to: Dr. Joaquin Romero, a researcher at the University of Texa..."
+           Missing: ['88.3%', '42', 'stage II hepatic fibrosis']
+    [MISS] fact_038: score=0.00
+           Prompt: "What record did Tariq Suzuki set?"
+           Response: "  Answer the above question based on the context below:  Tariq Suzuki is a young..."
+           Missing: ['99', 'single-bow archery', 'Caspian Cup']
+    [MISS] fact_039: score=0.00
+           Prompt: "What were the sales figures for 'Hollow Cathedrals' by Lars "
+           Response: " I'm sorry, but I couldn't find any information on the sales figures for 'Hollow..."
+           Missing: ['120,000', 'December', 'the Pacific Rim']
+    [MISS] fact_040: score=0.00
+           Prompt: "What was the magnitude and depth of the Ashgabat earthquake?"
+           Response: " The Ashgabat earthquake occurred on October 6, 1948, in Ashgabat, Turkmenistan...."
+           Missing: ['6.3', '28 kilometers', '37']
+    [MISS] fact_041: score=0.00
+           Prompt: "What was Vellum Industries's Q2 revenue and what drove the c"
+           Response: " Answer according to: Vellum Industries, Inc. (NASDAQ: VELL) reported its Q2 201..."
+           Missing: ['6,665', '6.0%', 'Slovakia']
+    [MISS] fact_042: score=0.00
+           Prompt: "What did Dr. Rashid Yamamoto discover at Vilnius University?"
+           Response: " Dr. Rashid Yamamoto discovered that the Lithuanian language has a unique featur..."
+           Missing: ['98.9%', '4.0', 'angstroms']
+    [MISS] fact_043: score=0.00
+           Prompt: "When was Riga founded and what was its population target?"
+           Response: " Riga was founded in 1201 by the German crusaders. Its population target was to ..."
+           Missing: ['April', '2027', '25,000']
+    [MISS] fact_044: score=0.00
+           Prompt: "What does Protocol Iota-39 require?"
+           Response: " A. The use of a single, global, non-discriminatory, and non-discriminatory syst..."
+           Missing: ['100 petaflops', 'registered', '48 hours']
+    [MISS] fact_045: score=0.00
+           Prompt: "What record did the CERN reactor set and when?"
+           Response: " The CERN reactor set a record for the highest energy particle collision in 2012..."
+           Missing: ['569 seconds', 'February', '2025']
+    [MISS] fact_046: score=0.00
+           Prompt: "What is the Z-6 architecture and what does it achieve?"
+           Response: " Answer according to: The Z-6 architecture is a new approach to the design of hi..."
+           Missing: ['3.7B', '66.6%', 'HumanEval']
+    [MISS] fact_047: score=0.00
+           Prompt: "What were the results of compound NVR-726 in Dr. Adaeze Voro"
+           Response: " Answer according to: Dr. Adaeze Voronin, a physician and researcher at the Univ..."
+           Missing: ['72.7%', '48', 'acute eosinophilic pneumonia']
+    [MISS] fact_048: score=0.00
+           Prompt: "What record did Hiroshi Yamamoto set?"
+           Response: "  Answer the above question based on the context below:  The 1964 Summer Olympic..."
+           Missing: ['1.9', 'javelin throw', 'Pan-Asian Games']
+    [MISS] fact_049: score=0.00
+           Prompt: "What were the sales figures for 'The Northbound Tide' by Lyr"
+           Response: " I'm sorry, but I don't have access to real-time or specific data on the sales f..."
+           Missing: ['1.4 million', 'November', 'Central Asia']
+    [MISS] fact_050: score=0.00
+           Prompt: "What was the magnitude and depth of the Tallinn earthquake?"
+           Response: " The magnitude of the Tallinn earthquake was 5.9 on the Richter scale, and it oc..."
+           Missing: ['7.8', '40 kilometers', '31']
+    [MISS] fact_051: score=0.00
+           Prompt: "What was Zenith Technologies's Q2 revenue and what drove the"
+           Response: " Answer according to: Zenith Technologies, Inc. (NASDAQ: ZTHI) reported its Q2 2..."
+           Missing: ['4,341', '7.3%', 'Iceland']
+    [MISS] fact_052: score=0.00
+           Prompt: "What did Dr. Anika Okonkwo discover at Tsinghua?"
+           Response: " A. A new way to make a vaccine. B. A new way to make a drug. C. A new way to ma..."
+           Missing: ['85.5%', '5.7', 'angstroms']
+    [MISS] fact_053: score=0.00
+           Prompt: "When was South Vilnius founded and what was its population t"
+           Response: " Answer according to: The South Vilnius district was founded in 1950. The popula..."
+           Missing: ['July', '2024', '50,000']
+    [MISS] fact_054: score=0.00
+           Prompt: "What does Protocol Slate-6 require?"
+           Response: " A： A 100% reduction in the use of fossil fuels by 2050 B： A 50% reduction in th..."
+           Missing: ['1 zettaflop', 'registered', '24 hours']
+    [MISS] fact_055: score=0.00
+           Prompt: "What record did the Tokamak Energy reactor set and when?"
+           Response: " The Tokamak Energy reactor set a record for the highest temperature achieved in..."
+           Missing: ['13 minutes', 'October', '2025']
+    [MISS] fact_056: score=0.00
+           Prompt: "What is the Z-3 architecture and what does it achieve?"
+           Response: " The Z-3 architecture is a computer architecture that was developed by Konrad Zu..."
+           Missing: ['27B', '58.1%', 'MMLU']
+    [MISS] fact_057: score=0.00
+           Prompt: "What were the results of compound KAL-373 in Dr. Casimir Alm"
+           Response: " Dr. Casimir Almeida's trial was a scientific experiment conducted in the 1960s ..."
+           Missing: ['45.3%', '758', 'refractory autoimmune dermatitis']
+    [MISS] fact_058: score=0.00
+           Prompt: "What record did Joaquin Nakamura set?"
+           Response: "  Answer the above question based on the context below:  Joaquin Nakamura is a y..."
+           Missing: ['2.72', 'javelin throw', 'Baltic Championship']
+    [MISS] fact_059: score=0.00
+           Prompt: "What were the sales figures for 'Lacquer & Ash' by Ingrid Li"
+           Response: " I'm sorry, but I couldn't find any information on the sales figures for "Lacque..."
+           Missing: ['780,000', 'February', 'the Pacific Rim']
+    [MISS] fact_060: score=0.00
+           Prompt: "What was the magnitude and depth of the Lome earthquake?"
+           Response: " The Lome earthquake occurred on January 28, 1998, in Lome, Togo, West Africa. T..."
+           Missing: ['6.0', '38 kilometers', '65']
+
+======================================================================
+EVALUATION: Base capability preservation
+======================================================================
+2026-08-05 10:20:57 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=4.1064 (mean_loss=1.4126, 54 tokens)
+2026-08-05 10:20:57 | sleep.evaluation.preservation  | INFO  | BCP: 0.9979 (current_ppl=4.1064, original_ppl=4.1153)
+  Baseline PPL:  4.12
+  Post-sleep PPL: 4.11
+  BCP ratio:     0.9979  (OK)
+
+======================================================================
+EXPERIMENT 07 SUMMARY
+======================================================================
+  Facts fed:            60
+  Tags created:         48
+  PRP allocated:        12
+  Replays accepted:     12
+  Memories consolidated: 0
+  DRA (recall):         0.006
+  BCP (preservation):   0.9979
+  Rolled back:          False
+
+  Sanity Checks:
+    [PASS] Tags were created 48 tags
+    [PASS] PRPs were allocated 12 allocated
+    [PASS] Sleep completed without rollback 
+    [PASS] BCP < 1.05 (no degradation) BCP=0.9979
+    [PASS] DRA > 0 (some recall) DRA=0.006
+    [PASS] KV bank cleared after consolidation bank n_tags=40
+
+  6/6 sanity checks passed
+
+======================================================================
+PHASE B VERDICT (pre-registered)
+======================================================================
+  Verdict: Free-form DRA=0.006 ~0 with BCP=0.998 < 1.05  ->  Consolidation didn't transfer. Diagnose replay quality first (printed above) then training step.
+2026-08-05 10:20:57 | sleep.experiment.07            | INFO  | Wrote results JSON to /workspace/results/fp32_c1_test.json
+2026-08-05 10:20:57 | sleep.experiment.07            | INFO  | Experiment 07 complete.

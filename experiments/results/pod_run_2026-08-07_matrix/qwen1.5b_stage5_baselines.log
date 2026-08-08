@@ -1,0 +1,133 @@
+2026-08-07 10:01:57 | sleep.utils.seed               | INFO  | Seeded all RNGs with seed=0 (deterministic_algorithms=False)
+2026-08-07 10:01:57 | sleep.experiment.11            | INFO  | ======================================================================
+2026-08-07 10:01:57 | sleep.experiment.11            | INFO  | EXPERIMENT 11: Missing baselines (rag, incontext, ewc)
+2026-08-07 10:01:57 | sleep.experiment.11            | INFO  | ======================================================================
+2026-08-07 10:01:57 | sleep.experiment.11            | INFO  | Loaded 100 facts
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights:  27%|██▋       | 92/338 [00:00<00:00, 854.90it/s]Loading weights:  53%|█████▎    | 178/338 [00:00<00:00, 703.10it/s]Loading weights:  74%|███████▍  | 250/338 [00:00<00:00, 690.97it/s]Loading weights:  95%|█████████▍| 320/338 [00:00<00:00, 639.72it/s]Loading weights: 100%|██████████| 338/338 [00:00<00:00, 705.98it/s]
+2026-08-07 10:02:08 | sleep.experiment.common        | INFO  | Loaded /workspace/models/qwen2.5-1.5b | dtype=bfloat16 | attn=sdpa | device=cuda | layers=28
+2026-08-07 10:02:08 | sleep.experiment.11            | INFO  | Running baseline: rag
+2026-08-07 10:02:09 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_001' (42 tokens)
+2026-08-07 10:02:09 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_002' (39 tokens)
+2026-08-07 10:02:09 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_003' (44 tokens)
+2026-08-07 10:02:09 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_004' (36 tokens)
+2026-08-07 10:02:09 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_005' (33 tokens)
+2026-08-07 10:02:09 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_006' (40 tokens)
+2026-08-07 10:02:09 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_007' (49 tokens)
+2026-08-07 10:02:09 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_008' (45 tokens)
+2026-08-07 10:02:09 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_009' (44 tokens)
+2026-08-07 10:02:09 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_010' (49 tokens)
+2026-08-07 10:02:09 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_011' (41 tokens)
+2026-08-07 10:02:09 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_012' (45 tokens)
+2026-08-07 10:02:09 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_013' (43 tokens)
+2026-08-07 10:02:09 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_014' (34 tokens)
+2026-08-07 10:02:09 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_015' (31 tokens)
+2026-08-07 10:02:09 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_016' (43 tokens)
+2026-08-07 10:02:09 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_017' (46 tokens)
+2026-08-07 10:02:09 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_018' (44 tokens)
+2026-08-07 10:02:09 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_019' (49 tokens)
+2026-08-07 10:02:09 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_020' (47 tokens)
+2026-08-07 10:02:09 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_021' (42 tokens)
+2026-08-07 10:02:09 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_022' (42 tokens)
+2026-08-07 10:02:09 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_023' (43 tokens)
+2026-08-07 10:02:09 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_024' (33 tokens)
+2026-08-07 10:02:09 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_025' (32 tokens)
+2026-08-07 10:02:09 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_026' (40 tokens)
+2026-08-07 10:02:09 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_027' (51 tokens)
+2026-08-07 10:02:09 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_028' (42 tokens)
+2026-08-07 10:02:09 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_029' (44 tokens)
+2026-08-07 10:02:09 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_030' (51 tokens)
+2026-08-07 10:02:09 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_031' (41 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_032' (42 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_033' (43 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_034' (37 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_035' (33 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_036' (42 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_037' (48 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_038' (45 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_039' (47 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_040' (48 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_041' (42 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_042' (41 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_043' (41 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_044' (38 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_045' (34 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_046' (42 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_047' (47 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_048' (41 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_049' (43 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_050' (47 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_051' (41 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_052' (43 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_053' (43 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_054' (33 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_055' (33 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_056' (42 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_057' (48 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_058' (41 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_059' (48 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_060' (46 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_061' (43 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_062' (44 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_063' (43 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_064' (36 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_065' (31 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_066' (40 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_067' (48 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_068' (47 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_069' (43 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_070' (48 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_071' (39 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_072' (41 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_073' (44 tokens)
+2026-08-07 10:02:10 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_074' (36 tokens)
+2026-08-07 10:02:11 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_075' (34 tokens)
+2026-08-07 10:02:11 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_076' (41 tokens)
+2026-08-07 10:02:11 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_077' (49 tokens)
+2026-08-07 10:02:11 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_078' (46 tokens)
+2026-08-07 10:02:11 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_079' (43 tokens)
+2026-08-07 10:02:11 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_080' (48 tokens)
+2026-08-07 10:02:11 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_081' (41 tokens)
+2026-08-07 10:02:11 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_082' (39 tokens)
+2026-08-07 10:02:11 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_083' (42 tokens)
+2026-08-07 10:02:11 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_084' (37 tokens)
+2026-08-07 10:02:11 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_085' (32 tokens)
+2026-08-07 10:02:11 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_086' (42 tokens)
+2026-08-07 10:02:11 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_087' (50 tokens)
+2026-08-07 10:02:11 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_088' (44 tokens)
+2026-08-07 10:02:11 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_089' (50 tokens)
+2026-08-07 10:02:11 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_090' (47 tokens)
+2026-08-07 10:02:11 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_091' (41 tokens)
+2026-08-07 10:02:11 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_092' (39 tokens)
+2026-08-07 10:02:11 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_093' (43 tokens)
+2026-08-07 10:02:11 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_094' (35 tokens)
+2026-08-07 10:02:11 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_095' (30 tokens)
+2026-08-07 10:02:11 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_096' (42 tokens)
+2026-08-07 10:02:11 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_097' (46 tokens)
+2026-08-07 10:02:11 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_098' (44 tokens)
+2026-08-07 10:02:11 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_099' (47 tokens)
+2026-08-07 10:02:11 | sleep.evaluation.baselines     | INFO  | RAG: added document 'fact_100' (48 tokens)
+[transformers] The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|██████████| 338/338 [00:00<00:00, 8808.11it/s]
+2026-08-07 10:03:15 | sleep.experiment.common        | INFO  | Loaded /workspace/models/qwen2.5-1.5b | dtype=bfloat16 | attn=sdpa | device=cuda | layers=28
+2026-08-07 10:03:15 | sleep.experiment.11            | INFO  | Running baseline: incontext
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|██████████| 338/338 [00:00<00:00, 9002.08it/s]
+2026-08-07 10:04:08 | sleep.experiment.common        | INFO  | Loaded /workspace/models/qwen2.5-1.5b | dtype=bfloat16 | attn=sdpa | device=cuda | layers=28
+2026-08-07 10:04:08 | sleep.experiment.11            | INFO  | Running baseline: ewc
+2026-08-07 10:04:08 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=6.4352 (mean_loss=1.8618, 30 tokens)
+2026-08-07 10:04:08 | sleep.evaluation.baselines     | INFO  | NaiveLoRA: 56 LoRA modules, 2179072 trainable parameters
+2026-08-07 10:04:14 | sleep.evaluation.baselines     | INFO  | EWC-only: consolidated task (32 seqs); 1 anchors stored
+2026-08-07 10:04:20 | sleep.evaluation.baselines     | INFO  | EWC-only: consolidated task (32 seqs); 2 anchors stored
+2026-08-07 10:04:26 | sleep.evaluation.baselines     | INFO  | EWC-only: consolidated task (32 seqs); 3 anchors stored
+2026-08-07 10:06:33 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=9.2074 (mean_loss=2.2200, 30 tokens)
+2026-08-07 10:06:33 | sleep.evaluation.preservation  | INFO  | BCP: 1.4308 (current_ppl=9.2074, original_ppl=6.4352)
+2026-08-07 10:06:33 | sleep.experiment.common        | INFO  | Wrote results to /workspace/results/qwen1.5b_baselines.json
+
+==================================================
+BASELINE RESULTS
+==================================================
+  baseline            DRA      BCP
+  rag               0.460    1.000
+  incontext         0.700    1.000
+  ewc               0.033    1.431
+
+  Wrote /workspace/results/qwen1.5b_baselines.json

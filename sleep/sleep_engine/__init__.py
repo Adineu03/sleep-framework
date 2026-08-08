@@ -29,6 +29,7 @@ from sleep.config import SleepConfig, WeightsConfig
 from sleep.sleep_engine.cleanup import (
     cleanup_tags,
     compute_span_surprise,
+    mini_recall_check,
     validate_consolidation,
 )
 from sleep.sleep_engine.fisher import compute_ewc_loss, compute_fisher_diagonal
@@ -123,6 +124,7 @@ class SleepEngine:
         mu_surprise: float | None = None,
         device: str = "cpu",
         replay_strategy: str = "generative",
+        two_stage_validation: bool = False,
     ) -> None:
         """
         Args:
@@ -135,6 +137,16 @@ class SleepEngine:
                     mode that strips out replay-generation as a confound;
                     answers "given perfect replays, does W_cons consolidation
                     transfer to free-form recall?"
+            two_stage_validation: If ``True``, Phase 5 confirms a consolidation
+                only when BOTH the surprise-reduction check
+                (:func:`validate_consolidation`) AND a direct free-form
+                mini-recall test (:func:`mini_recall_check`) pass. This
+                implements mentor feedback item #6 and directly attacks the C4
+                self-grading discrepancy: the surprise proxy can pass while
+                external recall fails, so we gate on external recall too. The
+                mini-recall gate needs per-fact keywords/prompts, supplied via
+                the ``fact_map`` argument to :meth:`run_cycle`. Default
+                ``False`` preserves the original single-gate behaviour.
         """
         valid_strategies = {"generative", "original"}
         if replay_strategy not in valid_strategies:
@@ -149,6 +161,7 @@ class SleepEngine:
         self._mu_surprise = mu_surprise
         self._device = device
         self._replay_strategy = replay_strategy
+        self._two_stage_validation = two_stage_validation
 
     # -- Properties ----------------------------------------------------------
 
@@ -219,6 +232,7 @@ class SleepEngine:
         original_tokens_map: dict,
         benchmark_data: list[torch.Tensor] | None = None,
         key_projection: TagKeyProjection | None = None,
+        fact_map: dict | None = None,
     ) -> dict:
         """Execute one complete sleep cycle.
 
@@ -237,6 +251,11 @@ class SleepEngine:
             benchmark_data:      Optional token tensors for PPL evaluation.
             key_projection:      :class:`TagKeyProjection` for quality checks.
                                  If ``None``, quality checks are skipped.
+            fact_map:            Optional ``{source_id: fact_dict}`` mapping,
+                                 where each fact dict carries ``test_prompt``
+                                 and ``keywords``. Required for the mini-recall
+                                 gate when ``two_stage_validation=True``; unused
+                                 otherwise.
 
         Returns:
             A dict with cycle statistics::
@@ -252,6 +271,11 @@ class SleepEngine:
                     "ppl_before": float | None,
                     "ppl_after": float | None,
                     "rolled_back": bool,
+                    # Two-stage validation diagnostics (mentor item #6). When
+                    # two_stage_validation is off, n_passed_recall_gate is None
+                    # and n_passed_surprise == n_consolidated.
+                    "n_passed_surprise": int,
+                    "n_passed_recall_gate": int | None,
                 }
         """
         result: dict = {
@@ -265,6 +289,9 @@ class SleepEngine:
             "ppl_before": None,
             "ppl_after": None,
             "rolled_back": False,
+            # Two-stage validation diagnostics (mentor item #6).
+            "n_passed_surprise": 0,
+            "n_passed_recall_gate": None,
             # Diagnostic: samples of generated replays alongside their
             # source-fact context, so callers can compare replay quality
             # against the original. Populated up to 3 entries.
@@ -637,12 +664,15 @@ class SleepEngine:
         model.eval()
 
         validation_results_final: dict[int, bool] = {}
+        n_passed_surprise = 0
+        n_passed_recall_gate = 0
         for tag in candidates:
             _span_start, _span_end, source_id = tag.ctx
             original_tokens = original_tokens_map.get(source_id)
             old_surprise: float = old_surprises.get(id(tag), 0.0)
 
-            passed = validate_consolidation(
+            # Stage 1: surprise-reduction pre-filter (fast, self-graded).
+            passed_surprise = validate_consolidation(
                 tag=tag,
                 model_new=model,
                 model_old_surprise=old_surprise,
@@ -650,7 +680,41 @@ class SleepEngine:
                 config=config,
                 device=self._device,
             )
-            validation_results_final[id(tag)] = passed
+            if passed_surprise:
+                n_passed_surprise += 1
+
+            if not self._two_stage_validation:
+                validation_results_final[id(tag)] = passed_surprise
+                continue
+
+            # Stage 2: direct free-form mini-recall gate (external, strict).
+            # Only run when Stage 1 passed — it is the expensive gate and a
+            # tag that did not even reduce surprise cannot be confirmed.
+            passed_recall = False
+            if passed_surprise:
+                fact = fact_map.get(source_id) if fact_map else None
+                passed_recall = mini_recall_check(
+                    tag=tag,
+                    model=model,
+                    fact=fact,
+                    tokenizer=self._tokenizer,
+                    device=self._device,
+                )
+                if passed_recall:
+                    n_passed_recall_gate += 1
+
+            # Consolidation confirmed only when BOTH gates pass.
+            validation_results_final[id(tag)] = passed_surprise and passed_recall
+
+        result["n_passed_surprise"] = n_passed_surprise
+        if self._two_stage_validation:
+            result["n_passed_recall_gate"] = n_passed_recall_gate
+            logger.info(
+                "Two-stage validation: %d/%d passed surprise, %d also passed "
+                "the mini-recall gate (self-grading gap = %d)",
+                n_passed_surprise, len(candidates), n_passed_recall_gate,
+                n_passed_surprise - n_passed_recall_gate,
+            )
 
         # --- Cleanup: sort tags into outcome buckets ---
         cleanup_result = cleanup_tags(

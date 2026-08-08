@@ -1,0 +1,30 @@
+2026-08-07 15:08:49 | sleep.utils.seed               | INFO  | Seeded all RNGs with seed=0 (deterministic_algorithms=False)
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]Loading weights:  17%|█▋        | 50/291 [00:00<00:00, 479.42it/s]Loading weights:  34%|███▎      | 98/291 [00:00<00:00, 332.48it/s]Loading weights:  46%|████▌     | 134/291 [00:00<00:00, 317.50it/s]Loading weights:  57%|█████▋    | 167/291 [00:00<00:00, 293.32it/s]Loading weights:  68%|██████▊   | 197/291 [00:00<00:00, 274.83it/s]Loading weights:  83%|████████▎ | 241/291 [00:00<00:00, 315.81it/s]Loading weights:  94%|█████████▍| 274/291 [00:00<00:00, 302.85it/s]Loading weights: 100%|██████████| 291/291 [00:00<00:00, 316.95it/s]
+2026-08-07 15:09:40 | sleep.experiment.common        | INFO  | Loaded /workspace/models/mistral-7b | dtype=bfloat16 | attn=eager | device=cuda | layers=32
+2026-08-07 15:09:41 | sleep.weights.lora             | INFO  | LoRA target modules for mistral: ['v_proj', 'o_proj']
+2026-08-07 15:09:41 | sleep.weights.lora             | INFO  | LoRA config: rank=16, alpha=32, layers=[22, 23, 24, 25, 26, 27, 28, 29, 30, 31] (of 32 total), targets=['v_proj', 'o_proj']
+2026-08-07 15:09:42 | sleep.weights.lora             | INFO  | Created LoRA adapter 'w_fast': 2129920 trainable parameters (0.0294% of base model)
+2026-08-07 15:09:42 | sleep.weights.lora             | INFO  | LoRA target modules for mistral: ['v_proj', 'o_proj']
+2026-08-07 15:09:42 | sleep.weights.lora             | INFO  | LoRA config: rank=16, alpha=32, layers=[22, 23, 24, 25, 26, 27, 28, 29, 30, 31] (of 32 total), targets=['v_proj', 'o_proj']
+2026-08-07 15:09:42 | sleep.weights.lora             | INFO  | Dual adapters ready: w_fast=2129920 params, w_cons=2129920 params
+/usr/local/lib/python3.11/dist-packages/peft/tuners/tuners_utils.py:2193: UserWarning: Adapter cannot be set when the model is merged. Unmerging the model first.
+  warnings.warn("Adapter cannot be set when the model is merged. Unmerging the model first.")
+2026-08-07 15:09:42 | sleep.weights.fast_update      | INFO  | FastWeightUpdater initialized: 40 parameter groups, alpha_base=1.00e-04, momentum=0.90
+2026-08-07 15:09:42 | sleep.weights.plasticity       | INFO  | Adapted layers: [22, 23, 24, 25, 26, 27, 28, 29, 30, 31] (top 33% of 32 layers)
+2026-08-07 15:09:43 | sleep.weights.plasticity       | INFO  | Computed Frobenius norms for 224 base model weight matrices.
+2026-08-07 15:09:43 | sleep.weights.kv_injection     | INFO  | KVInjector installed on 10 layers: [22, 23, 24, 25, 26, 27, 28, 29, 30, 31]
+2026-08-07 15:09:43 | sleep.weights                  | INFO  | KV memory mode enabled | adapted_layers=[22, 23, 24, 25, 26, 27, 28, 29, 30, 31] | num_kv_heads=8 | head_dim=128 | max_total_tokens=2000 | top_k=0 | device=cuda:0 | dtype=torch.bfloat16
+2026-08-07 15:09:43 | sleep.weights                  | INFO  | DualWeightSystem initialized | W_fast: 2,129,920 params | W_cons: 2,129,920 params | Adapted layers: [22, 23, 24, 25, 26, 27, 28, 29, 30, 31] | Plasticity: 0.525–0.945 | KV bank installed
+2026-08-07 15:09:43 | sleep.experiment.verify_kv     | INFO  | PEFT-wrap drift vs raw model: 0.00e+00 (zero-init adapters)
+2026-08-07 15:09:43 | sleep.experiment.verify_kv     | INFO  | [1] IDENTITY  max|diff|=0.00e+00  (atol=5e-03)  PASS
+2026-08-07 15:09:43 | sleep.experiment.verify_kv     | INFO  | [2] EFFECT    max|diff|=1.18e+01  PASS
+2026-08-07 15:09:43 | sleep.experiment.verify_kv     | INFO  | [3] DISABLE   max|diff|=0.00e+00  PASS
+2026-08-07 15:09:43 | sleep.weights.kv_injection     | INFO  | KVInjector uninstalled from 10 layers
+
+========================================================
+KV ARCH VERIFICATION — /workspace/models/mistral-7b
+  [PASS] identity_empty_bank
+  [PASS] effect_populated_bank
+  [PASS] disable_restores
+  VERDICT: SAFE TO RUN
+========================================================

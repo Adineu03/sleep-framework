@@ -1,0 +1,222 @@
+{
+  "script": "experiments/scripts/07_full_kv_pipeline.py",
+  "seeds_requested": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "seeds_succeeded": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "passthrough": [
+    "--config",
+    "experiments/configs/mistral7b.yaml",
+    "--facts-file",
+    "experiments/data/facts_200.json",
+    "--kv-top-k",
+    "64",
+    "--replay-strategy",
+    "original",
+    "--two-stage-validation"
+  ],
+  "aggregates": {
+    "dra": {
+      "mean": 0.006666666666666666,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+        0.006666666666666666,
+        0.006666666666666666,
+        0.006666666666666666,
+        0.006666666666666666,
+        0.006666666666666666
+      ],
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "bcp": {
+      "mean": 1.001226073800811,
+      "std": 0.00234007087691204,
+      "n": 5,
+      "values": [
+        0.999537346208903,
+        1.0033352072071056,
+        0.9987205268367148,
+        1.004022470170075,
+        1.0005148185812567
+      ],
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "n_consolidated": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "n_passed_surprise": {
+      "mean": 4.0,
+      "std": 1.0,
+      "n": 5,
+      "values": [
+        4.0,
+        5.0,
+        3.0,
+        5.0,
+        3.0
+      ],
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "n_passed_recall_gate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    }
+  },
+  "per_seed": {
+    "0": {
+      "experiment": "07_full_kv_pipeline",
+      "seed": 0,
+      "config_path": "experiments/configs/mistral7b.yaml",
+      "replay_strategy": "original",
+      "two_stage_validation": true,
+      "kv_top_k": 64,
+      "n_facts": 200,
+      "n_tags": 121,
+      "prp_allocated": 31,
+      "dra": 0.006666666666666666,
+      "bcp": 0.999537346208903,
+      "baseline_ppl": 4.364649260887004,
+      "post_ppl": 4.362629939359645,
+      "n_consolidated": 0,
+      "n_passed_surprise": 4,
+      "n_passed_recall_gate": 0,
+      "rolled_back": false
+    },
+    "1": {
+      "experiment": "07_full_kv_pipeline",
+      "seed": 1,
+      "config_path": "experiments/configs/mistral7b.yaml",
+      "replay_strategy": "original",
+      "two_stage_validation": true,
+      "kv_top_k": 64,
+      "n_facts": 200,
+      "n_tags": 121,
+      "prp_allocated": 33,
+      "dra": 0.006666666666666666,
+      "bcp": 1.0033352072071056,
+      "baseline_ppl": 4.364649260887004,
+      "post_ppl": 4.379206270558401,
+      "n_consolidated": 0,
+      "n_passed_surprise": 5,
+      "n_passed_recall_gate": 0,
+      "rolled_back": false
+    },
+    "2": {
+      "experiment": "07_full_kv_pipeline",
+      "seed": 2,
+      "config_path": "experiments/configs/mistral7b.yaml",
+      "replay_strategy": "original",
+      "two_stage_validation": true,
+      "kv_top_k": 64,
+      "n_facts": 200,
+      "n_tags": 121,
+      "prp_allocated": 36,
+      "dra": 0.006666666666666666,
+      "bcp": 0.9987205268367148,
+      "baseline_ppl": 4.364649260887004,
+      "post_ppl": 4.359064809290546,
+      "n_consolidated": 0,
+      "n_passed_surprise": 3,
+      "n_passed_recall_gate": 0,
+      "rolled_back": false
+    },
+    "3": {
+      "experiment": "07_full_kv_pipeline",
+      "seed": 3,
+      "config_path": "experiments/configs/mistral7b.yaml",
+      "replay_strategy": "original",
+      "two_stage_validation": true,
+      "kv_top_k": 64,
+      "n_facts": 200,
+      "n_tags": 121,
+      "prp_allocated": 36,
+      "dra": 0.006666666666666666,
+      "bcp": 1.004022470170075,
+      "baseline_ppl": 4.364649260887004,
+      "post_ppl": 4.382205932341762,
+      "n_consolidated": 0,
+      "n_passed_surprise": 5,
+      "n_passed_recall_gate": 0,
+      "rolled_back": false
+    },
+    "4": {
+      "experiment": "07_full_kv_pipeline",
+      "seed": 4,
+      "config_path": "experiments/configs/mistral7b.yaml",
+      "replay_strategy": "original",
+      "two_stage_validation": true,
+      "kv_top_k": 64,
+      "n_facts": 200,
+      "n_tags": 121,
+      "prp_allocated": 32,
+      "dra": 0.006666666666666666,
+      "bcp": 1.0005148185812567,
+      "baseline_ppl": 4.364649260887004,
+      "post_ppl": 4.366896263427177,
+      "n_consolidated": 0,
+      "n_passed_surprise": 3,
+      "n_passed_recall_gate": 0,
+      "rolled_back": false
+    }
+  }
+}

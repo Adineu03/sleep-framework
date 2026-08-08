@@ -1,0 +1,19 @@
+{
+  "experiment": "07_full_kv_pipeline",
+  "seed": 0,
+  "config_path": "experiments/configs/qwen7b_fp32.yaml",
+  "replay_strategy": "original",
+  "two_stage_validation": false,
+  "kv_top_k": 64,
+  "n_facts": 60,
+  "n_tags": 48,
+  "prp_allocated": 12,
+  "dra": 0.005555555555555555,
+  "bcp": 0.9978542731817606,
+  "baseline_ppl": 4.11526060985738,
+  "post_ppl": 4.106430384802764,
+  "n_consolidated": 0,
+  "n_passed_surprise": 0,
+  "n_passed_recall_gate": null,
+  "rolled_back": false
+}

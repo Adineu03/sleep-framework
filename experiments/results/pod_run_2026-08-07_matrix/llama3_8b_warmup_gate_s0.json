@@ -1,0 +1,48 @@
+{
+  "experiment": "09_warmup_extension",
+  "seed": 0,
+  "config_path": "experiments/configs/llama3_8b.yaml",
+  "n_facts": 200,
+  "kv_top_k": 64,
+  "warmup_steps": 300,
+  "warmup_lr": 0.001,
+  "train_wcons": false,
+  "ppl_reference": 9.12199927327556,
+  "without_warmup": {
+    "mc_accuracy": 0.25,
+    "mc_mean_correct_prob": 0.2421626246906817,
+    "cloze_accuracy": 0.005,
+    "dra": 0.008333333333333333,
+    "free_form_accuracy": 0.025,
+    "bcp": 2.0140946286896164
+  },
+  "with_warmup": {
+    "mc_accuracy": 0.235,
+    "mc_mean_correct_prob": 0.2412320734374225,
+    "cloze_accuracy": 0.005,
+    "dra": 0.0016666666666666666,
+    "free_form_accuracy": 0.005,
+    "bcp": 1.776846173899029
+  },
+  "warmup": {
+    "n_steps": 300,
+    "final_loss": 3.5346410274505615,
+    "mean_loss": 4.175868271191915,
+    "initial_loss": 5.06385612487793,
+    "gate_scales": {
+      "22": 1.0152665376663208,
+      "23": 0.919058084487915,
+      "24": 0.9501171708106995,
+      "25": 1.001535415649414,
+      "26": 0.9916614890098572,
+      "27": 0.9944062232971191,
+      "28": 0.8986661434173584,
+      "29": 0.9122205972671509,
+      "30": 0.8523598313331604,
+      "31": 1.0398519039154053
+    },
+    "train_wcons": false
+  },
+  "dra_delta": -0.006666666666666666,
+  "mc_delta": -0.015000000000000013
+}

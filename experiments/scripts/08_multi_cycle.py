@@ -81,6 +81,7 @@ from sleep.sleep_engine import SleepEngine
 from sleep.evaluation.recall import evaluate_recall, RecallTestCase
 from sleep.evaluation.preservation import evaluate_perplexity, compute_bcp
 from sleep.utils.logging import setup_logging, get_logger
+from sleep.utils.seed import seed_everything
 
 setup_logging()
 logger = get_logger("experiment.08")
@@ -417,6 +418,11 @@ def main():
     parser.add_argument("--naive-lora-lr", type=float, default=1e-4)
     parser.add_argument("--naive-lora-weight-decay", type=float, default=0.01)
     args = parser.parse_args()
+
+    # Seed every RNG (torch/numpy/random), not just the naive arm's local RNG,
+    # so both arms and model/adapter init are reproducible for this seed
+    # (mentor P1 item #1: run 3-5 seeds, report mean +/- std).
+    seed_everything(args.seed)
 
     timestamp = _dt.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     if args.output is None:

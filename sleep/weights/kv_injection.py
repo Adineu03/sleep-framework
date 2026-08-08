@@ -26,17 +26,40 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
+import sys
+
 import torch
 from torch import Tensor
 
 # Transformers internals we rely on. These are stable APIs in the Qwen2
-# implementation across recent transformers releases (5.x).
+# implementation across recent transformers releases (5.x). For non-Qwen
+# models we resolve the equivalent module from the attention module's own
+# package at install time (see ``_resolve_modeling_module``); the Qwen2 module
+# is the default and fallback so the Qwen path is unchanged.
 from transformers.models.qwen2 import modeling_qwen2 as _qwen2_mod
 
 from sleep.utils.logging import get_logger
 from sleep.weights.kv_memory import KVMemoryBank
 
 logger = get_logger("sleep.weights.kv_injection")
+
+
+def _resolve_modeling_module(attn_module: torch.nn.Module):
+    """Return the ``modeling_<arch>`` module that defines ``attn_module``.
+
+    Modern transformers give each architecture its own ``modeling_*.py`` that
+    exposes ``apply_rotary_pos_emb``, ``eager_attention_forward`` and
+    ``ALL_ATTENTION_FUNCTIONS`` with identical signatures. Resolving the module
+    from the attention instance lets KV injection work on Llama/Mistral/Qwen
+    alike. Falls back to the Qwen2 module when the resolved module is missing
+    any required name (the RoPE/eager helpers are mathematically identical
+    across these architectures, so the fallback is safe).
+    """
+    mod = sys.modules.get(type(attn_module).__module__)
+    required = ("apply_rotary_pos_emb", "ALL_ATTENTION_FUNCTIONS", "eager_attention_forward")
+    if mod is not None and all(hasattr(mod, name) for name in required):
+        return mod
+    return _qwen2_mod
 
 
 # ---------------------------------------------------------------------------
@@ -289,8 +312,9 @@ def _kv_injected_attention_forward(
     key_states = self.k_proj(hidden_states).view(hidden_shape).transpose(1, 2)
     value_states = self.v_proj(hidden_states).view(hidden_shape).transpose(1, 2)
 
+    _mod = getattr(self, "_sleep_modeling_mod", None) or _qwen2_mod
     cos, sin = position_embeddings
-    query_states, key_states = _qwen2_mod.apply_rotary_pos_emb(
+    query_states, key_states = _mod.apply_rotary_pos_emb(
         query_states, key_states, cos, sin,
     )
 
@@ -346,6 +370,16 @@ def _kv_injected_attention_forward(
         mem_k_rope = mem_k_rope.to(dtype=key_states.dtype)
         mem_v_b = mem_v_b.to(dtype=value_states.dtype)
 
+        # Optional retrieval-aware memory gate (warm-up extension). Because
+        # attention is linear in V, a per-kv-head scale on the memory values
+        # exactly modulates how strongly retrieved memory feeds the residual
+        # stream — the mechanism the warm-up phase trains to close the
+        # recognition–recall gap. A gate that is absent or identity-initialised
+        # leaves this forward bit-identical to the ungated path.
+        memory_gate = getattr(self, "_sleep_memory_gate", None)
+        if memory_gate is not None:
+            mem_v_b = memory_gate(mem_v_b, layer_idx=layer_idx)
+
         # Top-k visibility gating: read from attribute set by KVInjector
         top_k = getattr(self, "_sleep_kv_top_k", 0)
         memory_visibility = _compute_topk_visibility(
@@ -373,8 +407,11 @@ def _kv_injected_attention_forward(
         )
 
     # ---- Attention computation ----------------------------------------------
-    attention_interface = _qwen2_mod.ALL_ATTENTION_FUNCTIONS.get_interface(
-        self.config._attn_implementation, _qwen2_mod.eager_attention_forward,
+    # Use the modeling module resolved at install (Qwen2 by default/fallback),
+    # so injection works across architectures with identical attention APIs.
+    _mod = getattr(self, "_sleep_modeling_mod", None) or _qwen2_mod
+    attention_interface = _mod.ALL_ATTENTION_FUNCTIONS.get_interface(
+        self.config._attn_implementation, _mod.eager_attention_forward,
     )
 
     attn_output, attn_weights = attention_interface(
@@ -385,7 +422,10 @@ def _kv_injected_attention_forward(
         attention_mask,
         dropout=0.0 if not self.training else self.attention_dropout,
         scaling=self.scaling,
-        sliding_window=self.sliding_window,
+        # Qwen2/Mistral-config attention exposes sliding_window; LlamaAttention
+        # (and some Mistral builds in transformers 5.x) does not. None means
+        # full attention, which every backend accepts.
+        sliding_window=getattr(self, "sliding_window", None),
         **kwargs,
     )
 
@@ -445,6 +485,7 @@ class KVInjector:
         self._bank = bank
         self._top_k = int(top_k)
         self._enabled = True   # default: injection ON when installed
+        self._memory_gate: torch.nn.Module | None = None  # warm-up extension
         self._installed_layers: list[_InstalledLayer] = []
 
         # Validate at construction so we fail fast
@@ -509,6 +550,32 @@ class KVInjector:
         self._enabled = bool(enabled)
         for slot in self._installed_layers:
             slot.attn_module._sleep_kv_enabled = self._enabled  # type: ignore[attr-defined]
+
+    @property
+    def memory_gate(self) -> "torch.nn.Module | None":
+        """The installed retrieval-aware memory gate, or ``None``."""
+        return self._memory_gate
+
+    def set_memory_gate(self, gate: "torch.nn.Module | None") -> None:
+        """Install (or clear) a trainable gate on the memory value contribution.
+
+        The gate is called as ``gate(mem_v_b, layer_idx=...)`` inside the
+        patched attention forward, where ``mem_v_b`` has shape
+        ``(B, num_kv_heads, n_mem, head_dim)``. It must return a tensor of the
+        same shape. An identity-initialised gate leaves the forward unchanged,
+        so installing an untrained gate is safe.
+
+        The same gate object is shared across all adapted layers (it receives
+        ``layer_idx`` so it can hold per-layer parameters). Pass ``None`` to
+        remove the gate.
+
+        This is the mechanism the retrieval-aware warm-up phase
+        (:mod:`sleep.warmup`) trains and then freezes; because it lives on the
+        injector rather than in ``w_cons``, it persists across sleep cycles.
+        """
+        self._memory_gate = gate
+        for slot in self._installed_layers:
+            slot.attn_module._sleep_memory_gate = gate  # type: ignore[attr-defined]
 
     # ------------------------------------------------------------------
     # Locate model parts
@@ -600,6 +667,11 @@ class KVInjector:
             attn_module._sleep_rope_module = self._rope_module  # type: ignore[attr-defined]
             attn_module._sleep_kv_top_k = self._top_k  # type: ignore[attr-defined]
             attn_module._sleep_kv_enabled = self._enabled  # type: ignore[attr-defined]
+            attn_module._sleep_memory_gate = self._memory_gate  # type: ignore[attr-defined]
+            # Resolve the arch-specific modeling module (Qwen2 by default) so
+            # the patched forward calls the right apply_rotary_pos_emb / eager
+            # attention for Llama/Mistral/Qwen alike.
+            attn_module._sleep_modeling_mod = _resolve_modeling_module(attn_module)  # type: ignore[attr-defined]
 
             # Save original forward and install replacement
             original_forward = attn_module.forward
@@ -635,6 +707,8 @@ class KVInjector:
                 "_sleep_rope_module",
                 "_sleep_kv_top_k",
                 "_sleep_kv_enabled",
+                "_sleep_memory_gate",
+                "_sleep_modeling_mod",
             ):
                 if hasattr(slot.attn_module, attr):
                     delattr(slot.attn_module, attr)

@@ -1,0 +1,20 @@
+{
+  "experiment": "11_baselines",
+  "seed": 0,
+  "config_path": "experiments/configs/mistral7b.yaml",
+  "n_facts": 100,
+  "results": {
+    "rag": {
+      "dra": 0.5633333333333332,
+      "bcp": 1.0
+    },
+    "incontext": {
+      "dra": 0.9266666666666669,
+      "bcp": 1.0
+    },
+    "ewc": {
+      "dra": 0.1566666666666667,
+      "bcp": 2.5305103555331256
+    }
+  }
+}

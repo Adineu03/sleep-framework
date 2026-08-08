@@ -1,0 +1,23 @@
+=== [llama3_8b] STAGE 0: arch verification (ground-truth gate) ===
+llama3_8b_VERIFY_PASSED
+=== [llama3_8b] STAGE 1: 5-seed recognition/pipeline ===
+llama3_8b_STAGE1_DONE Fri Aug  7 10:44:15 UTC 2026
+=== [llama3_8b] STAGE 2: 10-cycle multi-cycle, both arms, seeds 0-1 ===
+llama3_8b_STAGE2_DONE Fri Aug  7 13:33:53 UTC 2026
+=== [llama3_8b] STAGE 3: warm-up, gate-only + wcons, seeds 0-1 ===
+llama3_8b_STAGE3_DONE Fri Aug  7 15:00:07 UTC 2026
+=== [llama3_8b] STAGE 5: baselines ===
+llama3_8b_STAGE5_DONE Fri Aug  7 15:08:46 UTC 2026
+llama3_8b_ALL_DONE Fri Aug  7 15:08:46 UTC 2026
+=== [mistral7b] STAGE 0: arch verification (ground-truth gate) ===
+mistral7b_VERIFY_PASSED
+=== [mistral7b] STAGE 1: 5-seed recognition/pipeline ===
+mistral7b_STAGE1_DONE Fri Aug  7 15:45:58 UTC 2026
+=== [mistral7b] STAGE 2: 10-cycle multi-cycle, both arms, seeds 0-1 ===
+mistral7b_STAGE2_DONE Fri Aug  7 18:37:08 UTC 2026
+=== [mistral7b] STAGE 3: warm-up, gate-only + wcons, seeds 0-1 ===
+mistral7b_STAGE3_DONE Fri Aug  7 20:15:41 UTC 2026
+=== [mistral7b] STAGE 5: baselines ===
+mistral7b_STAGE5_DONE Fri Aug  7 20:24:35 UTC 2026
+mistral7b_ALL_DONE Fri Aug  7 20:24:35 UTC 2026
+MATRIX3_ALL_DONE Fri Aug  7 20:24:35 UTC 2026

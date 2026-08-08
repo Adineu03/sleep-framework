@@ -1,0 +1,17 @@
+2026-08-07 15:09:45 | sleep.experiment.10            | INFO  | seed 0: /usr/bin/python experiments/scripts/07_full_kv_pipeline.py --seed 0 --output /tmp/tmpgueyich8/seed_0.json --config experiments/configs/mistral7b.yaml --facts-file experiments/data/facts_200.json --kv-top-k 64 --replay-strategy original --two-stage-validation
+2026-08-07 15:16:16 | sleep.experiment.10            | INFO  | seed 1: /usr/bin/python experiments/scripts/07_full_kv_pipeline.py --seed 1 --output /tmp/tmpgueyich8/seed_1.json --config experiments/configs/mistral7b.yaml --facts-file experiments/data/facts_200.json --kv-top-k 64 --replay-strategy original --two-stage-validation
+2026-08-07 15:23:40 | sleep.experiment.10            | INFO  | seed 2: /usr/bin/python experiments/scripts/07_full_kv_pipeline.py --seed 2 --output /tmp/tmpgueyich8/seed_2.json --config experiments/configs/mistral7b.yaml --facts-file experiments/data/facts_200.json --kv-top-k 64 --replay-strategy original --two-stage-validation
+2026-08-07 15:31:17 | sleep.experiment.10            | INFO  | seed 3: /usr/bin/python experiments/scripts/07_full_kv_pipeline.py --seed 3 --output /tmp/tmpgueyich8/seed_3.json --config experiments/configs/mistral7b.yaml --facts-file experiments/data/facts_200.json --kv-top-k 64 --replay-strategy original --two-stage-validation
+2026-08-07 15:38:34 | sleep.experiment.10            | INFO  | seed 4: /usr/bin/python experiments/scripts/07_full_kv_pipeline.py --seed 4 --output /tmp/tmpgueyich8/seed_4.json --config experiments/configs/mistral7b.yaml --facts-file experiments/data/facts_200.json --kv-top-k 64 --replay-strategy original --two-stage-validation
+
+================================================================
+MULTI-SEED AGGREGATE  (5/5 seeds ok)
+================================================================
+  metric                         mean        std  n
+  dra                          0.0067     0.0000  5
+  bcp                          1.0012     0.0023  5
+  n_consolidated               0.0000     0.0000  5
+  n_passed_surprise            4.0000     1.0000  5
+  n_passed_recall_gate         0.0000     0.0000  5
+
+  Wrote /workspace/results/mistral7b_seeds_recognition.json

@@ -1,0 +1,20 @@
+{
+  "experiment": "11_baselines",
+  "seed": 0,
+  "config_path": "experiments/configs/llama3_8b.yaml",
+  "n_facts": 100,
+  "results": {
+    "rag": {
+      "dra": 0.5199999999999999,
+      "bcp": 1.0
+    },
+    "incontext": {
+      "dra": 0.9866666666666667,
+      "bcp": 1.0
+    },
+    "ewc": {
+      "dra": 0.0733333333333333,
+      "bcp": 1.465708668715884
+    }
+  }
+}
