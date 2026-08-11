@@ -50,6 +50,30 @@ mid-MLP configs.
 - Fixed-horizon claims only with both seeds agreeing, per the plateau-lottery
   lesson.
 
+## D1b extension (registered 16:20 UTC, after the Llama moderate result,
+## BEFORE the added runs)
+Llama at moderate: trained-subset DRA 0.659 (best ever) but BCP 4.35 — fails
+the damage bar. Clip ladder added: delta_max 0.05 and 0.03 (paraphrase-CE,
+seed 0, same protocol). Selection rule fixed in advance: Llama's matrix
+setting is the delta in {0.1, 0.05, 0.03} maximizing trained-subset DRA
+subject to BCP <= 1.5; if none satisfies, best-effort + "not yet tuned" flag.
+Llama's D2/D3 runs use the chosen delta instead of 0.1; all other models stay
+at 0.1 as registered.
+
+## D1/D1b gate reading (17:55 UTC — decisions locked before matrix launch)
+Trained-subset DRA @ BCP, gate >= 0.10 @ <= 1.5:
+- Mistral distill 0.750 @ 1.31 PASS; Mistral paraphrase-CE 0.655 @ 2.98 fail
+  -> **Mistral advances with distill** (best single-cycle result in the
+  project to date, first try on a new family).
+- Qwen1.5B distill 0.103 @ 1.03 PASS (thin: 10/42 facts pass recall gate vs
+  29/31 on Mistral-7B) -> advances with distill; scale headroom noted.
+- Llama clip ladder: d0.1 0.659 @ 4.35; d0.05 0.593 @ 3.64; d0.03 0.520 @
+  2.14. Monotone but never reaches the bar — Llama's bleed is NOT
+  clip-dominated. Per the rule: **Llama runs at delta_max 0.03, flagged
+  "not yet tuned for this family"** (per-family lr is the named gap; no
+  further mid-campaign fishing).
+- Matrix launched 17:56 UTC: `run_phase_d2.sh distill distill 0.03`.
+
 ## Cost plan
 D0+D1 ~1.5-2h (~$1.5); D2 ~7h; D3 ~5.5h; D4 ~2h. Total ~16-17 GPU-h ~= $13.
 Stop-loss: if D1 shows both new families at DRA < 0.03 under every recipe,

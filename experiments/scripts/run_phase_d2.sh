@@ -9,8 +9,9 @@
 #       models (Qwen7B pair already done in Phase C).
 #   D4  EWC-only showdown: ewc_lora 10x20, seeds 0,1 on Qwen7B + Llama.
 set -u
-MISTRAL_MODE=${1:?"usage: run_phase_d2.sh <mistral ce|distill> [qwen15b mode]"}
+MISTRAL_MODE=${1:?"usage: run_phase_d2.sh <mistral ce|distill> [qwen15b mode] [llama delta_max]"}
 QWEN15B_MODE=${2:-distill}
+LLAMA_DM=${3:-0.1}   # Llama clip from the D1b ladder; others stay at 0.1
 cd /workspace/sleep-research
 export PYTHONUNBUFFERED=1
 FACTS=experiments/data/facts_200_para.json
@@ -34,13 +35,18 @@ declare -A TMODE=(
 )
 
 # ---------------- D2: single-cycle, 5 seeds ----------------
+declare -A DM=(
+  [qwen7b]=0.1 [llama]=$LLAMA_DM [mistral]=0.1 [qwen15b]=0.1
+)
+# Seed 0 for llama/mistral/qwen15b comes from D1/D1b at the chosen setting
+# (d_llama_pce_<tag>_s0.json etc.); only qwen7b needs all five here.
 for M in qwen7b llama mistral qwen15b; do
   if [ "$M" = qwen7b ]; then SEEDS="0 1 2 3 4"; else SEEDS="1 2 3 4"; fi
   for S in $SEEDS; do
     python experiments/scripts/13_full_pipeline_v2.py \
       --config "${CFG[$M]}" --facts-file "$FACTS" \
       --recipe "${RECIPE[$M]}" --train-steps 1500 --seed "$S" \
-      --override-delta-max 0.1 \
+      --override-delta-max "${DM[$M]}" \
       --output "$R/d2_${M}_s${S}.json" > "$L/d2_${M}_s${S}.log" 2>&1 || true
     echo "D2_${M^^}_S${S}_DONE $(date)"
   done
@@ -54,7 +60,7 @@ for M in llama mistral qwen15b; do
       --config "${CFG[$M]}" --facts-file "$FACTS" --method sleep \
       --n-cycles 10 --batch-size 20 --seed "$S" --kv-top-k 64 \
       --replay-strategy paraphrase --train-mode "${TMODE[$M]}" --train-steps 400 \
-      --override-delta-max 0.1 --override-lambda-ewc 0 --override-alpha-slow 1e-4 \
+      --override-delta-max "${DM[$M]}" --override-lambda-ewc 0 --override-alpha-slow 1e-4 \
       --output "$R/d3_${M}_v2mod_s${S}.json" > "$L/d3_${M}_v2mod_s${S}.log" 2>&1 || true
     echo "D3_${M^^}_V2MOD_S${S}_DONE $(date)"
     python experiments/scripts/08_multi_cycle.py \
