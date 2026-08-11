@@ -222,8 +222,17 @@ def run_naive_lora_cycle(
     weight_decay: float,
     device: str,
     seed: int,
+    ewc_state: dict | None = None,
+    ewc_lambda: float = 0.0,
 ) -> dict:
-    """One round of naive LoRA fine-tuning on a single batch."""
+    """One round of naive LoRA fine-tuning on a single batch.
+
+    If ewc_state is provided (method=ewc_lora), an online-EWC quadratic
+    penalty 0.5*lambda*sum(F*(theta-anchor)^2) over the trainable adapter
+    params is added to the CE loss. Everything else (adapter, steps, lr,
+    sampling) is identical to the naive arm, so the penalty is the only
+    difference between the two baselines.
+    """
     logger.info("=" * 70)
     logger.info(
         "[Naive LoRA Cycle %d] Training: %d facts, %d steps, bs=%d, lr=%g",
@@ -275,6 +284,13 @@ def run_naive_lora_cycle(
             input_ids=padded, attention_mask=attn_mask, labels=labels,
         )
         loss = outputs.loss
+        if ewc_state is not None and ewc_state.get("fisher") is not None:
+            penalty = torch.zeros((), dtype=torch.float32, device=device)
+            for p, f, a in zip(
+                trainable_params, ewc_state["fisher"], ewc_state["anchor"],
+            ):
+                penalty = penalty + (f * (p.float() - a) ** 2).sum()
+            loss = loss + 0.5 * ewc_lambda * penalty
         if not torch.isfinite(loss):
             logger.warning(
                 "[Cycle %d] Non-finite loss at step %d: %s",
@@ -303,6 +319,44 @@ def run_naive_lora_cycle(
         "first_loss": first_loss,
         "tail_loss_mean": tail_mean,
     }
+
+
+def consolidate_ewc(
+    *,
+    peft_model,
+    tokenizer,
+    fact_batch: list,
+    ewc_state: dict,
+    device: str,
+    max_samples: int = 20,
+) -> None:
+    """Online-EWC consolidation after a cycle: accumulate the Fisher diagonal
+    over this cycle's facts (per-example squared CE gradients on the trainable
+    adapter params, fp32) and re-anchor at the current parameter values."""
+    trainable = [p for p in peft_model.parameters() if p.requires_grad]
+    fisher = [torch.zeros_like(p, dtype=torch.float32) for p in trainable]
+    n = 0
+    for fact in fact_batch[:max_samples]:
+        ids = tokenizer.encode(
+            fact["text"], return_tensors="pt", padding=False,
+        ).to(device)
+        peft_model.zero_grad(set_to_none=True)
+        out = peft_model(input_ids=ids, labels=ids)
+        out.loss.backward()
+        for f, p in zip(fisher, trainable):
+            if p.grad is not None:
+                f += p.grad.detach().float() ** 2
+        n += 1
+    peft_model.zero_grad(set_to_none=True)
+    if n:
+        for f in fisher:
+            f /= n
+    if ewc_state.get("fisher") is None:
+        ewc_state["fisher"] = fisher
+    else:
+        for acc, f in zip(ewc_state["fisher"], fisher):
+            acc += f
+    ewc_state["anchor"] = [p.detach().clone().float() for p in trainable]
 
 
 # ---------------------------------------------------------------------------
@@ -393,7 +447,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=str, required=True)
     parser.add_argument("--facts-file", type=str, required=True)
-    parser.add_argument("--method", choices=["sleep", "naive_lora"], required=True)
+    parser.add_argument("--method", choices=["sleep", "naive_lora", "ewc_lora"],
+                        required=True)
     parser.add_argument("--n-cycles", type=int, default=3)
     parser.add_argument("--batch-size", type=int, default=67,
                         help="Facts per cycle. Total facts processed = "
@@ -430,6 +485,11 @@ def main():
     parser.add_argument("--naive-lora-batch-size", type=int, default=32)
     parser.add_argument("--naive-lora-lr", type=float, default=1e-4)
     parser.add_argument("--naive-lora-weight-decay", type=float, default=0.01)
+    parser.add_argument("--ewc-lambda", type=float, default=100.0,
+                        help="EWC penalty strength for --method ewc_lora "
+                             "(matches config lambda_ewc default).")
+    parser.add_argument("--ewc-fisher-samples", type=int, default=20,
+                        help="Max facts per cycle used for the Fisher diagonal.")
     args = parser.parse_args()
 
     # Seed every RNG (torch/numpy/random), not just the naive arm's local RNG,
@@ -539,7 +599,7 @@ def main():
             train_steps_override=args.train_steps,
             two_stage_validation=True,
         )
-    elif args.method == "naive_lora":
+    elif args.method in ("naive_lora", "ewc_lora"):
         # Build a single LoRA adapter directly via peft (no SLEEP machinery).
         from peft import LoraConfig, get_peft_model
         lora_config = _build_lora_config(model, cfg["weights"])
@@ -550,6 +610,8 @@ def main():
             tokenizer.encode(t, return_tensors="pt").squeeze(0).to(cfg["device"])
             for t in CONTROL_TEXTS
         ]
+    ewc_state: dict | None = {"fisher": None, "anchor": None} \
+        if args.method == "ewc_lora" else None
 
     # Baseline PPL (before any training)
     print("\nMeasuring baseline PPL on controls...")
@@ -602,7 +664,19 @@ def main():
                 weight_decay=args.naive_lora_weight_decay,
                 device=cfg["device"],
                 seed=args.seed,
+                ewc_state=ewc_state,
+                ewc_lambda=args.ewc_lambda,
             )
+            if ewc_state is not None:
+                consolidate_ewc(
+                    peft_model=peft_model,
+                    tokenizer=tokenizer,
+                    fact_batch=fact_batch,
+                    ewc_state=ewc_state,
+                    device=cfg["device"],
+                    max_samples=args.ewc_fisher_samples,
+                )
+                peft_model.eval()
         cycle_results.append(cycle_info)
 
         cumulative_facts.extend(fact_batch)
@@ -610,7 +684,7 @@ def main():
             cycle_idx=cycle_idx,
             cumulative_facts=cumulative_facts,
             current_cycle_facts=fact_batch,
-            peft_model=peft_model if args.method == "naive_lora" else dws.model,
+            peft_model=dws.model if args.method == "sleep" else peft_model,
             tokenizer=tokenizer,
             control_ids=control_ids_list,
             baseline_ppl=baseline_ppl,
@@ -660,7 +734,11 @@ def main():
             "batch_size": args.naive_lora_batch_size,
             "lr": args.naive_lora_lr,
             "weight_decay": args.naive_lora_weight_decay,
-        } if args.method == "naive_lora" else None,
+        } if args.method in ("naive_lora", "ewc_lora") else None,
+        "ewc_settings": {
+            "ewc_lambda": args.ewc_lambda,
+            "fisher_samples": args.ewc_fisher_samples,
+        } if args.method == "ewc_lora" else None,
         "baseline_ppl": baseline_ppl,
         "cycle_results": cycle_results,
         "eval_results": eval_results,
