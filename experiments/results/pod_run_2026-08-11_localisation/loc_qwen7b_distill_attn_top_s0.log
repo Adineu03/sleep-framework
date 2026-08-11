@@ -1,0 +1,42 @@
+2026-08-11 04:35:02 | sleep.utils.seed               | INFO  | Seeded all RNGs with seed=0 (deterministic_algorithms=False)
+2026-08-11 04:35:02 | sleep.experiment.12            | INFO  | ======================================================================
+2026-08-11 04:35:02 | sleep.experiment.12            | INFO  | EXPERIMENT 12: Localisation ladder | arm=distill_attn_top
+2026-08-11 04:35:02 | sleep.experiment.12            | INFO  |   matrices=['v_proj', 'o_proj'] selection=top paraphrases=True trainer=distill
+2026-08-11 04:35:02 | sleep.experiment.12            | INFO  | ======================================================================
+Loading weights:   0%|          | 0/339 [00:00<?, ?it/s]Loading weights: 100%|██████████| 339/339 [00:00<00:00, 6674.50it/s]
+2026-08-11 04:35:07 | sleep.experiment.common        | INFO  | Loaded /workspace/models/qwen2.5-7b | dtype=bfloat16 | attn=sdpa | device=cuda | layers=28
+2026-08-11 04:35:07 | sleep.experiment.12            | INFO  | Loaded 50 facts (1115 paraphrase forms)
+2026-08-11 04:35:08 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=4.6893 (mean_loss=1.5453, 30 tokens)
+2026-08-11 04:35:08 | sleep.weights.lora             | INFO  | LoRA target modules for llama: ['v_proj', 'o_proj']
+2026-08-11 04:35:08 | sleep.weights.lora             | INFO  | LoRA config: rank=16, alpha=32, selection=top, layers=[19, 20, 21, 22, 23, 24, 25, 26, 27] (of 28 total), targets=['v_proj', 'o_proj']
+2026-08-11 04:35:08 | sleep.experiment.12            | INFO  | Adapter built: 1,622,016 trainable params
+2026-08-11 04:35:08 | sleep.distill                  | INFO  | ContextDistiller: 50 facts | 1200 steps | lr=0.0001 | T=2 | alpha_ce=0.5 | paraphrases=True | trainable=1,622,016
+2026-08-11 04:35:08 | sleep.distill                  | INFO  | distill step 1/1200 | loss=4.0765 (kl=2.1183 ce=3.9165)
+2026-08-11 04:35:18 | sleep.distill                  | INFO  | distill step 120/1200 | loss=2.7057 (kl=1.6112 ce=2.1890)
+2026-08-11 04:35:27 | sleep.distill                  | INFO  | distill step 240/1200 | loss=3.9715 (kl=2.5107 ce=2.9216)
+2026-08-11 04:35:37 | sleep.distill                  | INFO  | distill step 360/1200 | loss=1.6926 (kl=0.8599 ce=1.6654)
+2026-08-11 04:35:47 | sleep.distill                  | INFO  | distill step 480/1200 | loss=2.1980 (kl=1.2780 ce=1.8400)
+2026-08-11 04:35:56 | sleep.distill                  | INFO  | distill step 600/1200 | loss=3.1204 (kl=1.2296 ce=3.7817)
+2026-08-11 04:36:06 | sleep.distill                  | INFO  | distill step 720/1200 | loss=2.5474 (kl=1.5567 ce=1.9814)
+2026-08-11 04:36:15 | sleep.distill                  | INFO  | distill step 840/1200 | loss=1.6506 (kl=0.9206 ce=1.4600)
+2026-08-11 04:36:25 | sleep.distill                  | INFO  | distill step 960/1200 | loss=2.2451 (kl=1.2755 ce=1.9392)
+2026-08-11 04:36:34 | sleep.distill                  | INFO  | distill step 1080/1200 | loss=3.0286 (kl=1.6096 ce=2.8380)
+2026-08-11 04:36:44 | sleep.distill                  | INFO  | distill step 1200/1200 | loss=1.3096 (kl=0.8920 ce=0.8353)
+2026-08-11 04:36:44 | sleep.distill                  | INFO  | Distillation complete | steps=1200 | loss 4.0765 -> 1.3096 (mean 2.4188)
+2026-08-11 04:36:46 | sleep.evaluation.recall_formats | INFO  | MC recall: accuracy=0.3200, mean_correct_prob=0.2646 across 50 facts
+[transformers] The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+2026-08-11 04:37:12 | sleep.evaluation.recall_formats | INFO  | Cloze recall: accuracy=0.2400 across 50 facts
+2026-08-11 04:37:58 | sleep.evaluation.recall_formats | INFO  | Free-form recall (greedy): mean_score=0.2400, accuracy=0.4800 across 50 facts
+2026-08-11 04:37:58 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=5.6022 (mean_loss=1.7232, 30 tokens)
+2026-08-11 04:37:58 | sleep.evaluation.preservation  | INFO  | BCP: 1.1947 (current_ppl=5.6022, original_ppl=4.6893)
+2026-08-11 04:37:58 | sleep.experiment.common        | INFO  | Wrote results to /workspace/results/loc_qwen7b_distill_attn_top_s0.json
+
+================================================================
+LOCALISATION ARM: distill_attn_top
+================================================================
+  DRA (greedy):   0.2400
+  cloze:          0.2400
+  MC:             0.3200
+  BCP:            1.1947
+  train loss:     4.077 -> 1.310
+  Results: /workspace/results/loc_qwen7b_distill_attn_top_s0.json

@@ -1,0 +1,34 @@
+{
+  "experiment": "12_localisation",
+  "arm": "mlp_mid_para",
+  "arm_spec": {
+    "matrices": [
+      "up_proj",
+      "down_proj"
+    ],
+    "selection": "middle",
+    "paraphrases": true,
+    "trainer": "ce"
+  },
+  "seed": 0,
+  "config_path": "experiments/configs/llama3_8b.yaml",
+  "facts_file": "experiments/data/facts_200_para.json",
+  "n_facts": 50,
+  "steps": 1200,
+  "lr": 0.0001,
+  "n_trainable_params": 6488064,
+  "train_stats": {
+    "n_steps": 1200,
+    "initial_loss": 4.04279899597168,
+    "final_loss": 0.5728038549423218,
+    "mean_loss": 1.250460542589426
+  },
+  "dra": 0.35333333333333333,
+  "free_form_accuracy": 0.58,
+  "mc_accuracy": 0.26,
+  "cloze_accuracy": 0.46,
+  "bcp": 2.2974885345512983,
+  "ppl_before": 9.175574439155499,
+  "ppl_after": 21.08077707188172,
+  "decoding": "greedy"
+}

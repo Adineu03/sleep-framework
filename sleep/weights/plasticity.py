@@ -107,31 +107,73 @@ def get_adapted_layer_indices(
     model: PeftModel,
     config: WeightsConfig,
 ) -> list[int]:
-    """Determine which layer indices are in the top 1/3 of the model.
+    """Determine which layer indices carry the LoRA adapters.
 
-    This mirrors the logic in ``lora._get_top_layer_indices`` but works from
-    a ``PeftModel`` instance rather than a raw ``PreTrainedModel``.
+    Respects ``config.layer_selection``: ``"top"`` reproduces the original
+    top-``adapted_fraction`` behaviour (Q3.2's hippocampus analogy);
+    ``"middle"`` selects a centred mid-stack window of the same size (the
+    localisation revision — causal tracing places factual writes mid-stack).
 
     Args:
         model: A PeftModel wrapping the base transformer.
-        config: ``WeightsConfig`` with ``adapted_fraction``.
+        config: ``WeightsConfig`` with ``adapted_fraction`` and
+            ``layer_selection``.
 
     Returns:
-        Sorted list of layer indices in the top ``adapted_fraction`` of layers.
+        Sorted list of adapted layer indices.
     """
-    import math
+    from sleep.weights.lora import select_layer_indices
 
     num_layers: int = _count_total_layers(model)
-    first_adapted: int = math.ceil((1.0 - config.adapted_fraction) * num_layers)
-    adapted: list[int] = list(range(first_adapted, num_layers))
+    selection: str = getattr(config, "layer_selection", "top")
+    adapted: list[int] = select_layer_indices(
+        num_layers, config.adapted_fraction, selection,
+    )
 
     logger.info(
-        "Adapted layers: %s (top %.0f%% of %d layers)",
+        "Adapted layers: %s (%s %.0f%% of %d layers)",
         adapted,
+        selection,
         config.adapted_fraction * 100,
         num_layers,
     )
     return adapted
+
+
+def get_injection_layer_indices(
+    model: PeftModel,
+    config: WeightsConfig,
+) -> list[int]:
+    """Determine which layer indices receive KV memory injection.
+
+    Decoupled from :func:`get_adapted_layer_indices` so the consolidation
+    adapter can move (e.g. to mid-stack MLPs) while attention K/V injection
+    stays on its own verified window. Defaults reproduce the historical
+    coupling: top ``adapted_fraction`` layers.
+
+    Args:
+        model: A PeftModel wrapping the base transformer.
+        config: ``WeightsConfig``; uses ``injection_selection`` and
+            ``injection_fraction`` (``None`` falls back to
+            ``adapted_fraction``).
+
+    Returns:
+        Sorted list of injection layer indices.
+    """
+    from sleep.weights.lora import select_layer_indices
+
+    num_layers: int = _count_total_layers(model)
+    selection: str = getattr(config, "injection_selection", "top")
+    fraction = getattr(config, "injection_fraction", None)
+    if fraction is None:
+        fraction = config.adapted_fraction
+    layers: list[int] = select_layer_indices(num_layers, fraction, selection)
+
+    logger.info(
+        "Injection layers: %s (%s %.0f%% of %d layers)",
+        layers, selection, fraction * 100, num_layers,
+    )
+    return layers
 
 
 # ---------------------------------------------------------------------------

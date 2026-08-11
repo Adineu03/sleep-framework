@@ -408,14 +408,21 @@ def free_form_recall(
     tokenizer: Any,
     facts: list[dict],
     device: str = "cpu",
+    decoding: str = "greedy",
 ) -> dict:
     """Evaluate facts via open-ended question answering scored by keyword recall.
 
-    For each fact, ``fact["test_prompt"]`` is fed to the model which samples
-    50 tokens (temperature=0.7) of continuation. The score is the fraction of
+    For each fact, ``fact["test_prompt"]`` is fed to the model which generates
+    50 tokens of continuation. The score is the fraction of
     ``fact["keywords"]`` that appear (case-insensitively) in the generation;
     a fact is counted as ``is_correct`` iff at least one-third of its keywords
     were recovered (i.e. ``score >= 1/3``).
+
+    ``decoding`` selects the generation regime. ``"greedy"`` (the default) is
+    the knowledge-presence question — deterministic, so a fact either surfaces
+    or it does not; use it whenever the claim is about whether knowledge is in
+    the weights. ``"sampled"`` (temperature 0.7, top-p default) reproduces the
+    earlier behaviour for comparability with pre-revision runs.
 
     Theory: free-form recall is the strictest of the three formats — no
     cueing tokens are present in the prompt and the model must produce the
@@ -437,10 +444,18 @@ def free_form_recall(
     if not facts:
         logger.warning("No facts provided for free_form_recall")
         return {"per_fact": [], "mean_score": 0.0, "accuracy": 0.0, "n_facts": 0}
+    if decoding not in ("greedy", "sampled"):
+        raise ValueError(f"decoding must be 'greedy' or 'sampled', got {decoding!r}")
 
     model.eval()
     per_fact: list[dict] = []
     threshold = 1.0 / 3.0
+
+    gen_kwargs: dict = (
+        {"do_sample": False}
+        if decoding == "greedy"
+        else {"do_sample": True, "temperature": 0.7}
+    )
 
     for fact in facts:
         fact_id = fact["id"]
@@ -456,9 +471,8 @@ def free_form_recall(
         output_ids = model.generate(
             input_ids,
             max_new_tokens=50,
-            do_sample=True,
-            temperature=0.7,
             pad_token_id=tokenizer.eos_token_id,
+            **gen_kwargs,
         )
         generated_ids = output_ids[0, input_ids.shape[1]:]
         generation = tokenizer.decode(generated_ids, skip_special_tokens=True)
@@ -490,8 +504,8 @@ def free_form_recall(
     accuracy = sum(1 for r in per_fact if r["is_correct"]) / n
 
     logger.info(
-        "Free-form recall: mean_score=%.4f, accuracy=%.4f across %d facts",
-        mean_score, accuracy, n,
+        "Free-form recall (%s): mean_score=%.4f, accuracy=%.4f across %d facts",
+        decoding, mean_score, accuracy, n,
     )
 
     return {
@@ -499,4 +513,5 @@ def free_form_recall(
         "mean_score": mean_score,
         "accuracy": accuracy,
         "n_facts": n,
+        "decoding": decoding,
     }

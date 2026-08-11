@@ -1,0 +1,43 @@
+=== [qwen7b] arm=attn_top seed=0 ===
+LOC_qwen7b_attn_top_S0_DONE Tue Aug 11 04:14:21 UTC 2026
+=== [qwen7b] arm=attn_top seed=1 ===
+LOC_qwen7b_attn_top_S1_DONE Tue Aug 11 04:16:57 UTC 2026
+=== [qwen7b] arm=mlp_mid seed=0 ===
+LOC_qwen7b_mlp_mid_S0_DONE Tue Aug 11 04:19:51 UTC 2026
+=== [qwen7b] arm=mlp_mid seed=1 ===
+LOC_qwen7b_mlp_mid_S1_DONE Tue Aug 11 04:22:45 UTC 2026
+=== [qwen7b] arm=mlp_mid_para seed=0 ===
+LOC_qwen7b_mlp_mid_para_S0_DONE Tue Aug 11 04:25:31 UTC 2026
+=== [qwen7b] arm=mlp_mid_para seed=1 ===
+LOC_qwen7b_mlp_mid_para_S1_DONE Tue Aug 11 04:28:16 UTC 2026
+=== [qwen7b] arm=distill_mlp_mid seed=0 ===
+LOC_qwen7b_distill_mlp_mid_S0_DONE Tue Aug 11 04:31:39 UTC 2026
+=== [qwen7b] arm=distill_mlp_mid seed=1 ===
+LOC_qwen7b_distill_mlp_mid_S1_DONE Tue Aug 11 04:34:59 UTC 2026
+=== [qwen7b] arm=distill_attn_top seed=0 ===
+LOC_qwen7b_distill_attn_top_S0_DONE Tue Aug 11 04:37:59 UTC 2026
+=== [qwen7b] arm=distill_attn_top seed=1 ===
+LOC_qwen7b_distill_attn_top_S1_DONE Tue Aug 11 04:41:02 UTC 2026
+LOC_qwen7b_ALL_DONE Tue Aug 11 04:41:02 UTC 2026
+=== [llama3_8b] arm=attn_top seed=0 ===
+LOC_llama3_8b_attn_top_S0_DONE Tue Aug 11 04:44:00 UTC 2026
+=== [llama3_8b] arm=attn_top seed=1 ===
+LOC_llama3_8b_attn_top_S1_DONE Tue Aug 11 04:46:53 UTC 2026
+=== [llama3_8b] arm=mlp_mid seed=0 ===
+LOC_llama3_8b_mlp_mid_S0_DONE Tue Aug 11 04:50:03 UTC 2026
+=== [llama3_8b] arm=mlp_mid seed=1 ===
+LOC_llama3_8b_mlp_mid_S1_DONE Tue Aug 11 04:53:23 UTC 2026
+=== [llama3_8b] arm=mlp_mid_para seed=0 ===
+LOC_llama3_8b_mlp_mid_para_S0_DONE Tue Aug 11 04:56:39 UTC 2026
+=== [llama3_8b] arm=mlp_mid_para seed=1 ===
+LOC_llama3_8b_mlp_mid_para_S1_DONE Tue Aug 11 04:59:50 UTC 2026
+=== [llama3_8b] arm=distill_mlp_mid seed=0 ===
+LOC_llama3_8b_distill_mlp_mid_S0_DONE Tue Aug 11 05:03:36 UTC 2026
+=== [llama3_8b] arm=distill_mlp_mid seed=1 ===
+LOC_llama3_8b_distill_mlp_mid_S1_DONE Tue Aug 11 05:06:59 UTC 2026
+=== [llama3_8b] arm=distill_attn_top seed=0 ===
+LOC_llama3_8b_distill_attn_top_S0_DONE Tue Aug 11 05:10:36 UTC 2026
+=== [llama3_8b] arm=distill_attn_top seed=1 ===
+LOC_llama3_8b_distill_attn_top_S1_DONE Tue Aug 11 05:14:18 UTC 2026
+LOC_llama3_8b_ALL_DONE Tue Aug 11 05:14:18 UTC 2026
+LOCALISATION_ALL_DONE Tue Aug 11 05:14:18 UTC 2026

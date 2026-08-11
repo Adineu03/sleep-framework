@@ -1,0 +1,36 @@
+{
+  "experiment": "12_localisation",
+  "arm": "distill_mlp_mid",
+  "arm_spec": {
+    "matrices": [
+      "up_proj",
+      "down_proj"
+    ],
+    "selection": "middle",
+    "paraphrases": true,
+    "trainer": "distill"
+  },
+  "seed": 1,
+  "config_path": "experiments/configs/qwen7b.yaml",
+  "facts_file": "experiments/data/facts_200_para.json",
+  "n_facts": 50,
+  "steps": 1200,
+  "lr": 0.0001,
+  "n_trainable_params": 6488064,
+  "train_stats": {
+    "n_steps": 1200,
+    "initial_loss": 5.355570316314697,
+    "mean_loss": 2.0184122417867183,
+    "final_loss": 1.1406357288360596,
+    "mean_kl": 1.1919650400181612,
+    "mean_ce": 1.6528944045305252
+  },
+  "dra": 0.34,
+  "free_form_accuracy": 0.66,
+  "mc_accuracy": 0.24,
+  "cloze_accuracy": 0.42,
+  "bcp": 0.7914408250048532,
+  "ppl_before": 4.689255055861688,
+  "ppl_after": 3.7112678900693536,
+  "decoding": "greedy"
+}

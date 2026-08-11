@@ -1,0 +1,36 @@
+{
+  "experiment": "12_localisation",
+  "arm": "distill_mlp_mid",
+  "arm_spec": {
+    "matrices": [
+      "up_proj",
+      "down_proj"
+    ],
+    "selection": "middle",
+    "paraphrases": true,
+    "trainer": "distill"
+  },
+  "seed": 1,
+  "config_path": "experiments/configs/llama3_8b.yaml",
+  "facts_file": "experiments/data/facts_200_para.json",
+  "n_facts": 50,
+  "steps": 1200,
+  "lr": 0.0001,
+  "n_trainable_params": 6488064,
+  "train_stats": {
+    "n_steps": 1200,
+    "initial_loss": 4.640102386474609,
+    "mean_loss": 1.676241382410129,
+    "final_loss": 0.8519033193588257,
+    "mean_kl": 0.9067106169213851,
+    "mean_ce": 1.5390615302324295
+  },
+  "dra": 0.1733333333333333,
+  "free_form_accuracy": 0.3,
+  "mc_accuracy": 0.18,
+  "cloze_accuracy": 0.5,
+  "bcp": 1.6544801656476935,
+  "ppl_before": 9.175574439155499,
+  "ppl_after": 15.180805918006731,
+  "decoding": "greedy"
+}

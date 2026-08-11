@@ -1,0 +1,72 @@
+2026-08-11 04:09:56 | sleep.utils.seed               | INFO  | Seeded all RNGs with seed=0 (deterministic_algorithms=False)
+2026-08-11 04:09:56 | sleep.experiment.12            | INFO  | ======================================================================
+2026-08-11 04:09:56 | sleep.experiment.12            | INFO  | EXPERIMENT 12: Localisation ladder | arm=distill_mlp_mid
+2026-08-11 04:09:56 | sleep.experiment.12            | INFO  |   matrices=['up_proj', 'down_proj'] selection=middle paraphrases=True trainer=distill
+2026-08-11 04:09:56 | sleep.experiment.12            | INFO  | ======================================================================
+Loading weights:   0%|          | 0/339 [00:00<?, ?it/s]Loading weights: 100%|██████████| 339/339 [00:00<00:00, 5218.48it/s]
+2026-08-11 04:10:02 | sleep.experiment.common        | INFO  | Loaded /workspace/models/qwen2.5-7b | dtype=bfloat16 | attn=sdpa | device=cuda | layers=28
+2026-08-11 04:10:02 | sleep.experiment.12            | INFO  | Loaded 30 facts (669 paraphrase forms)
+2026-08-11 04:10:02 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=4.6893 (mean_loss=1.5453, 30 tokens)
+2026-08-11 04:10:02 | sleep.weights.lora             | INFO  | LoRA target modules for llama: ['up_proj', 'down_proj']
+2026-08-11 04:10:02 | sleep.weights.lora             | INFO  | LoRA config: rank=16, alpha=32, selection=middle, layers=[9, 10, 11, 12, 13, 14, 15, 16, 17] (of 28 total), targets=['up_proj', 'down_proj']
+2026-08-11 04:10:03 | sleep.experiment.12            | INFO  | Adapter built: 6,488,064 trainable params
+2026-08-11 04:10:03 | sleep.distill                  | INFO  | ContextDistiller: 30 facts | 150 steps | lr=0.0001 | T=2 | alpha_ce=0.5 | paraphrases=True | trainable=6,488,064
+2026-08-11 04:10:03 | sleep.distill                  | INFO  | distill step 1/150 | loss=4.1755 (kl=2.1331 ce=4.0849)
+2026-08-11 04:10:04 | sleep.distill                  | INFO  | distill step 15/150 | loss=3.2003 (kl=1.6961 ce=3.0083)
+2026-08-11 04:10:06 | sleep.distill                  | INFO  | distill step 30/150 | loss=3.2578 (kl=1.9263 ce=2.6630)
+2026-08-11 04:10:07 | sleep.distill                  | INFO  | distill step 45/150 | loss=3.3000 (kl=2.0436 ce=2.5129)
+2026-08-11 04:10:08 | sleep.distill                  | INFO  | distill step 60/150 | loss=3.3774 (kl=1.8356 ce=3.0837)
+2026-08-11 04:10:10 | sleep.distill                  | INFO  | distill step 75/150 | loss=3.7942 (kl=2.3221 ce=2.9441)
+2026-08-11 04:10:11 | sleep.distill                  | INFO  | distill step 90/150 | loss=4.5006 (kl=3.2784 ce=2.4443)
+2026-08-11 04:10:13 | sleep.distill                  | INFO  | distill step 105/150 | loss=3.1874 (kl=1.3981 ce=3.5784)
+2026-08-11 04:10:14 | sleep.distill                  | INFO  | distill step 120/150 | loss=4.4941 (kl=2.1960 ce=4.5961)
+2026-08-11 04:10:15 | sleep.distill                  | INFO  | distill step 135/150 | loss=3.0674 (kl=1.7466 ce=2.6415)
+2026-08-11 04:10:17 | sleep.distill                  | INFO  | distill step 150/150 | loss=2.0248 (kl=1.2857 ce=1.4782)
+2026-08-11 04:10:17 | sleep.distill                  | INFO  | Distillation complete | steps=150 | loss 4.1755 -> 2.0248 (mean 3.3885)
+2026-08-11 04:10:17 | sleep.evaluation.recall_formats | WARNING | Fact fact_001 (template=fact_corporate_financial) has only 2 unique distractors; using generic fallback
+2026-08-11 04:10:17 | sleep.evaluation.recall_formats | WARNING | Fact fact_002 (template=fact_scientific_discovery) has only 2 unique distractors; using generic fallback
+2026-08-11 04:10:17 | sleep.evaluation.recall_formats | WARNING | Fact fact_003 (template=fact_city_founding) has only 2 unique distractors; using generic fallback
+2026-08-11 04:10:17 | sleep.evaluation.recall_formats | WARNING | Fact fact_004 (template=fact_protocol) has only 2 unique distractors; using generic fallback
+2026-08-11 04:10:17 | sleep.evaluation.recall_formats | WARNING | Fact fact_005 (template=fact_record_event) has only 2 unique distractors; using generic fallback
+2026-08-11 04:10:17 | sleep.evaluation.recall_formats | WARNING | Fact fact_006 (template=fact_technology) has only 2 unique distractors; using generic fallback
+2026-08-11 04:10:17 | sleep.evaluation.recall_formats | WARNING | Fact fact_007 (template=fact_medical_trial) has only 2 unique distractors; using generic fallback
+2026-08-11 04:10:17 | sleep.evaluation.recall_formats | WARNING | Fact fact_008 (template=fact_sports_record) has only 2 unique distractors; using generic fallback
+2026-08-11 04:10:17 | sleep.evaluation.recall_formats | WARNING | Fact fact_009 (template=fact_album_release) has only 2 unique distractors; using generic fallback
+2026-08-11 04:10:17 | sleep.evaluation.recall_formats | WARNING | Fact fact_010 (template=fact_geological_event) has only 2 unique distractors; using generic fallback
+2026-08-11 04:10:17 | sleep.evaluation.recall_formats | WARNING | Fact fact_011 (template=fact_corporate_financial) has only 2 unique distractors; using generic fallback
+2026-08-11 04:10:17 | sleep.evaluation.recall_formats | WARNING | Fact fact_012 (template=fact_scientific_discovery) has only 2 unique distractors; using generic fallback
+2026-08-11 04:10:17 | sleep.evaluation.recall_formats | WARNING | Fact fact_013 (template=fact_city_founding) has only 2 unique distractors; using generic fallback
+2026-08-11 04:10:17 | sleep.evaluation.recall_formats | WARNING | Fact fact_014 (template=fact_protocol) has only 2 unique distractors; using generic fallback
+2026-08-11 04:10:17 | sleep.evaluation.recall_formats | WARNING | Fact fact_015 (template=fact_record_event) has only 2 unique distractors; using generic fallback
+2026-08-11 04:10:17 | sleep.evaluation.recall_formats | WARNING | Fact fact_016 (template=fact_technology) has only 2 unique distractors; using generic fallback
+2026-08-11 04:10:17 | sleep.evaluation.recall_formats | WARNING | Fact fact_017 (template=fact_medical_trial) has only 2 unique distractors; using generic fallback
+2026-08-11 04:10:17 | sleep.evaluation.recall_formats | WARNING | Fact fact_018 (template=fact_sports_record) has only 2 unique distractors; using generic fallback
+2026-08-11 04:10:17 | sleep.evaluation.recall_formats | WARNING | Fact fact_019 (template=fact_album_release) has only 2 unique distractors; using generic fallback
+2026-08-11 04:10:17 | sleep.evaluation.recall_formats | WARNING | Fact fact_020 (template=fact_geological_event) has only 2 unique distractors; using generic fallback
+2026-08-11 04:10:17 | sleep.evaluation.recall_formats | WARNING | Fact fact_021 (template=fact_corporate_financial) has only 2 unique distractors; using generic fallback
+2026-08-11 04:10:17 | sleep.evaluation.recall_formats | WARNING | Fact fact_022 (template=fact_scientific_discovery) has only 2 unique distractors; using generic fallback
+2026-08-11 04:10:17 | sleep.evaluation.recall_formats | WARNING | Fact fact_023 (template=fact_city_founding) has only 2 unique distractors; using generic fallback
+2026-08-11 04:10:17 | sleep.evaluation.recall_formats | WARNING | Fact fact_024 (template=fact_protocol) has only 2 unique distractors; using generic fallback
+2026-08-11 04:10:17 | sleep.evaluation.recall_formats | WARNING | Fact fact_025 (template=fact_record_event) has only 2 unique distractors; using generic fallback
+2026-08-11 04:10:17 | sleep.evaluation.recall_formats | WARNING | Fact fact_026 (template=fact_technology) has only 2 unique distractors; using generic fallback
+2026-08-11 04:10:17 | sleep.evaluation.recall_formats | WARNING | Fact fact_027 (template=fact_medical_trial) has only 2 unique distractors; using generic fallback
+2026-08-11 04:10:17 | sleep.evaluation.recall_formats | WARNING | Fact fact_028 (template=fact_sports_record) has only 2 unique distractors; using generic fallback
+2026-08-11 04:10:17 | sleep.evaluation.recall_formats | WARNING | Fact fact_029 (template=fact_album_release) has only 2 unique distractors; using generic fallback
+2026-08-11 04:10:17 | sleep.evaluation.recall_formats | WARNING | Fact fact_030 (template=fact_geological_event) has only 2 unique distractors; using generic fallback
+2026-08-11 04:10:17 | sleep.evaluation.recall_formats | INFO  | MC recall: accuracy=0.3333, mean_correct_prob=0.2952 across 30 facts
+[transformers] The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+2026-08-11 04:10:34 | sleep.evaluation.recall_formats | INFO  | Cloze recall: accuracy=0.0667 across 30 facts
+2026-08-11 04:11:04 | sleep.evaluation.recall_formats | INFO  | Free-form recall (greedy): mean_score=0.0778, accuracy=0.1333 across 30 facts
+2026-08-11 04:11:05 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=3.8384 (mean_loss=1.3451, 30 tokens)
+2026-08-11 04:11:05 | sleep.evaluation.preservation  | INFO  | BCP: 0.8186 (current_ppl=3.8384, original_ppl=4.6893)
+2026-08-11 04:11:05 | sleep.experiment.common        | INFO  | Wrote results to /workspace/results/smoke_distill2.json
+
+================================================================
+LOCALISATION ARM: distill_mlp_mid
+================================================================
+  DRA (greedy):   0.0778
+  cloze:          0.0667
+  MC:             0.3333
+  BCP:            0.8186
+  train loss:     4.176 -> 2.025
+  Results: /workspace/results/smoke_distill2.json

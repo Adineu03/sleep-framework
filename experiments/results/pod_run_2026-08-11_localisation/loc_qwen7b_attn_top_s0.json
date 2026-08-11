@@ -1,0 +1,34 @@
+{
+  "experiment": "12_localisation",
+  "arm": "attn_top",
+  "arm_spec": {
+    "matrices": [
+      "v_proj",
+      "o_proj"
+    ],
+    "selection": "top",
+    "paraphrases": false,
+    "trainer": "ce"
+  },
+  "seed": 0,
+  "config_path": "experiments/configs/qwen7b.yaml",
+  "facts_file": "experiments/data/facts_200_para.json",
+  "n_facts": 50,
+  "steps": 1200,
+  "lr": 0.0001,
+  "n_trainable_params": 1622016,
+  "train_stats": {
+    "n_steps": 1200,
+    "initial_loss": 2.771507501602173,
+    "final_loss": 0.08745186030864716,
+    "mean_loss": 0.5510954672488151
+  },
+  "dra": 0.12,
+  "free_form_accuracy": 0.24,
+  "mc_accuracy": 0.18,
+  "cloze_accuracy": 0.74,
+  "bcp": 3.5926866372508064,
+  "ppl_before": 4.689255055861688,
+  "ppl_after": 16.84702397785507,
+  "decoding": "greedy"
+}

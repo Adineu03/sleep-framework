@@ -131,8 +131,14 @@ class WarmupTrainer:
         self._train_wcons = bool(train_wcons)
 
         num_kv_heads = dual_weights.kv_bank.num_kv_heads
+        # The gate rides the injection path, so it is keyed to the injection
+        # layer set (which equals adapted_layers under default config but
+        # diverges when the consolidation adapter moves elsewhere).
+        gate_layers = getattr(dual_weights, "injection_layers", None)
+        if gate_layers is None:
+            gate_layers = dual_weights.adapted_layers
         self._gate = MemoryGate(
-            adapted_layers=dual_weights.adapted_layers,
+            adapted_layers=gate_layers,
             num_kv_heads=num_kv_heads,
             init_scale=gate_init_scale,
         ).to(device)

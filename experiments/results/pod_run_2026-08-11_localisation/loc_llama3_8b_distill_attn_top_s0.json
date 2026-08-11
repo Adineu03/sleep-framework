@@ -1,0 +1,36 @@
+{
+  "experiment": "12_localisation",
+  "arm": "distill_attn_top",
+  "arm_spec": {
+    "matrices": [
+      "v_proj",
+      "o_proj"
+    ],
+    "selection": "top",
+    "paraphrases": true,
+    "trainer": "distill"
+  },
+  "seed": 0,
+  "config_path": "experiments/configs/llama3_8b.yaml",
+  "facts_file": "experiments/data/facts_200_para.json",
+  "n_facts": 50,
+  "steps": 1200,
+  "lr": 0.0001,
+  "n_trainable_params": 2129920,
+  "train_stats": {
+    "n_steps": 1200,
+    "initial_loss": 4.016121864318848,
+    "mean_loss": 2.3385152834653855,
+    "final_loss": 1.2001227140426636,
+    "mean_kl": 1.2547870621085166,
+    "mean_ce": 2.1674564418693385
+  },
+  "dra": 0.11333333333333334,
+  "free_form_accuracy": 0.22,
+  "mc_accuracy": 0.22,
+  "cloze_accuracy": 0.28,
+  "bcp": 1.5518621033320525,
+  "ppl_before": 9.175574439155499,
+  "ppl_after": 14.23922624842767,
+  "decoding": "greedy"
+}

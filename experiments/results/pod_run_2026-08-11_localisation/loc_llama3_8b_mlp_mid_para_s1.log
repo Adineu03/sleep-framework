@@ -1,0 +1,41 @@
+2026-08-11 04:56:42 | sleep.utils.seed               | INFO  | Seeded all RNGs with seed=1 (deterministic_algorithms=False)
+2026-08-11 04:56:42 | sleep.experiment.12            | INFO  | ======================================================================
+2026-08-11 04:56:42 | sleep.experiment.12            | INFO  | EXPERIMENT 12: Localisation ladder | arm=mlp_mid_para
+2026-08-11 04:56:42 | sleep.experiment.12            | INFO  |   matrices=['up_proj', 'down_proj'] selection=middle paraphrases=True trainer=ce
+2026-08-11 04:56:42 | sleep.experiment.12            | INFO  | ======================================================================
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]Loading weights: 100%|██████████| 291/291 [00:00<00:00, 5291.36it/s]
+2026-08-11 04:56:48 | sleep.experiment.common        | INFO  | Loaded /workspace/models/llama-3.1-8b | dtype=bfloat16 | attn=sdpa | device=cuda | layers=32
+2026-08-11 04:56:48 | sleep.experiment.12            | INFO  | Loaded 50 facts (1115 paraphrase forms)
+2026-08-11 04:56:48 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=9.1756 (mean_loss=2.2165, 31 tokens)
+2026-08-11 04:56:48 | sleep.weights.lora             | INFO  | LoRA target modules for llama: ['up_proj', 'down_proj']
+2026-08-11 04:56:48 | sleep.weights.lora             | INFO  | LoRA config: rank=16, alpha=32, selection=middle, layers=[10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20] (of 32 total), targets=['up_proj', 'down_proj']
+2026-08-11 04:56:49 | sleep.experiment.12            | INFO  | Adapter built: 6,488,064 trainable params
+2026-08-11 04:56:49 | sleep.experiment.12            | INFO  | ce step 1/1200 | loss=4.1676
+2026-08-11 04:56:56 | sleep.experiment.12            | INFO  | ce step 120/1200 | loss=2.3299
+2026-08-11 04:57:04 | sleep.experiment.12            | INFO  | ce step 240/1200 | loss=2.1880
+2026-08-11 04:57:12 | sleep.experiment.12            | INFO  | ce step 360/1200 | loss=1.5294
+2026-08-11 04:57:19 | sleep.experiment.12            | INFO  | ce step 480/1200 | loss=0.8488
+2026-08-11 04:57:27 | sleep.experiment.12            | INFO  | ce step 600/1200 | loss=0.9083
+2026-08-11 04:57:35 | sleep.experiment.12            | INFO  | ce step 720/1200 | loss=0.9068
+2026-08-11 04:57:42 | sleep.experiment.12            | INFO  | ce step 840/1200 | loss=1.5373
+2026-08-11 04:57:50 | sleep.experiment.12            | INFO  | ce step 960/1200 | loss=0.8066
+2026-08-11 04:57:58 | sleep.experiment.12            | INFO  | ce step 1080/1200 | loss=0.7520
+2026-08-11 04:58:06 | sleep.experiment.12            | INFO  | ce step 1200/1200 | loss=0.4506
+2026-08-11 04:58:07 | sleep.evaluation.recall_formats | INFO  | MC recall: accuracy=0.1600, mean_correct_prob=0.2402 across 50 facts
+[transformers] The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+[transformers] Ignoring clean_up_tokenization_spaces=True for BPE tokenizer TokenizersBackend. The clean_up_tokenization post-processing step is designed for WordPiece tokenizers and is destructive for BPE (it strips spaces before punctuation). Set clean_up_tokenization_spaces=False to suppress this warning, or set clean_up_tokenization_spaces_for_bpe_even_though_it_will_corrupt_output=True to force cleanup anyway.
+2026-08-11 04:58:37 | sleep.evaluation.recall_formats | INFO  | Cloze recall: accuracy=0.4800 across 50 facts
+2026-08-11 04:59:49 | sleep.evaluation.recall_formats | INFO  | Free-form recall (greedy): mean_score=0.3533, accuracy=0.6000 across 50 facts
+2026-08-11 04:59:49 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=27.4867 (mean_loss=3.3137, 31 tokens)
+2026-08-11 04:59:49 | sleep.evaluation.preservation  | INFO  | BCP: 2.9956 (current_ppl=27.4867, original_ppl=9.1756)
+2026-08-11 04:59:49 | sleep.experiment.common        | INFO  | Wrote results to /workspace/results/loc_llama3_8b_mlp_mid_para_s1.json
+
+================================================================
+LOCALISATION ARM: mlp_mid_para
+================================================================
+  DRA (greedy):   0.3533
+  cloze:          0.4800
+  MC:             0.1600
+  BCP:            2.9956
+  train loss:     4.168 -> 0.451
+  Results: /workspace/results/loc_llama3_8b_mlp_mid_para_s1.json

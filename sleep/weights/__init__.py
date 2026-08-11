@@ -45,6 +45,7 @@ from sleep.weights.fast_update import FastWeightUpdater
 from sleep.weights.plasticity import (
     compute_plasticity_profile,
     get_adapted_layer_indices,
+    get_injection_layer_indices,
     apply_plasticity_scaling,
     enforce_weight_bounds,
     compute_base_model_norms,
@@ -133,6 +134,12 @@ class DualWeightSystem:
         # 4. Compute plasticity profile (layer_index -> phi value)
         adapted_layers = get_adapted_layer_indices(self._model, config)
         self._adapted_layers: list[int] = list(adapted_layers)
+        # Injection layers are decoupled from the LoRA block: K/V extraction
+        # and injection live on attention regardless of where the
+        # consolidation adapter sits (defaults keep the historical top-third).
+        self._injection_layers: list[int] = list(
+            get_injection_layer_indices(self._model, config)
+        )
         num_layers = self._model.config.num_hidden_layers
         self._plasticity_profile: dict[int, float] = compute_plasticity_profile(
             num_layers, adapted_layers, config.phi_min,
@@ -188,7 +195,7 @@ class DualWeightSystem:
         dtype = ref_param.dtype
 
         self._kv_bank = KVMemoryBank(
-            adapted_layer_indices=self._adapted_layers,
+            adapted_layer_indices=self._injection_layers,
             num_kv_heads=num_kv_heads,
             head_dim=head_dim,
             max_total_tokens=max_total_tokens,
@@ -256,8 +263,18 @@ class DualWeightSystem:
 
     @property
     def adapted_layers(self) -> list[int]:
-        """Sorted list of layer indices in the adapted set."""
+        """Sorted list of layer indices carrying the LoRA adapters."""
         return list(self._adapted_layers)
+
+    @property
+    def injection_layers(self) -> list[int]:
+        """Sorted list of layer indices receiving KV memory injection.
+
+        Equal to :attr:`adapted_layers` under default config; diverges when
+        the consolidation adapter is moved (e.g. mid-stack MLPs) while
+        injection keeps its verified attention window.
+        """
+        return list(self._injection_layers)
 
     # -- Mode switching ------------------------------------------------------
 
@@ -423,7 +440,7 @@ class DualWeightSystem:
         layers = self._locate_decoder_layers()
 
         layer_kvs: dict[int, tuple[torch.Tensor, torch.Tensor]] = {}
-        for layer_idx in self._adapted_layers:
+        for layer_idx in self._injection_layers:
             h_layer = hidden_states[layer_idx]  # (1, span_end, hidden_size)
 
             # CRITICAL: apply input_layernorm before k_proj/v_proj.

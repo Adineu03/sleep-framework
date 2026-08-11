@@ -18,7 +18,11 @@ import argparse
 import json
 import os
 import random
+import sys
 from pathlib import Path
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+from sleep.datagen.paraphrase import build_paraphrases
 
 
 # ===========================================================================
@@ -114,7 +118,9 @@ def fact_corporate_financial():
     )
     test_prompt = f"What was {company}'s Q{quarter} revenue and what drove the change?"
     keywords = [revenue, f"{pct}%", region]
-    return text, test_prompt, keywords
+    slots = {"company": company, "quarter": quarter, "revenue": revenue,
+             "pct": pct, "direction": direction, "year": year, "region": region}
+    return text, test_prompt, keywords, slots
 
 
 def fact_scientific_discovery():
@@ -134,7 +140,9 @@ def fact_scientific_discovery():
     )
     test_prompt = f"What did {name} discover at {institution}?"
     keywords = [f"{pct}%", str(angstroms), "angstroms"]
-    return text, test_prompt, keywords
+    slots = {"name": name, "institution": institution, "material": material,
+             "pct": pct, "angstroms": angstroms}
+    return text, test_prompt, keywords, slots
 
 
 def fact_city_founding():
@@ -153,7 +161,9 @@ def fact_city_founding():
     )
     test_prompt = f"When was {city} founded and what was its population target?"
     keywords = [month_day.split()[0], year, population]
-    return text, test_prompt, keywords
+    slots = {"city": city, "month_day": month_day, "year": year,
+             "population": population, "region": region}
+    return text, test_prompt, keywords, slots
 
 
 def fact_protocol():
@@ -173,7 +183,8 @@ def fact_protocol():
     )
     test_prompt = f"What does Protocol {name} require?"
     keywords = [threshold, "registered", f"{hours} hours"]
-    return text, test_prompt, keywords
+    slots = {"name": name, "threshold": threshold, "hours": hours, "body": body}
+    return text, test_prompt, keywords, slots
 
 
 def fact_record_event():
@@ -195,7 +206,9 @@ def fact_record_event():
     )
     test_prompt = f"What record did the {location} reactor set and when?"
     keywords = [duration, month_day.split()[0], year]
-    return text, test_prompt, keywords
+    slots = {"location": location, "duration": duration, "month_day": month_day,
+             "year": year, "record_type": record_type}
+    return text, test_prompt, keywords, slots
 
 
 def fact_technology():
@@ -213,7 +226,9 @@ def fact_technology():
     )
     test_prompt = f"What is the {arch} architecture and what does it achieve?"
     keywords = [n_params, f"{score}%", benchmark]
-    return text, test_prompt, keywords
+    slots = {"arch": arch, "n_params": n_params, "benchmark": benchmark,
+             "score": score, "org": org}
+    return text, test_prompt, keywords, slots
 
 
 def fact_medical_trial():
@@ -234,7 +249,9 @@ def fact_medical_trial():
     )
     test_prompt = f"What were the results of {treatment} in {name}'s trial?"
     keywords = [f"{pct}%", str(n_patients), condition]
-    return text, test_prompt, keywords
+    slots = {"name": name, "treatment": treatment, "condition": condition,
+             "n_patients": n_patients, "pct": pct, "institution": institution}
+    return text, test_prompt, keywords, slots
 
 
 def fact_sports_record():
@@ -259,7 +276,9 @@ def fact_sports_record():
     )
     test_prompt = f"What record did {athlete} set?"
     keywords = [record.split()[0], discipline, venue]
-    return text, test_prompt, keywords
+    slots = {"athlete": athlete, "country": country, "discipline": discipline,
+             "record": record, "venue": venue, "month_day": month_day, "year": year}
+    return text, test_prompt, keywords, slots
 
 
 def fact_album_release():
@@ -280,7 +299,9 @@ def fact_album_release():
     )
     test_prompt = f"What were the sales figures for '{album}' by {artist}?"
     keywords = [sales, month_day.split()[0], region]
-    return text, test_prompt, keywords
+    slots = {"artist": artist, "album": album, "month_day": month_day,
+             "year": year, "sales": sales, "region": region}
+    return text, test_prompt, keywords, slots
 
 
 def fact_geological_event():
@@ -297,7 +318,9 @@ def fact_geological_event():
     )
     test_prompt = f"What was the magnitude and depth of the {location} earthquake?"
     keywords = [str(magnitude), f"{depth} kilometers", str(aftershock)]
-    return text, test_prompt, keywords
+    slots = {"magnitude": magnitude, "location": location, "month_day": month_day,
+             "year": year, "depth": depth, "aftershock": aftershock}
+    return text, test_prompt, keywords, slots
 
 
 # ===========================================================================
@@ -324,13 +347,18 @@ def generate_dataset(n: int, seed: int = 42) -> list[dict]:
     for i in range(n):
         # Cycle through templates evenly so we get a balanced dataset
         template = TEMPLATES[i % len(TEMPLATES)]
-        text, test_prompt, keywords = template()
+        text, test_prompt, keywords, slots = template()
         facts.append({
             "id": f"fact_{i+1:03d}",
             "text": text,
             "test_prompt": test_prompt,
             "keywords": keywords,
             "template": template.__name__,
+            # Deterministic surface-form diversity (localisation revision):
+            # 20+ wordings per fact incl. question--answer and cloze forms,
+            # rendered from the slot values with no additional RNG draws so
+            # the same seed still produces the exact same facts.
+            "paraphrases": build_paraphrases(template.__name__, slots),
         })
     return facts
 

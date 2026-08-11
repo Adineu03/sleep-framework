@@ -1,0 +1,40 @@
+2026-08-11 04:19:55 | sleep.utils.seed               | INFO  | Seeded all RNGs with seed=1 (deterministic_algorithms=False)
+2026-08-11 04:19:55 | sleep.experiment.12            | INFO  | ======================================================================
+2026-08-11 04:19:55 | sleep.experiment.12            | INFO  | EXPERIMENT 12: Localisation ladder | arm=mlp_mid
+2026-08-11 04:19:55 | sleep.experiment.12            | INFO  |   matrices=['up_proj', 'down_proj'] selection=middle paraphrases=False trainer=ce
+2026-08-11 04:19:55 | sleep.experiment.12            | INFO  | ======================================================================
+Loading weights:   0%|          | 0/339 [00:00<?, ?it/s]Loading weights: 100%|██████████| 339/339 [00:00<00:00, 8671.94it/s]
+2026-08-11 04:20:00 | sleep.experiment.common        | INFO  | Loaded /workspace/models/qwen2.5-7b | dtype=bfloat16 | attn=sdpa | device=cuda | layers=28
+2026-08-11 04:20:00 | sleep.experiment.12            | INFO  | Loaded 50 facts (1115 paraphrase forms)
+2026-08-11 04:20:00 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=4.6893 (mean_loss=1.5453, 30 tokens)
+2026-08-11 04:20:00 | sleep.weights.lora             | INFO  | LoRA target modules for llama: ['up_proj', 'down_proj']
+2026-08-11 04:20:00 | sleep.weights.lora             | INFO  | LoRA config: rank=16, alpha=32, selection=middle, layers=[9, 10, 11, 12, 13, 14, 15, 16, 17] (of 28 total), targets=['up_proj', 'down_proj']
+2026-08-11 04:20:01 | sleep.experiment.12            | INFO  | Adapter built: 6,488,064 trainable params
+2026-08-11 04:20:01 | sleep.experiment.12            | INFO  | ce step 1/1200 | loss=2.9529
+2026-08-11 04:20:08 | sleep.experiment.12            | INFO  | ce step 120/1200 | loss=1.3591
+2026-08-11 04:20:15 | sleep.experiment.12            | INFO  | ce step 240/1200 | loss=0.9032
+2026-08-11 04:20:22 | sleep.experiment.12            | INFO  | ce step 360/1200 | loss=0.2094
+2026-08-11 04:20:28 | sleep.experiment.12            | INFO  | ce step 480/1200 | loss=0.0572
+2026-08-11 04:20:35 | sleep.experiment.12            | INFO  | ce step 600/1200 | loss=0.3157
+2026-08-11 04:20:42 | sleep.experiment.12            | INFO  | ce step 720/1200 | loss=0.0508
+2026-08-11 04:20:48 | sleep.experiment.12            | INFO  | ce step 840/1200 | loss=0.0514
+2026-08-11 04:20:55 | sleep.experiment.12            | INFO  | ce step 960/1200 | loss=0.4168
+2026-08-11 04:21:02 | sleep.experiment.12            | INFO  | ce step 1080/1200 | loss=0.1477
+2026-08-11 04:21:08 | sleep.experiment.12            | INFO  | ce step 1200/1200 | loss=0.0498
+2026-08-11 04:21:10 | sleep.evaluation.recall_formats | INFO  | MC recall: accuracy=0.2800, mean_correct_prob=0.2384 across 50 facts
+[transformers] The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+2026-08-11 04:21:37 | sleep.evaluation.recall_formats | INFO  | Cloze recall: accuracy=0.8000 across 50 facts
+2026-08-11 04:22:44 | sleep.evaluation.recall_formats | INFO  | Free-form recall (greedy): mean_score=0.1467, accuracy=0.3000 across 50 facts
+2026-08-11 04:22:44 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=8.2116 (mean_loss=2.1055, 30 tokens)
+2026-08-11 04:22:44 | sleep.evaluation.preservation  | INFO  | BCP: 1.7512 (current_ppl=8.2116, original_ppl=4.6893)
+2026-08-11 04:22:44 | sleep.experiment.common        | INFO  | Wrote results to /workspace/results/loc_qwen7b_mlp_mid_s1.json
+
+================================================================
+LOCALISATION ARM: mlp_mid
+================================================================
+  DRA (greedy):   0.1467
+  cloze:          0.8000
+  MC:             0.2800
+  BCP:            1.7512
+  train loss:     2.953 -> 0.050
+  Results: /workspace/results/loc_qwen7b_mlp_mid_s1.json

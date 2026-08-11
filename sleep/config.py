@@ -77,10 +77,27 @@ class WeightsConfig:
     # LoRA architecture
     lora_rank: int = 16                 # Q3.1: rank of W_fast/W_cons adapters
     lora_alpha: int = 32                # Q3.1: LoRA scaling factor
-    adapted_fraction: float = 1 / 3     # Q3.1: fraction of top layers adapted
-    adapted_matrices: list = field(      # Q3.1: which attention matrices get LoRA
+    adapted_fraction: float = 1 / 3     # Q3.1: fraction of layers adapted
+    adapted_matrices: list = field(      # Q3.1: which matrices get LoRA.
+        # Attention: "v_proj", "o_proj" (the original Q3.1 spec).
+        # MLP: "gate_proj", "up_proj", "down_proj" (localisation revision:
+        # causal-tracing work locates factual associations in mid-layer MLPs,
+        # not attention — see logbook 2026-08-11).
         default_factory=lambda: ["v_proj", "o_proj"]
     )
+    layer_selection: str = "top"        # Where the adapted block sits:
+    # "top"    — top adapted_fraction of layers (original Q3.2 hippocampus
+    #            analogy; the default, preserving all prior behaviour).
+    # "middle" — a centered mid-stack window of the same fraction (the
+    #            localisation revision: causal tracing says facts are written
+    #            mid-stack).
+
+    # KV memory injection layers (decoupled from the LoRA block above).
+    # Injection extracts/injects attention K/V, so it keeps its own layer
+    # window regardless of where the consolidation adapter sits. Defaults
+    # reproduce the historical behaviour (same top-third as before).
+    injection_selection: str = "top"    # "top" | "middle"
+    injection_fraction: float | None = None  # None -> use adapted_fraction
 
     # W_fast learning
     alpha_fast: float = 1e-4            # Q3.3: base learning rate for W_fast

@@ -30,25 +30,40 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 # Maps logical projection names to architecture-specific module suffixes.
-# Each entry maps ("v_proj", "o_proj") to the actual module names for that arch.
+# Attention entries ("v_proj", "o_proj") are the original Q3.1 spec; the MLP
+# entries ("gate_proj", "up_proj", "down_proj") support the localisation
+# revision, which targets feed-forward layers where causal-tracing work
+# locates factual associations (Geva et al.; Meng et al., ROME/MEMIT).
 _ARCH_MODULE_MAP: dict[str, dict[str, str]] = {
     "gpt2": {
         # GPT-2 uses Conv1D. c_attn is fused QKV, c_proj is output projection.
         # peft handles the fused QKV internally when targeting c_attn.
         "v_proj": "attn.c_attn",
         "o_proj": "attn.c_proj",
+        # GPT-2 MLP: c_fc (up) and mlp.c_proj (down). No gate projection.
+        "up_proj": "mlp.c_fc",
+        "down_proj": "mlp.c_proj",
     },
     "llama": {
         "v_proj": "self_attn.v_proj",
         "o_proj": "self_attn.o_proj",
+        "gate_proj": "mlp.gate_proj",
+        "up_proj": "mlp.up_proj",
+        "down_proj": "mlp.down_proj",
     },
     "mistral": {
         "v_proj": "self_attn.v_proj",
         "o_proj": "self_attn.o_proj",
+        "gate_proj": "mlp.gate_proj",
+        "up_proj": "mlp.up_proj",
+        "down_proj": "mlp.down_proj",
     },
     "phi": {
         "v_proj": "self_attn.v_proj",
         "o_proj": "self_attn.o_proj",
+        "gate_proj": "mlp.gate_proj",
+        "up_proj": "mlp.up_proj",
+        "down_proj": "mlp.down_proj",
     },
 }
 
@@ -112,6 +127,33 @@ def _get_top_layer_indices(num_layers: int, adapted_fraction: float) -> list[int
     return list(range(first_adapted, num_layers))
 
 
+def _get_middle_layer_indices(num_layers: int, adapted_fraction: float) -> list[int]:
+    """Compute a centered mid-stack window of ``adapted_fraction`` layers.
+
+    The localisation revision: causal-tracing work (ROME) finds factual
+    associations mediated by mid-stack MLPs, so the consolidation adapter can
+    be placed there instead of the top of the network. For a 28-layer model
+    with fraction=1/3: 9 layers, centred -> layers [9..17]. For 12 layers with
+    fraction=1/3: 4 layers -> [4..7].
+    """
+    count = max(1, round(adapted_fraction * num_layers))
+    start = (num_layers - count) // 2
+    return list(range(start, start + count))
+
+
+def select_layer_indices(
+    num_layers: int, adapted_fraction: float, selection: str,
+) -> list[int]:
+    """Dispatch layer-window selection by mode (``"top"`` or ``"middle"``)."""
+    if selection == "top":
+        return _get_top_layer_indices(num_layers, adapted_fraction)
+    if selection == "middle":
+        return _get_middle_layer_indices(num_layers, adapted_fraction)
+    raise ValueError(
+        f"Unknown layer_selection {selection!r}; expected 'top' or 'middle'."
+    )
+
+
 def get_target_modules(model: PreTrainedModel, config: WeightsConfig) -> list[str]:
     """Determine which module name suffixes to apply LoRA to.
 
@@ -141,14 +183,25 @@ def get_target_modules(model: PreTrainedModel, config: WeightsConfig) -> list[st
         target_suffixes.append(arch_map[logical_name])
 
     # De-duplicate (e.g., for GPT-2 c_attn appears once even if mapped from v_proj)
-    seen: set[str] = set()
-    unique: list[str] = []
+    dedup: list[str] = []
     for suffix in target_suffixes:
-        # Extract just the final component for peft target_modules
-        short = suffix.rsplit(".", maxsplit=1)[-1]
-        if short not in seen:
-            seen.add(short)
-            unique.append(short)
+        if suffix not in dedup:
+            dedup.append(suffix)
+
+    # Prefer the short final component (peft's conventional form) — but only
+    # when shortening is unambiguous. GPT-2's attention and MLP both end in
+    # "c_proj"; if two different mapped modules would collapse to the same
+    # short name, keep the full dotted suffixes (peft suffix-matches those
+    # against fully-qualified module names, so "attn.c_proj" targets only the
+    # attention projection).
+    shorts = [s.rsplit(".", maxsplit=1)[-1] for s in dedup]
+    if len(set(shorts)) == len(dedup):
+        unique: list[str] = []
+        for short in shorts:
+            if short not in unique:
+                unique.append(short)
+    else:
+        unique = dedup
 
     logger.info(
         "LoRA target modules for %s: %s",
@@ -169,14 +222,18 @@ def _build_lora_config(
     """
     arch = _detect_architecture(model)
     num_layers = _count_layers(model, arch)
-    top_layers = _get_top_layer_indices(num_layers, config.adapted_fraction)
+    selection = getattr(config, "layer_selection", "top")
+    adapted_layers = select_layer_indices(
+        num_layers, config.adapted_fraction, selection,
+    )
     target_modules = get_target_modules(model, config)
 
     logger.info(
-        "LoRA config: rank=%d, alpha=%d, layers=%s (of %d total), targets=%s",
+        "LoRA config: rank=%d, alpha=%d, selection=%s, layers=%s (of %d total), targets=%s",
         config.lora_rank,
         config.lora_alpha,
-        top_layers,
+        selection,
+        adapted_layers,
         num_layers,
         target_modules,
     )
@@ -185,7 +242,7 @@ def _build_lora_config(
         r=config.lora_rank,
         lora_alpha=config.lora_alpha,
         target_modules=target_modules,
-        layers_to_transform=top_layers,
+        layers_to_transform=adapted_layers,
         bias="none",
         task_type="CAUSAL_LM",
     )

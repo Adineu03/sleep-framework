@@ -1,0 +1,43 @@
+2026-08-11 05:07:03 | sleep.utils.seed               | INFO  | Seeded all RNGs with seed=0 (deterministic_algorithms=False)
+2026-08-11 05:07:03 | sleep.experiment.12            | INFO  | ======================================================================
+2026-08-11 05:07:03 | sleep.experiment.12            | INFO  | EXPERIMENT 12: Localisation ladder | arm=distill_attn_top
+2026-08-11 05:07:03 | sleep.experiment.12            | INFO  |   matrices=['v_proj', 'o_proj'] selection=top paraphrases=True trainer=distill
+2026-08-11 05:07:03 | sleep.experiment.12            | INFO  | ======================================================================
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]Loading weights: 100%|██████████| 291/291 [00:00<00:00, 4886.61it/s]
+2026-08-11 05:07:08 | sleep.experiment.common        | INFO  | Loaded /workspace/models/llama-3.1-8b | dtype=bfloat16 | attn=sdpa | device=cuda | layers=32
+2026-08-11 05:07:08 | sleep.experiment.12            | INFO  | Loaded 50 facts (1115 paraphrase forms)
+2026-08-11 05:07:08 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=9.1756 (mean_loss=2.2165, 31 tokens)
+2026-08-11 05:07:08 | sleep.weights.lora             | INFO  | LoRA target modules for llama: ['v_proj', 'o_proj']
+2026-08-11 05:07:08 | sleep.weights.lora             | INFO  | LoRA config: rank=16, alpha=32, selection=top, layers=[22, 23, 24, 25, 26, 27, 28, 29, 30, 31] (of 32 total), targets=['v_proj', 'o_proj']
+2026-08-11 05:07:09 | sleep.experiment.12            | INFO  | Adapter built: 2,129,920 trainable params
+2026-08-11 05:07:09 | sleep.distill                  | INFO  | ContextDistiller: 50 facts | 1200 steps | lr=0.0001 | T=2 | alpha_ce=0.5 | paraphrases=True | trainable=2,129,920
+2026-08-11 05:07:09 | sleep.distill                  | INFO  | distill step 1/1200 | loss=4.0161 (kl=1.9947 ce=4.0428)
+2026-08-11 05:07:19 | sleep.distill                  | INFO  | distill step 120/1200 | loss=2.8147 (kl=1.5634 ce=2.5025)
+2026-08-11 05:07:30 | sleep.distill                  | INFO  | distill step 240/1200 | loss=3.3626 (kl=1.7482 ce=3.2287)
+2026-08-11 05:07:41 | sleep.distill                  | INFO  | distill step 360/1200 | loss=1.8984 (kl=0.9100 ce=1.9767)
+2026-08-11 05:07:51 | sleep.distill                  | INFO  | distill step 480/1200 | loss=2.3880 (kl=1.2192 ce=2.3375)
+2026-08-11 05:08:02 | sleep.distill                  | INFO  | distill step 600/1200 | loss=2.6910 (kl=0.8913 ce=3.5994)
+2026-08-11 05:08:13 | sleep.distill                  | INFO  | distill step 720/1200 | loss=2.6076 (kl=1.5514 ce=2.1124)
+2026-08-11 05:08:24 | sleep.distill                  | INFO  | distill step 840/1200 | loss=1.5802 (kl=0.9148 ce=1.3309)
+2026-08-11 05:08:34 | sleep.distill                  | INFO  | distill step 960/1200 | loss=2.3267 (kl=1.2859 ce=2.0816)
+2026-08-11 05:08:45 | sleep.distill                  | INFO  | distill step 1080/1200 | loss=2.5751 (kl=0.9981 ce=3.1540)
+2026-08-11 05:08:56 | sleep.distill                  | INFO  | distill step 1200/1200 | loss=1.2001 (kl=0.7697 ce=0.8609)
+2026-08-11 05:08:56 | sleep.distill                  | INFO  | Distillation complete | steps=1200 | loss 4.0161 -> 1.2001 (mean 2.3385)
+2026-08-11 05:08:57 | sleep.evaluation.recall_formats | INFO  | MC recall: accuracy=0.2200, mean_correct_prob=0.2375 across 50 facts
+[transformers] The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+[transformers] Ignoring clean_up_tokenization_spaces=True for BPE tokenizer TokenizersBackend. The clean_up_tokenization post-processing step is designed for WordPiece tokenizers and is destructive for BPE (it strips spaces before punctuation). Set clean_up_tokenization_spaces=False to suppress this warning, or set clean_up_tokenization_spaces_for_bpe_even_though_it_will_corrupt_output=True to force cleanup anyway.
+2026-08-11 05:09:26 | sleep.evaluation.recall_formats | INFO  | Cloze recall: accuracy=0.2800 across 50 facts
+2026-08-11 05:10:35 | sleep.evaluation.recall_formats | INFO  | Free-form recall (greedy): mean_score=0.1133, accuracy=0.2200 across 50 facts
+2026-08-11 05:10:35 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=14.2392 (mean_loss=2.6560, 31 tokens)
+2026-08-11 05:10:35 | sleep.evaluation.preservation  | INFO  | BCP: 1.5519 (current_ppl=14.2392, original_ppl=9.1756)
+2026-08-11 05:10:35 | sleep.experiment.common        | INFO  | Wrote results to /workspace/results/loc_llama3_8b_distill_attn_top_s0.json
+
+================================================================
+LOCALISATION ARM: distill_attn_top
+================================================================
+  DRA (greedy):   0.1133
+  cloze:          0.2800
+  MC:             0.2200
+  BCP:            1.5519
+  train loss:     4.016 -> 1.200
+  Results: /workspace/results/loc_llama3_8b_distill_attn_top_s0.json
