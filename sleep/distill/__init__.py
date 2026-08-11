@@ -122,7 +122,7 @@ class ContextDistiller:
     def _encode(self, text: str) -> torch.Tensor:
         return self._tokenizer(text, return_tensors="pt").input_ids.to(self._device)
 
-    def _step_loss(self, fact_text: str, target: str) -> tuple[torch.Tensor, float, float]:
+    def step_loss(self, fact_text: str, target: str) -> tuple[torch.Tensor, float, float]:
         """Compute the distillation loss for one (fact, target-wording) pair.
 
         Returns ``(total_loss, kl_value, ce_value)``.
@@ -168,6 +168,15 @@ class ContextDistiller:
         )
         total = kl + self._alpha_ce * ce
         return total, float(kl.item()), float(ce.item())
+
+    # Backward-compatible private alias (tests spy on this seam).
+    @property
+    def _step_loss(self):
+        return self.step_loss
+
+    @_step_loss.setter
+    def _step_loss(self, fn):
+        self.step_loss = fn
 
     # -- main loop -----------------------------------------------------------
 
@@ -238,7 +247,7 @@ class ContextDistiller:
                 wordings = fact["paraphrases"]
             target = rng.choice(wordings)
 
-            total, kl_v, ce_v = self._step_loss(fact["text"], target)
+            total, kl_v, ce_v = self.step_loss(fact["text"], target)
 
             optimizer.zero_grad()
             total.backward()

@@ -181,11 +181,13 @@ def run_sleep_cycle(
         cycle_idx, prp_result["allocated"], len(candidates),
     )
 
-    # Sleep
+    # Sleep. fact_map powers the paraphrase replay / distill training and the
+    # two-stage validation gate (localisation recipe, Phase C).
     sleep_result = sleep_engine.run_cycle(
         candidates=candidates,
         original_tokens_map=original_tokens_map,
         key_projection=tagging.key_projection,
+        fact_map={f["id"]: f for f in fact_batch},
     )
 
     return {
@@ -195,6 +197,8 @@ def run_sleep_cycle(
         "n_prp_allocated": prp_result["allocated"],
         "n_candidates": len(candidates),
         "n_consolidated": sleep_result.get("n_consolidated", 0),
+        "n_passed_surprise": sleep_result.get("n_passed_surprise", 0),
+        "n_passed_recall_gate": sleep_result.get("n_passed_recall_gate"),
         "n_failed": sleep_result.get("n_failed", 0),
         "rolled_back": sleep_result.get("rolled_back", False),
         "training_stats": sleep_result.get("training_stats", {}),
@@ -402,8 +406,17 @@ def main():
     parser.add_argument("--override-alpha-slow", type=float, default=1e-4)
     parser.add_argument("--override-steps-per-memory", type=int, default=4)
     parser.add_argument("--kv-top-k", type=int, default=64)
+    parser.add_argument("--train-mode", choices=["ce", "distill"], default="ce",
+                        help="Sleep training signal. 'distill' = context "
+                             "distillation (localisation recipe).")
+    parser.add_argument("--train-steps", type=int, default=None,
+                        help="Override sleep training steps per cycle "
+                             "(needed with paraphrase replay).")
+    parser.add_argument("--override-phi-min", type=float, default=None,
+                        help="Override weights.phi_min (1.0 disables "
+                             "plasticity down-scaling).")
     parser.add_argument("--replay-strategy",
-                        choices=["generative", "original"],
+                        choices=["generative", "original", "paraphrase"],
                         default="original",
                         help="Use 'original' to strip the replay-quality "
                              "confound; SLEEP arm trains W_cons on actual fact "
@@ -455,6 +468,8 @@ def main():
     cfg["weights"].lambda_ewc = args.override_lambda_ewc
     cfg["weights"].alpha_slow = args.override_alpha_slow
     cfg["sleep"].steps_per_memory = args.override_steps_per_memory
+    if args.override_phi_min is not None:
+        cfg["weights"].phi_min = args.override_phi_min
 
     # Load facts
     with open(args.facts_file) as f:
@@ -520,6 +535,9 @@ def main():
             mu_surprise=mu_surprise,
             device=cfg["device"],
             replay_strategy=args.replay_strategy,
+            train_mode=args.train_mode,
+            train_steps_override=args.train_steps,
+            two_stage_validation=True,
         )
     elif args.method == "naive_lora":
         # Build a single LoRA adapter directly via peft (no SLEEP machinery).

@@ -1,0 +1,128 @@
+2026-08-11 09:12:45 | sleep.utils.seed               | INFO  | Seeded all RNGs with seed=0 (deterministic_algorithms=False)
+==============================================================================
+EXPERIMENT 08: Multi-Cycle Continual Learning
+  Method:     naive_lora
+  Cycles:     10
+  Batch size: 20
+==============================================================================
+  Loaded 200 facts (will run 10 cycles of 20 each)
+
+Loading model: /workspace/models/qwen2.5-7b (eager attention)
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/339 [00:00<?, ?it/s]Loading weights: 100%|██████████| 339/339 [00:00<00:00, 5624.10it/s]
+  Model: 7.616B params
+2026-08-11 09:12:50 | sleep.weights.lora             | INFO  | LoRA target modules for llama: ['up_proj', 'down_proj']
+2026-08-11 09:12:50 | sleep.weights.lora             | INFO  | LoRA config: rank=16, alpha=32, selection=middle, layers=[9, 10, 11, 12, 13, 14, 15, 16, 17] (of 28 total), targets=['up_proj', 'down_proj']
+
+Measuring baseline PPL on controls...
+2026-08-11 09:12:51 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=4.1217 (mean_loss=1.4163, 54 tokens)
+  Baseline PPL: 4.1217
+2026-08-11 09:12:51 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-11 09:12:51 | sleep.experiment.08            | INFO  | [Naive LoRA Cycle 1] Training: 20 facts, 200 steps, bs=32, lr=0.0001
+2026-08-11 09:12:51 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-11 09:14:32 | sleep.experiment.08            | INFO  | [Naive LoRA Cycle 1] 200 steps complete; first_loss=2.9192 tail_mean=0.0641
+[transformers] The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+2026-08-11 09:15:03 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.1167 across 20 cases
+2026-08-11 09:15:34 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.1167 across 20 cases
+2026-08-11 09:15:34 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=6.5516 (mean_loss=1.8797, 54 tokens)
+2026-08-11 09:15:34 | sleep.evaluation.preservation  | INFO  | BCP: 1.5895 (current_ppl=6.5516, original_ppl=4.1217)
+2026-08-11 09:15:34 | sleep.experiment.08            | INFO  | [naive_lora Cycle 1 EVAL] DRA cumulative=0.117 (4/20 hits); DRA current=0.117 (4/20 hits); BCP=1.5895
+2026-08-11 09:15:34 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-11 09:15:34 | sleep.experiment.08            | INFO  | [Naive LoRA Cycle 2] Training: 20 facts, 200 steps, bs=32, lr=0.0001
+2026-08-11 09:15:34 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-11 09:17:16 | sleep.experiment.08            | INFO  | [Naive LoRA Cycle 2] 200 steps complete; first_loss=2.4873 tail_mean=0.0457
+2026-08-11 09:18:17 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0583 across 40 cases
+2026-08-11 09:18:47 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0333 across 20 cases
+2026-08-11 09:18:47 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=7.4594 (mean_loss=2.0095, 54 tokens)
+2026-08-11 09:18:47 | sleep.evaluation.preservation  | INFO  | BCP: 1.8098 (current_ppl=7.4594, original_ppl=4.1217)
+2026-08-11 09:18:47 | sleep.experiment.08            | INFO  | [naive_lora Cycle 2 EVAL] DRA cumulative=0.058 (6/40 hits); DRA current=0.033 (2/20 hits); BCP=1.8098
+2026-08-11 09:18:47 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-11 09:18:47 | sleep.experiment.08            | INFO  | [Naive LoRA Cycle 3] Training: 20 facts, 200 steps, bs=32, lr=0.0001
+2026-08-11 09:18:47 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-11 09:20:19 | sleep.experiment.08            | INFO  | [Naive LoRA Cycle 3] 200 steps complete; first_loss=2.2239 tail_mean=0.0428
+2026-08-11 09:21:50 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0778 across 60 cases
+2026-08-11 09:22:20 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.1167 across 20 cases
+2026-08-11 09:22:20 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=8.5219 (mean_loss=2.1426, 54 tokens)
+2026-08-11 09:22:20 | sleep.evaluation.preservation  | INFO  | BCP: 2.0676 (current_ppl=8.5219, original_ppl=4.1217)
+2026-08-11 09:22:20 | sleep.experiment.08            | INFO  | [naive_lora Cycle 3 EVAL] DRA cumulative=0.078 (11/60 hits); DRA current=0.117 (6/20 hits); BCP=2.0676
+2026-08-11 09:22:20 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-11 09:22:20 | sleep.experiment.08            | INFO  | [Naive LoRA Cycle 4] Training: 20 facts, 200 steps, bs=32, lr=0.0001
+2026-08-11 09:22:20 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-11 09:24:00 | sleep.experiment.08            | INFO  | [Naive LoRA Cycle 4] 200 steps complete; first_loss=1.9244 tail_mean=0.0423
+2026-08-11 09:26:03 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0667 across 80 cases
+2026-08-11 09:26:35 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0833 across 20 cases
+2026-08-11 09:26:35 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=7.1255 (mean_loss=1.9637, 54 tokens)
+2026-08-11 09:26:35 | sleep.evaluation.preservation  | INFO  | BCP: 1.7288 (current_ppl=7.1255, original_ppl=4.1217)
+2026-08-11 09:26:35 | sleep.experiment.08            | INFO  | [naive_lora Cycle 4 EVAL] DRA cumulative=0.067 (15/80 hits); DRA current=0.083 (4/20 hits); BCP=1.7288
+2026-08-11 09:26:35 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-11 09:26:35 | sleep.experiment.08            | INFO  | [Naive LoRA Cycle 5] Training: 20 facts, 200 steps, bs=32, lr=0.0001
+2026-08-11 09:26:35 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-11 09:28:16 | sleep.experiment.08            | INFO  | [Naive LoRA Cycle 5] 200 steps complete; first_loss=2.0823 tail_mean=0.0402
+2026-08-11 09:30:48 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0400 across 100 cases
+2026-08-11 09:31:18 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0167 across 20 cases
+2026-08-11 09:31:18 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=7.3511 (mean_loss=1.9949, 54 tokens)
+2026-08-11 09:31:18 | sleep.evaluation.preservation  | INFO  | BCP: 1.7835 (current_ppl=7.3511, original_ppl=4.1217)
+2026-08-11 09:31:18 | sleep.experiment.08            | INFO  | [naive_lora Cycle 5 EVAL] DRA cumulative=0.040 (12/100 hits); DRA current=0.017 (1/20 hits); BCP=1.7835
+2026-08-11 09:31:18 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-11 09:31:18 | sleep.experiment.08            | INFO  | [Naive LoRA Cycle 6] Training: 20 facts, 200 steps, bs=32, lr=0.0001
+2026-08-11 09:31:18 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-11 09:32:50 | sleep.experiment.08            | INFO  | [Naive LoRA Cycle 6] 200 steps complete; first_loss=1.8055 tail_mean=0.0401
+2026-08-11 09:35:52 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0611 across 120 cases
+2026-08-11 09:36:23 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.1500 across 20 cases
+2026-08-11 09:36:23 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=7.6723 (mean_loss=2.0376, 54 tokens)
+2026-08-11 09:36:23 | sleep.evaluation.preservation  | INFO  | BCP: 1.8614 (current_ppl=7.6723, original_ppl=4.1217)
+2026-08-11 09:36:23 | sleep.experiment.08            | INFO  | [naive_lora Cycle 6 EVAL] DRA cumulative=0.061 (18/120 hits); DRA current=0.150 (5/20 hits); BCP=1.8614
+2026-08-11 09:36:23 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-11 09:36:23 | sleep.experiment.08            | INFO  | [Naive LoRA Cycle 7] Training: 20 facts, 200 steps, bs=32, lr=0.0001
+2026-08-11 09:36:23 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-11 09:38:02 | sleep.experiment.08            | INFO  | [Naive LoRA Cycle 7] 200 steps complete; first_loss=1.8443 tail_mean=0.0423
+2026-08-11 09:41:36 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0452 across 140 cases
+2026-08-11 09:42:07 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0667 across 20 cases
+2026-08-11 09:42:07 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=6.8473 (mean_loss=1.9239, 54 tokens)
+2026-08-11 09:42:07 | sleep.evaluation.preservation  | INFO  | BCP: 1.6613 (current_ppl=6.8473, original_ppl=4.1217)
+2026-08-11 09:42:07 | sleep.experiment.08            | INFO  | [naive_lora Cycle 7 EVAL] DRA cumulative=0.045 (19/140 hits); DRA current=0.067 (4/20 hits); BCP=1.6613
+2026-08-11 09:42:07 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-11 09:42:07 | sleep.experiment.08            | INFO  | [Naive LoRA Cycle 8] Training: 20 facts, 200 steps, bs=32, lr=0.0001
+2026-08-11 09:42:07 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-11 09:43:47 | sleep.experiment.08            | INFO  | [Naive LoRA Cycle 8] 200 steps complete; first_loss=1.6750 tail_mean=0.0409
+2026-08-11 09:47:58 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0521 across 160 cases
+2026-08-11 09:48:29 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0667 across 20 cases
+2026-08-11 09:48:29 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=6.7770 (mean_loss=1.9135, 54 tokens)
+2026-08-11 09:48:29 | sleep.evaluation.preservation  | INFO  | BCP: 1.6442 (current_ppl=6.7770, original_ppl=4.1217)
+2026-08-11 09:48:29 | sleep.experiment.08            | INFO  | [naive_lora Cycle 8 EVAL] DRA cumulative=0.052 (20/160 hits); DRA current=0.067 (3/20 hits); BCP=1.6442
+2026-08-11 09:48:29 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-11 09:48:29 | sleep.experiment.08            | INFO  | [Naive LoRA Cycle 9] Training: 20 facts, 200 steps, bs=32, lr=0.0001
+2026-08-11 09:48:29 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-11 09:50:10 | sleep.experiment.08            | INFO  | [Naive LoRA Cycle 9] 200 steps complete; first_loss=1.7335 tail_mean=0.0426
+2026-08-11 09:54:56 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0370 across 180 cases
+2026-08-11 09:55:27 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0333 across 20 cases
+2026-08-11 09:55:27 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=6.3931 (mean_loss=1.8552, 54 tokens)
+2026-08-11 09:55:27 | sleep.evaluation.preservation  | INFO  | BCP: 1.5511 (current_ppl=6.3931, original_ppl=4.1217)
+2026-08-11 09:55:27 | sleep.experiment.08            | INFO  | [naive_lora Cycle 9 EVAL] DRA cumulative=0.037 (17/180 hits); DRA current=0.033 (2/20 hits); BCP=1.5511
+2026-08-11 09:55:27 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-11 09:55:27 | sleep.experiment.08            | INFO  | [Naive LoRA Cycle 10] Training: 20 facts, 200 steps, bs=32, lr=0.0001
+2026-08-11 09:55:27 | sleep.experiment.08            | INFO  | ======================================================================
+2026-08-11 09:57:09 | sleep.experiment.08            | INFO  | [Naive LoRA Cycle 10] 200 steps complete; first_loss=1.5978 tail_mean=0.0404
+2026-08-11 10:02:20 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.0533 across 200 cases
+2026-08-11 10:02:50 | sleep.evaluation.recall        | INFO  | Recall evaluation: DRA=0.1167 across 20 cases
+2026-08-11 10:02:51 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=6.8419 (mean_loss=1.9231, 54 tokens)
+2026-08-11 10:02:51 | sleep.evaluation.preservation  | INFO  | BCP: 1.6599 (current_ppl=6.8419, original_ppl=4.1217)
+2026-08-11 10:02:51 | sleep.experiment.08            | INFO  | [naive_lora Cycle 10 EVAL] DRA cumulative=0.053 (28/200 hits); DRA current=0.117 (6/20 hits); BCP=1.6599
+
+==============================================================================
+MULTI-CYCLE SUMMARY (naive_lora)
+==============================================================================
+Cycle  Cum N   DRA cum    DRA cur    BCP       
+--------------------------------------------------
+1      20      0.1167     0.1167     1.5895    
+2      40      0.0583     0.0333     1.8098    
+3      60      0.0778     0.1167     2.0676    
+4      80      0.0667     0.0833     1.7288    
+5      100     0.0400     0.0167     1.7835    
+6      120     0.0611     0.1500     1.8614    
+7      140     0.0452     0.0667     1.6613    
+8      160     0.0521     0.0667     1.6442    
+9      180     0.0370     0.0333     1.5511    
+10     200     0.0533     0.1167     1.6599    
+
+Results saved to: /workspace/results/c_naive_s0.json

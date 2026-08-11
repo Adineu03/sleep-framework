@@ -146,6 +146,7 @@ def sleep_train(
     weights_config: WeightsConfig,
     fisher_diag: dict[str, torch.Tensor] | None = None,
     device: str = "cpu",
+    n_steps_override: int | None = None,
 ) -> dict:
     """Execute the sleep training loop.
 
@@ -211,7 +212,12 @@ def sleep_train(
         weight_decay=config.sleep_weight_decay,
     )
 
-    n_steps: int = max(100, len(replay_dataset) * config.steps_per_memory)
+    # With paraphrase replay the dataset can be thousands of samples; the auto
+    # rule (len * steps_per_memory) would explode. Callers may cap it.
+    if n_steps_override is not None:
+        n_steps: int = int(n_steps_override)
+    else:
+        n_steps = max(100, len(replay_dataset) * config.steps_per_memory)
     warmup_steps: int = int(0.1 * n_steps)
     scheduler = _cosine_warmup_schedule(optimizer, warmup_steps, n_steps)
 
@@ -319,3 +325,144 @@ def sleep_train(
         "mean_loss": mean_loss,
         "cons_checkpoint": cons_checkpoint,
     }
+
+
+# ---------------------------------------------------------------------------
+# Distillation-based sleep training (localisation revision, 2026-08-11)
+# ---------------------------------------------------------------------------
+
+def sleep_distill_train(
+    dual_weights: "DualWeightSystem",
+    facts: list[dict],
+    tokenizer,
+    config: "SleepConfig",
+    weights_config: "WeightsConfig",
+    fisher_diag: "dict[str, torch.Tensor] | None" = None,
+    device: str = "cpu",
+    n_steps_override: int | None = None,
+    kd_temperature: float = 2.0,
+    alpha_ce: float = 0.5,
+    seed: int = 0,
+) -> dict:
+    """Sleep training via context distillation, under SLEEP's safety machinery.
+
+    Replaces the CE-on-replay objective with the localisation recipe's
+    training signal: the base model *with the fact in its prompt* is the
+    teacher, and ``w_cons`` (wherever the config places it — e.g. mid-stack
+    MLPs) is trained to match the teacher's next-token distribution over the
+    fact's paraphrase/QA wordings *without* the fact in the prompt. The KV
+    bank plays no role.
+
+    The safety machinery is identical to :func:`sleep_train` and applied in
+    the same order per step: zero_grad -> backward -> grad clip ->
+    plasticity scaling -> optimizer step -> hard weight bounds. Optional EWC
+    joins the loss before backward when ``fisher_diag`` is given. Rollback
+    remains the caller's job via the returned ``cons_checkpoint``.
+
+    Args:
+        dual_weights:    The dual-weight system (must support sleep_training
+                         mode with w_cons trainable).
+        facts:           Fact dicts carrying ``text`` and (ideally)
+                         ``paraphrases``; the PRP-selected consolidation set.
+        tokenizer:       Matching tokenizer.
+        config:          SleepConfig (weight decay, grad clip, steps rule).
+        weights_config:  WeightsConfig (alpha_slow LR, lambda_ewc).
+        fisher_diag:     Optional Fisher diagonal for EWC.
+        device:          Device string.
+        n_steps_override: Total steps; defaults to
+                         ``max(100, len(facts) * steps_per_memory)``.
+        kd_temperature:  KD softmax temperature.
+        alpha_ce:        Hard-label CE mix-in weight.
+        seed:            Local sampling RNG seed.
+
+    Returns:
+        Same schema as :func:`sleep_train`:
+        ``{n_steps, final_loss, mean_loss, cons_checkpoint}``.
+    """
+    import random as _random
+
+    from sleep.distill import ContextDistiller
+    from sleep.sleep_engine.fisher import compute_ewc_loss
+
+    dual_weights.set_mode("sleep_training")
+    model = dual_weights.model
+
+    cons_checkpoint = dual_weights.save_cons_checkpoint()
+
+    if not facts:
+        logger.warning("sleep_distill_train: empty fact set")
+        return {"n_steps": 0, "final_loss": 0.0, "mean_loss": 0.0,
+                "cons_checkpoint": cons_checkpoint}
+
+    trainable_params = dual_weights.get_cons_trainable_params()
+    if not trainable_params:
+        logger.warning("sleep_distill_train: no trainable parameters")
+        return {"n_steps": 0, "final_loss": 0.0, "mean_loss": 0.0,
+                "cons_checkpoint": cons_checkpoint}
+
+    optimizer = torch.optim.AdamW(
+        trainable_params,
+        lr=weights_config.alpha_slow,
+        weight_decay=config.sleep_weight_decay,
+    )
+    if n_steps_override is not None:
+        n_steps = int(n_steps_override)
+    else:
+        n_steps = max(100, len(facts) * config.steps_per_memory)
+    warmup_steps = int(0.1 * n_steps)
+    scheduler = _cosine_warmup_schedule(optimizer, warmup_steps, n_steps)
+
+    distiller = ContextDistiller(
+        model, tokenizer, device=device,
+        kd_temperature=kd_temperature, alpha_ce=alpha_ce,
+    )
+    rng = _random.Random(seed)
+
+    logger.info(
+        "Sleep distill-training: %d facts | %d steps | lr=%.2e | T=%g",
+        len(facts), n_steps, weights_config.alpha_slow, kd_temperature,
+    )
+
+    loss_accum = 0.0
+    final_loss = 0.0
+    for step in range(1, n_steps + 1):
+        fact = rng.choice(facts)
+        wordings = fact.get("paraphrases") or [fact["text"]]
+        target = rng.choice(wordings)
+
+        total_loss, kl_v, ce_v = distiller.step_loss(fact["text"], target)
+
+        if fisher_diag is not None:
+            ewc_loss = compute_ewc_loss(
+                model=model, fisher_diag=fisher_diag,
+                checkpoint=cons_checkpoint,
+                lambda_ewc=weights_config.lambda_ewc,
+                adapter_name="w_cons",
+            )
+            total_loss = total_loss + ewc_loss
+
+        optimizer.zero_grad()
+        total_loss.backward()
+        torch.nn.utils.clip_grad_norm_(trainable_params, config.grad_clip_norm)
+        dual_weights.apply_plasticity_scaling()
+        optimizer.step()
+        scheduler.step()
+        dual_weights.enforce_weight_bounds(cons_checkpoint)
+
+        val = float(total_loss.item())
+        loss_accum += val
+        final_loss = val
+        if step == 1 or step % max(1, n_steps // 10) == 0:
+            logger.info(
+                "  distill step %d/%d | loss=%.4f (kl=%.4f ce=%.4f) | lr=%.2e",
+                step, n_steps, val, kl_v, ce_v,
+                scheduler.get_last_lr()[0],
+            )
+
+    mean_loss = loss_accum / max(n_steps, 1)
+    logger.info(
+        "Sleep distill-training complete | n_steps=%d | final_loss=%.4f | mean_loss=%.4f",
+        n_steps, final_loss, mean_loss,
+    )
+    return {"n_steps": n_steps, "final_loss": final_loss,
+            "mean_loss": mean_loss, "cons_checkpoint": cons_checkpoint}

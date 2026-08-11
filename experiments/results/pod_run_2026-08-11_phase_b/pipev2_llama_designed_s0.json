@@ -1,0 +1,32 @@
+{
+  "experiment": "13_full_pipeline_v2",
+  "recipe": "paraphrase_ce",
+  "seed": 0,
+  "config_path": "experiments/configs/llama3_8b_mlp_mid.yaml",
+  "n_facts": 200,
+  "train_steps": 1500,
+  "n_tags": 135,
+  "prp_allocated": 41,
+  "n_candidates": 41,
+  "n_replays_accepted": 950,
+  "n_passed_surprise": 1,
+  "n_passed_recall_gate": 1,
+  "n_consolidated": 1,
+  "rolled_back": false,
+  "training_stats": {
+    "n_steps": 1500,
+    "final_loss": 1.7867119312286377,
+    "mean_loss": 2.200371827443441
+  },
+  "dra": 0.011666666666666665,
+  "dra_trained_subset": 0.04065040650406504,
+  "n_trained_facts": 41,
+  "free_form_accuracy": 0.035,
+  "mc_accuracy": 0.2,
+  "cloze_accuracy": 0.09,
+  "bcp": 1.0173515071867256,
+  "ppl_before": 9.12199927327556,
+  "ppl_after": 9.280279709223105,
+  "decoding": "greedy",
+  "safety_overrides": {}
+}

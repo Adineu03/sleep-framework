@@ -125,6 +125,8 @@ class SleepEngine:
         device: str = "cpu",
         replay_strategy: str = "generative",
         two_stage_validation: bool = False,
+        train_mode: str = "ce",
+        train_steps_override: int | None = None,
     ) -> None:
         """
         Args:
@@ -148,11 +150,16 @@ class SleepEngine:
                 the ``fact_map`` argument to :meth:`run_cycle`. Default
                 ``False`` preserves the original single-gate behaviour.
         """
-        valid_strategies = {"generative", "original"}
+        valid_strategies = {"generative", "original", "paraphrase"}
         if replay_strategy not in valid_strategies:
             raise ValueError(
                 f"replay_strategy must be one of {valid_strategies}, "
                 f"got {replay_strategy!r}"
+            )
+        valid_train_modes = {"ce", "distill"}
+        if train_mode not in valid_train_modes:
+            raise ValueError(
+                f"train_mode must be one of {valid_train_modes}, got {train_mode!r}"
             )
         self._dual_weights = dual_weights
         self._tokenizer = tokenizer
@@ -162,6 +169,13 @@ class SleepEngine:
         self._device = device
         self._replay_strategy = replay_strategy
         self._two_stage_validation = two_stage_validation
+        # Localisation-revision knobs. replay_strategy="paraphrase" builds the
+        # replay set from each selected fact's paraphrase/QA wordings (needs
+        # fact_map at run_cycle); train_mode="distill" trains w_cons by
+        # context distillation (in-context teacher) under the same safety
+        # machinery instead of CE on replay tokens.
+        self._train_mode = train_mode
+        self._train_steps_override = train_steps_override
 
     # -- Properties ----------------------------------------------------------
 
@@ -390,6 +404,46 @@ class SleepEngine:
                 "%d candidates",
                 len(replay_dataset), len(candidates),
             )
+        elif self._replay_strategy == "paraphrase":
+            # Localisation revision: the replay set is every paraphrase/QA
+            # wording of each selected fact. Deterministic ground-truth data,
+            # so no generation and no KV needed; deduplicate by source.
+            self._set_kv_enabled(False)
+            if not fact_map:
+                raise RuntimeError(
+                    "replay_strategy='paraphrase' requires fact_map "
+                    "(source_id -> fact dict with 'paraphrases')."
+                )
+            seen_sources: set = set()
+            for tag in candidates:
+                _s, _e, source_id = tag.ctx
+                if source_id in seen_sources:
+                    continue
+                fact = fact_map.get(source_id)
+                if fact is None:
+                    continue
+                seen_sources.add(source_id)
+                wordings = fact.get("paraphrases") or [fact["text"]]
+                prp = float(getattr(tag, "p", 1.0))
+                for w in wordings:
+                    ids = self._tokenizer(
+                        w, return_tensors="pt",
+                    ).input_ids[0].to(self._device)
+                    if ids.numel() < 2:
+                        continue
+                    replay_dataset.append(ReplaySample(
+                        text_ids=ids,
+                        tag_id=id(tag),
+                        prp_score=prp,
+                        original_length=int(ids.numel()),
+                        seed_length=int(ids.numel()),
+                    ))
+                    replay_tag_map.append(tag)
+            logger.info(
+                "Phase 1 (paraphrase strategy): %d wordings from %d unique "
+                "sources (%d candidates)",
+                len(replay_dataset), len(seen_sources), len(candidates),
+            )
         else:
             raise RuntimeError(f"unknown replay_strategy {self._replay_strategy!r}")
 
@@ -464,7 +518,12 @@ class SleepEngine:
         accepted_tags: list[Tag] = []
 
         for sample, tag in zip(replay_dataset, replay_tag_map):
-            if key_projection is not None:
+            if self._replay_strategy == "paraphrase":
+                # Paraphrases are deterministic renderings of the ground-truth
+                # fact — the quality gate exists to filter *generated* text
+                # and its similarity threshold would wrongly reject QA forms.
+                passed, reason = True, ""
+            elif key_projection is not None:
                 passed, reason = quality_check(
                     replay_ids=sample.text_ids,
                     tag=tag,
@@ -537,14 +596,45 @@ class SleepEngine:
             self._dual_weights.save_cons_checkpoint()
         )
 
-        training_stats: dict = sleep_train(
-            dual_weights=self._dual_weights,
-            replay_dataset=accepted,
-            tokenizer=self._tokenizer,
-            config=config,
-            weights_config=self._weights_config,
-            device=self._device,
-        )
+        if self._train_mode == "distill":
+            # Localisation recipe: context-distillation signal under the same
+            # safety machinery. Trains on the selected facts directly (their
+            # paraphrases are drawn inside the loop); requires fact_map.
+            from sleep.sleep_engine.train import sleep_distill_train
+
+            if not fact_map:
+                raise RuntimeError(
+                    "train_mode='distill' requires fact_map at run_cycle()."
+                )
+            accepted_sources: list = []
+            seen_src: set = set()
+            for tag in accepted_tags:
+                _s, _e, source_id = tag.ctx
+                if source_id in seen_src:
+                    continue
+                seen_src.add(source_id)
+                fact = fact_map.get(source_id)
+                if fact is not None:
+                    accepted_sources.append(fact)
+            training_stats: dict = sleep_distill_train(
+                dual_weights=self._dual_weights,
+                facts=accepted_sources,
+                tokenizer=self._tokenizer,
+                config=config,
+                weights_config=self._weights_config,
+                device=self._device,
+                n_steps_override=self._train_steps_override,
+            )
+        else:
+            training_stats = sleep_train(
+                dual_weights=self._dual_weights,
+                replay_dataset=accepted,
+                tokenizer=self._tokenizer,
+                config=config,
+                weights_config=self._weights_config,
+                device=self._device,
+                n_steps_override=self._train_steps_override,
+            )
         result["training_stats"] = training_stats
 
         logger.info(
