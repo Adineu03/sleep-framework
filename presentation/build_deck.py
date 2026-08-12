@@ -66,7 +66,8 @@ p.lead b, li b { font-weight:650; color:#1A1F2E; }
 .dark .footer { color:#97A0B5; border-top-color:#2C3349; }
 
 .cols { display:flex; gap:44px; flex:1; min-height:0; }
-.col { flex:1; display:flex; flex-direction:column; gap:22px; min-width:0; }
+.col { flex:1 1 0; display:flex; flex-direction:column; gap:22px; min-width:0; }
+.cols > .panel { flex:1 1 0; min-width:0; }
 
 .panel {
   background:#FFFFFF; border:1px solid #D5DBE7; border-radius:4px;
@@ -229,6 +230,34 @@ slide("""
   </div>
 </div>
 """, """SLEEP = Synaptic Learning through Error-driven Encoding and Plasticity. Five components, each mapping to one biological mechanism. Emphasize the pre-registration: 36 design questions resolved in a formalization document before implementation - so when things later failed, we could tell exactly which assumption broke, and when things worked, nobody could accuse us of tuning our way to the answer. About 4,000 lines of Python, 410 tests by the end.""")
+
+# 4b -- Decoder ring (jargon, translated) ---------------------------------------
+slide("""
+<div class="frame">
+  <p class="eyebrow">Interlude &middot; The decoder ring &mdash; every technical term, translated</p>
+  <h1 class="title" style="margin-bottom:30px;">Ten terms, <b>in plain language</b></h1>
+  <div class="content" style="gap:20px;">
+    <div class="cols" style="flex:0 0 auto; gap:24px;">
+      <div class="panel" style="padding:22px 26px; gap:8px;"><span class="k" style="color:#3D52C9;">Weights</span><p style="font-size:23px;">The billions of numbers where everything a model knows lives. Training = changing them. <i>The brain tissue.</i></p></div>
+      <div class="panel" style="padding:22px 26px; gap:8px;"><span class="k" style="color:#3D52C9;">Transformer layer</span><p style="font-size:23px;">The model is a stack of ~30 identical blocks. Each block has two parts: <b>attention</b> and an <b>MLP</b>. <i>Floors of a building.</i></p></div>
+      <div class="panel" style="padding:22px 26px; gap:8px;"><span class="k" style="color:#3D52C9;">Attention &amp; KV</span><p style="font-size:23px;">The part that looks back at earlier text, stored as <b>K</b>eys (an index) and <b>V</b>alues (content). Our memory bank injects extra entries here. <i>The librarian.</i></p></div>
+    </div>
+    <div class="cols" style="flex:0 0 auto; gap:24px;">
+      <div class="panel" style="padding:22px 26px; gap:8px;"><span class="k" style="color:#3D52C9;">MLP layer</span><p style="font-size:23px;">The other part of each block &mdash; where research shows <b>facts are actually stored</b>. <i>The filing cabinets.</i></p></div>
+      <div class="panel" style="padding:22px 26px; gap:8px;"><span class="k" style="color:#3D52C9;">LoRA / adapter</span><p style="font-size:23px;">A small trainable patch (&lt;1% of model size) attached to a frozen model. We train this, never the model itself. <i>Sticky notes on a locked book.</i></p></div>
+      <div class="panel" style="padding:22px 26px; gap:8px;"><span class="k" style="color:#3D52C9;">Fine-tuning (naive)</span><p style="font-size:23px;">Just keep training on the new text, no protection. Cheap &mdash; and it tramples old knowledge. <i>Scribbling over the page.</i></p></div>
+    </div>
+    <div class="cols" style="flex:0 0 auto; gap:24px;">
+      <div class="panel" style="padding:22px 26px; gap:8px;"><span class="k" style="color:#3D52C9;">EWC</span><p style="font-size:23px;">A penalty that holds the weights important for old knowledge in place while others move. <i>Museum ropes.</i></p></div>
+      <div class="panel" style="padding:22px 26px; gap:8px;"><span class="k" style="color:#3D52C9;">Distillation</span><p style="font-size:23px;">A student learns by imitating a teacher's answers. Our teacher: <b>the same model with the fact in its prompt</b>. <i>Copying your own best self.</i></p></div>
+      <div class="panel" style="padding:22px 26px; gap:8px;"><span class="k" style="color:#3D52C9;">Greedy decoding</span><p style="font-size:23px;">Always pick the single most likely next word &mdash; no dice-rolling. If it answers correctly, <b>it really knows</b>. <i>No lucky guesses.</i></p></div>
+    </div>
+    <div class="cols" style="flex:0 0 auto; gap:24px;">
+      <div class="panel" style="padding:22px 26px; gap:8px;"><span class="k" style="color:#3D52C9;">Seed</span><p style="font-size:23px;">The randomness setting of a run. 5 seeds = 5 independent reruns &mdash; a number that survives all five <b>is real</b>, not luck. <i>Rolling the dice five times.</i></p></div>
+    </div>
+  </div>
+</div>
+""", """A 60-second vocabulary pass so nobody gets lost - pause briefly on the three that carry the whole talk: MLP layers (the filing cabinets where facts live - this is where our fix goes), LoRA (the sticky-note patch we train instead of the model), and seeds (why our numbers are trustworthy). Tell the audience: don't memorize this - the deck will remind you in context, and this slide will be in the handout to refer back to.""")
 
 # 5 -- Architecture ------------------------------------------------------------
 slide(f"""
@@ -572,9 +601,15 @@ def assemble(pngs: list[str]) -> str:
         s.shapes.add_picture(png, 0, 0, width=prs.slide_width, height=prs.slide_height)
         s.notes_slide.notes_text_frame.text = notes
 
-    out = os.path.join(HERE, "SLEEP_Presentation.pptx")
-    prs.save(out)
-    return out
+    for name in ("SLEEP_Presentation.pptx", "SLEEP_Presentation_v2.pptx",
+                 "SLEEP_Presentation_v3.pptx", "SLEEP_Presentation_v4.pptx"):
+        out = os.path.join(HERE, name)
+        try:
+            prs.save(out)
+            return out
+        except PermissionError:  # file open in PowerPoint
+            continue
+    raise RuntimeError("all output filenames are locked - close PowerPoint")
 
 
 if __name__ == "__main__":
