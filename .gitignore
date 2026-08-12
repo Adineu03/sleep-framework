@@ -76,3 +76,7 @@ Thumbs.db
 .env
 .env.*
 !.env.example
+
+# presentation render intermediates
+presentation/html/
+presentation/png/
