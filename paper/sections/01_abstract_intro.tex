@@ -13,9 +13,9 @@ This work is relevant to researchers in continual learning, memory-augmented tra
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.78\textwidth]{figures/figure_pareto_frontier.pdf}
-\caption{Single-cycle stability--plasticity Pareto frontier of the \emph{original} architecture (attention-top placement, single-wording replay). SLEEP configurations sweep from default (most conservative) to aggressive; naive LoRA marks the unconstrained extreme. The green band shows the preservation-acceptable region ($\mathrm{BCP} < 1.05$); the dotted line shows a useful-recall threshold ($\mathrm{DRA} > 0.05$). No setting on this frontier reaches the upper-left intersection---and Section~\ref{sec:results_localisation} shows why: the frontier itself is an artefact of consolidating into the wrong substrate. The localisation-corrected pipeline of Section~\ref{sec:results_pipeline_v2} reaches $\mathrm{DRA}=0.19$ at $\mathrm{BCP}=0.88$ on this model (five seeds), off this curve's scale.}
-\label{fig:pareto}
+\includegraphics[width=0.98\textwidth]{figures/figure_arc.pdf}
+\caption{The paper in one figure. \textbf{Left (the diagnosis):} with the consolidation adapter placed by biological analogy (attention projections, top-third layers) and trained on single wordings, free-form recall from consolidated weights sits at $\approx 0.006$ on every model---while the same models answer from the same facts \emph{in context} at up to $0.99$. \textbf{Right (the repair):} relocating consolidation to mid-stack MLPs, training on paraphrase diversity, and distilling from an in-context teacher raises trained-subset recall to $17$--$125\times$ the floor on every model (5 seeds each, error bars $\pm$SD), strongest on the family the recipe never saw during development. Llama-3.1-8B gains recall but exceeds our damage bar and is flagged \emph{not yet tuned} (Section~\ref{sec:results_matrix}).}
+\label{fig:arc}
 \end{figure}
 
 Large language models exhibit a form of architectural anterograde amnesia: pretrained weights are fixed at deployment, and any new information acquired during inference exists only within the context window, vanishing once the conversation ends. Retrieval-augmented generation (RAG) treats this as plumbing---append a database lookup to every query---rather than as a representational gap to close \citep{lewis2020retrieval}.

@@ -301,12 +301,236 @@ def fig_warmup_extension():
     print("Wrote figure_warmup_extension.pdf")
 
 
+# ---------------------------------------------------------------------------
+# Figure: The arc (Figure 1) — before/after the localisation repair
+# ---------------------------------------------------------------------------
+
+MODELS = ["Mistral-7B", "Llama-3.1-8B", "Qwen2.5-7B", "Qwen2.5-1.5B"]
+C_ACCENT = "#3D52C9"
+C_GOOD = "#2C7D57"
+C_WARN = "#A96D12"
+C_GREY = "#8A93A6"
+
+
+def fig_arc():
+    """Left: the diagnosis-era dissociation (in-context vs consolidated).
+    Right: single-cycle trained-subset DRA after the localisation repair
+    (5 seeds, mean +/- SD), with the old floor marked."""
+    incontext = [0.927, 0.987, 0.760, 0.700]
+    old_weights = [0.007, 0.006, 0.006, 0.007]
+    repaired = [0.750, 0.512, 0.189, 0.105]
+    repaired_sd = [0.033, 0.048, 0.031, 0.020]
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4.0))
+    x = np.arange(len(MODELS))
+    w = 0.38
+
+    ax1.bar(x - w / 2, incontext, w, color=C_GREY, label="fact in context (ceiling)")
+    ax1.bar(x + w / 2, old_weights, w, color=C_WARN,
+            label="from consolidated weights")
+    for i, v in enumerate(old_weights):
+        ax1.text(i + w / 2, v + 0.02, f"{v:.3f}", ha="center", fontsize=8,
+                 color=C_WARN)
+    ax1.set_xticks(x)
+    ax1.set_xticklabels([m.replace("-", "-\n", 1) for m in MODELS], fontsize=8.5)
+    ax1.set_ylabel("Free-form recall (DRA)")
+    ax1.set_ylim(0, 1.05)
+    ax1.set_title("Before: recognition without recall\n(original placement, 5 seeds/model)",
+                  fontsize=10.5)
+    ax1.legend(fontsize=8.5, loc="upper right", framealpha=0.9)
+
+    ax2.bar(x, repaired, 0.55, yerr=repaired_sd, capsize=3, color=C_ACCENT)
+    ax2.axhline(0.006, color=C_WARN, lw=1.2, ls="--")
+    ax2.text(len(MODELS) - 0.45, 0.017, "old floor (0.006)", fontsize=8.5,
+             color=C_WARN, ha="right")
+    for i, (v, s) in enumerate(zip(repaired, repaired_sd)):
+        ax2.text(i, v + s + 0.02, f"{v:.3f}", ha="center", fontsize=8.5)
+    ax2.set_xticks(x)
+    ax2.set_xticklabels([m.replace("-", "-\n", 1) for m in MODELS], fontsize=8.5)
+    ax2.set_ylabel("Trained-subset DRA")
+    ax2.set_ylim(0, 1.05)
+    ax2.set_title("After: the localisation repair\n(mid-MLP + paraphrases + distillation, 5 seeds/model)",
+                  fontsize=10.5)
+
+    plt.tight_layout()
+    plt.savefig(os.path.join(OUT, "figure_arc.pdf"))
+    plt.savefig(os.path.join(OUT, "figure_arc.png"), dpi=200)
+    plt.close()
+    print("Wrote figure_arc.pdf")
+
+
+# ---------------------------------------------------------------------------
+# Figure: Localisation ladder
+# ---------------------------------------------------------------------------
+
+def fig_localisation_ladder():
+    """Five-arm isolation on Qwen2.5-7B: recall and damage per arm."""
+    arms = [
+        "attention-top,\n1 wording\n(original)",
+        "mid-MLP,\n1 wording",
+        "mid-MLP\n+ paraphrases",
+        "mid-MLP + para.\n+ distillation",
+        "attention-top\n+ distillation\n(control)",
+    ]
+    dra = [0.01, 0.03, 0.22, 0.36, 0.06]
+    bcp = [3.6, 1.5, 1.4, 0.83, 2.9]
+    colors = [C_WARN, C_GREY, C_ACCENT, C_GOOD, C_WARN]
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4.0))
+    x = np.arange(len(arms))
+
+    ax1.bar(x, dra, 0.6, color=colors)
+    for i, v in enumerate(dra):
+        ax1.text(i, v + 0.008, f"{v:.2f}", ha="center", fontsize=8.5)
+    ax1.set_xticks(x)
+    ax1.set_xticklabels(arms, fontsize=7.8)
+    ax1.set_ylabel("Free-form recall (DRA)")
+    ax1.set_title("Recall by arm (50 facts, matched exposure)", fontsize=10.5)
+    ax1.set_ylim(0, 0.42)
+
+    ax2.bar(x, bcp, 0.6, color=colors)
+    ax2.axhline(1.0, color=C_GREY, lw=1.0, ls=":")
+    for i, v in enumerate(bcp):
+        ax2.text(i, v + 0.06, f"{v:.2f}", ha="center", fontsize=8.5)
+    ax2.set_xticks(x)
+    ax2.set_xticklabels(arms, fontsize=7.8)
+    ax2.set_ylabel("BCP (lower = better)")
+    ax2.set_title("Damage by arm", fontsize=10.5)
+    ax2.set_ylim(0, 4.1)
+
+    plt.suptitle("The localisation ladder: substrate, diversity, and objective each isolated (Qwen2.5-7B)",
+                 fontsize=12, y=1.02)
+    plt.tight_layout()
+    plt.savefig(os.path.join(OUT, "figure_localisation_ladder.pdf"))
+    plt.savefig(os.path.join(OUT, "figure_localisation_ladder.png"), dpi=200)
+    plt.close()
+    print("Wrote figure_localisation_ladder.pdf")
+
+
+# ---------------------------------------------------------------------------
+# Figure: Ten-cycle trajectories, three arms (from result JSONs)
+# ---------------------------------------------------------------------------
+
+def _load_traj(path):
+    import json
+    with open(path) as f:
+        d = json.load(f)
+    ev = d["eval_results"]
+    return ([e["cycle"] for e in ev],
+            [e["dra_cumulative"] for e in ev],
+            [e["bcp"] for e in ev])
+
+
+def fig_matrix_multi_cycle():
+    """Qwen2.5-7B ten-cycle trajectories for the three arms, both seeds,
+    loaded from the released result JSONs."""
+    res = os.path.abspath(os.path.join(OUT, "../../experiments/results"))
+    arms = {
+        "SLEEP v2-moderate": (
+            [os.path.join(res, "pod_run_2026-08-11_phase_c", f"c_v2moderate_s{s}.json") for s in (0, 1)],
+            C_GOOD),
+        "EWC-only (matched)": (
+            [os.path.join(res, "pod_run_2026-08-12_phase_d", f"d4_qwen7b_ewc_s{s}.json") for s in (0, 1)],
+            C_ACCENT),
+        "naive LoRA": (
+            [os.path.join(res, "pod_run_2026-08-11_phase_c", f"c_naive_s{s}.json") for s in (0, 1)],
+            C_WARN),
+    }
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4.0))
+    for name, (paths, color) in arms.items():
+        for i, p in enumerate(paths):
+            cycles, dra, bcp = _load_traj(p)
+            ax1.plot(cycles, dra, color=color, lw=1.8, alpha=0.9 if i == 0 else 0.55,
+                     label=name if i == 0 else None,
+                     ls="-" if i == 0 else "--")
+            ax2.plot(cycles, bcp, color=color, lw=1.8, alpha=0.9 if i == 0 else 0.55,
+                     ls="-" if i == 0 else "--")
+
+    ax1.set_xlabel("Cycle")
+    ax1.set_ylabel("Cumulative DRA (all facts seen so far)")
+    ax1.set_title("Recall accumulates only under the repaired pipeline", fontsize=10.5)
+    ax1.legend(fontsize=8.5, framealpha=0.9)
+    ax1.set_xticks(range(1, 11))
+
+    ax2.set_xlabel("Cycle")
+    ax2.set_ylabel("BCP (lower = better)")
+    ax2.set_title("Damage drifts smoothly, no step-cliffs", fontsize=10.5)
+    ax2.set_xticks(range(1, 11))
+
+    plt.suptitle("Ten cycles, three arms, Qwen2.5-7B (solid = seed 0, dashed = seed 1; from released run files)",
+                 fontsize=12, y=1.02)
+    plt.tight_layout()
+    plt.savefig(os.path.join(OUT, "figure_matrix_multi_cycle.pdf"))
+    plt.savefig(os.path.join(OUT, "figure_matrix_multi_cycle.png"), dpi=200)
+    plt.close()
+    print("Wrote figure_matrix_multi_cycle.pdf")
+
+
+# ---------------------------------------------------------------------------
+# Figure: Multi-cycle endpoints across the matrix + the 1.5B catastrophe
+# ---------------------------------------------------------------------------
+
+def fig_matrix_endpoints():
+    """Left: cycle-10 cumulative DRA, v2 vs naive, per model (seed pairs).
+    Right: cycle-10 BCP on log scale showing the small-model blow-up."""
+    models = ["Qwen2.5-7B", "Mistral-7B", "Qwen2.5-1.5B", "Llama-3.1-8B"]
+    v2_dra = [(0.173, 0.175), (0.173, 0.168), (0.097, 0.102), (0.102, 0.062)]
+    nv_dra = [(0.053, 0.060), (0.118, 0.160), (0.038, 0.050), (0.082, 0.042)]
+    v2_bcp = [(1.87, 2.24), (1.18, 1.18), (2.35, 2.49), (4.33, 9.20)]
+    nv_bcp = [(1.66, 1.80), (1.71, 1.57), (24.5, 11.4), (2.24, 1.67)]
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4.0))
+    x = np.arange(len(models))
+    w = 0.38
+
+    ax1.bar(x - w / 2, [np.mean(v) for v in v2_dra], w, color=C_GOOD,
+            label="SLEEP v2-moderate")
+    ax1.bar(x + w / 2, [np.mean(v) for v in nv_dra], w, color=C_WARN,
+            label="naive LoRA")
+    for i, (v2, nv) in enumerate(zip(v2_dra, nv_dra)):
+        ax1.scatter([i - w / 2] * 2, v2, color="black", s=9, zorder=3)
+        ax1.scatter([i + w / 2] * 2, nv, color="black", s=9, zorder=3)
+    ax1.set_xticks(x)
+    ax1.set_xticklabels([m.replace("-", "-\n", 1) for m in models], fontsize=8.5)
+    ax1.set_ylabel("Cumulative DRA at cycle 10")
+    ax1.set_title("Recall: v2 leads on all four models (dots = seeds)", fontsize=10.5)
+    ax1.legend(fontsize=8.5, framealpha=0.9)
+
+    ax2.bar(x - w / 2, [np.mean(v) for v in v2_bcp], w, color=C_GOOD)
+    ax2.bar(x + w / 2, [np.mean(v) for v in nv_bcp], w, color=C_WARN)
+    for i, (v2, nv) in enumerate(zip(v2_bcp, nv_bcp)):
+        ax2.scatter([i - w / 2] * 2, v2, color="black", s=9, zorder=3)
+        ax2.scatter([i + w / 2] * 2, nv, color="black", s=9, zorder=3)
+    ax2.set_yscale("log")
+    ax2.axhline(1.0, color=C_GREY, lw=1.0, ls=":")
+    ax2.set_xticks(x)
+    ax2.set_xticklabels([m.replace("-", "-\n", 1) for m in models], fontsize=8.5)
+    ax2.set_ylabel("BCP at cycle 10 (log scale)")
+    ax2.set_title("Damage: naive detonates the 1.5B model;\nv2's flagged exception is Llama",
+                  fontsize=10.5)
+    ax2.annotate("24.5 / 11.4", xy=(2 + w / 2, 17), fontsize=8.5, ha="center",
+                 color=C_WARN, fontweight="bold")
+
+    plt.suptitle("Ten-cycle endpoints across the matrix (2 seeds per arm)",
+                 fontsize=12, y=1.02)
+    plt.tight_layout()
+    plt.savefig(os.path.join(OUT, "figure_matrix_endpoints.pdf"))
+    plt.savefig(os.path.join(OUT, "figure_matrix_endpoints.png"), dpi=200)
+    plt.close()
+    print("Wrote figure_matrix_endpoints.pdf")
+
+
 def main():
     fig_substrate_comparison()
     fig_pareto_frontier()
     fig_multi_cycle()
     fig_warmup_extension()
     fig_architecture()
+    fig_arc()
+    fig_localisation_ladder()
+    fig_matrix_multi_cycle()
+    fig_matrix_endpoints()
     print("All figures written.")
 
 
