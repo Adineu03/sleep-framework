@@ -1,0 +1,6 @@
+/usr/local/lib/python3.11/dist-packages/huggingface_hub/constants.py:310: FutureWarning: The `HF_HUB_ENABLE_HF_TRANSFER` environment variable is deprecated as 'hf_transfer' is not used anymore. Please use `HF_XET_HIGH_PERFORMANCE` instead to enable high performance transfer with Xet. Visit https://huggingface.co/docs/huggingface_hub/package_reference/environment_variables#hfxethighperformance for more details.
+  warnings.warn(
+Fetching 14 files:   0%|          | 0/14 [00:00<?, ?it/s]Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Fetching 14 files:  29%|██▊       | 4/14 [00:00<00:00, 39.60it/s]Fetching 14 files:  64%|██████▍   | 9/14 [00:00<00:00, 40.15it/s]Fetching 14 files:  71%|███████▏  | 10/14 [00:20<00:00, 40.15it/s]Fetching 14 files:  79%|███████▊  | 11/14 [01:03<00:25,  8.46s/it]Fetching 14 files:  86%|████████▌ | 12/14 [01:35<00:24, 12.36s/it]Fetching 14 files:  93%|█████████▎| 13/14 [01:41<00:11, 11.09s/it]Fetching 14 files: 100%|██████████| 14/14 [01:55<00:00,  8.26s/it]
+[32m✓ Downloaded[0m
+  path: /workspace/models/mistral-7b

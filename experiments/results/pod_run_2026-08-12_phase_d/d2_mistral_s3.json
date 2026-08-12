@@ -1,0 +1,34 @@
+{
+  "experiment": "13_full_pipeline_v2",
+  "recipe": "distill",
+  "seed": 3,
+  "config_path": "experiments/configs/mistral7b_mlp_mid.yaml",
+  "n_facts": 200,
+  "train_steps": 1500,
+  "n_tags": 112,
+  "prp_allocated": 31,
+  "n_candidates": 31,
+  "n_replays_accepted": 637,
+  "n_passed_surprise": 31,
+  "n_passed_recall_gate": 31,
+  "n_consolidated": 31,
+  "rolled_back": false,
+  "training_stats": {
+    "n_steps": 1500,
+    "final_loss": 0.485934853553772,
+    "mean_loss": 1.2183035716613133
+  },
+  "dra": 0.20166666666666674,
+  "dra_trained_subset": 0.7976190476190477,
+  "n_trained_facts": 28,
+  "free_form_accuracy": 0.37,
+  "mc_accuracy": 0.205,
+  "cloze_accuracy": 0.19,
+  "bcp": 1.1838169070946019,
+  "ppl_before": 6.550295832742265,
+  "ppl_after": 7.754350953271608,
+  "decoding": "greedy",
+  "safety_overrides": {
+    "delta_max": 0.1
+  }
+}

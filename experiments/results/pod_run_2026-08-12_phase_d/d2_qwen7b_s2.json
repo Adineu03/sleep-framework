@@ -1,0 +1,34 @@
+{
+  "experiment": "13_full_pipeline_v2",
+  "recipe": "distill",
+  "seed": 2,
+  "config_path": "experiments/configs/qwen7b_mlp_mid.yaml",
+  "n_facts": 200,
+  "train_steps": 1500,
+  "n_tags": 162,
+  "prp_allocated": 50,
+  "n_candidates": 50,
+  "n_replays_accepted": 1151,
+  "n_passed_surprise": 49,
+  "n_passed_recall_gate": 18,
+  "n_consolidated": 18,
+  "rolled_back": false,
+  "training_stats": {
+    "n_steps": 1500,
+    "final_loss": 0.9687483906745911,
+    "mean_loss": 2.025402184089025
+  },
+  "dra": 0.13166666666666657,
+  "dra_trained_subset": 0.18666666666666665,
+  "n_trained_facts": 50,
+  "free_form_accuracy": 0.31,
+  "mc_accuracy": 0.21,
+  "cloze_accuracy": 0.12,
+  "bcp": 0.8587949740991327,
+  "ppl_before": 5.041975626264122,
+  "ppl_after": 4.330023327365955,
+  "decoding": "greedy",
+  "safety_overrides": {
+    "delta_max": 0.1
+  }
+}

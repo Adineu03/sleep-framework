@@ -1,0 +1,617 @@
+2026-08-11 15:52:41 | sleep.utils.seed               | INFO  | Seeded all RNGs with seed=0 (deterministic_algorithms=False)
+2026-08-11 15:52:41 | sleep.experiment.13            | INFO  | ======================================================================
+2026-08-11 15:52:41 | sleep.experiment.13            | INFO  | EXPERIMENT 13: Full pipeline v2 | recipe=paraphrase_ce | seed=0
+2026-08-11 15:52:41 | sleep.experiment.13            | INFO  | ======================================================================
+2026-08-11 15:52:41 | sleep.experiment.13            | INFO  | Safety overrides: {'delta_max': (0.01, 0.1)}
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]Loading weights: 100%|██████████| 291/291 [00:00<00:00, 4289.45it/s]
+2026-08-11 15:52:47 | sleep.experiment.common        | INFO  | Loaded /workspace/models/llama-3.1-8b | dtype=bfloat16 | attn=eager | device=cuda | layers=32
+2026-08-11 15:52:47 | sleep.experiment.13            | INFO  | Loaded 200 facts (paraphrased: True)
+2026-08-11 15:52:47 | sleep.weights.lora             | INFO  | LoRA target modules for llama: ['up_proj', 'down_proj']
+2026-08-11 15:52:47 | sleep.weights.lora             | INFO  | LoRA config: rank=16, alpha=32, selection=middle, layers=[10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20] (of 32 total), targets=['up_proj', 'down_proj']
+2026-08-11 15:52:48 | sleep.weights.lora             | INFO  | Created LoRA adapter 'w_fast': 6488064 trainable parameters (0.0807% of base model)
+2026-08-11 15:52:48 | sleep.weights.lora             | INFO  | LoRA target modules for llama: ['up_proj', 'down_proj']
+2026-08-11 15:52:48 | sleep.weights.lora             | INFO  | LoRA config: rank=16, alpha=32, selection=middle, layers=[10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20] (of 32 total), targets=['up_proj', 'down_proj']
+2026-08-11 15:52:49 | sleep.weights.lora             | INFO  | Dual adapters ready: w_fast=6488064 params, w_cons=6488064 params
+/usr/local/lib/python3.11/dist-packages/peft/tuners/tuners_utils.py:2193: UserWarning: Adapter cannot be set when the model is merged. Unmerging the model first.
+  warnings.warn("Adapter cannot be set when the model is merged. Unmerging the model first.")
+2026-08-11 15:52:49 | sleep.weights.fast_update      | INFO  | FastWeightUpdater initialized: 44 parameter groups, alpha_base=1.00e-04, momentum=0.90
+2026-08-11 15:52:49 | sleep.weights.plasticity       | INFO  | Adapted layers: [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20] (middle 33% of 32 layers)
+2026-08-11 15:52:49 | sleep.weights.plasticity       | INFO  | Injection layers: [22, 23, 24, 25, 26, 27, 28, 29, 30, 31] (top 33% of 32 layers)
+2026-08-11 15:52:49 | sleep.weights.plasticity       | INFO  | Computed Frobenius norms for 224 base model weight matrices.
+2026-08-11 15:52:49 | sleep.weights.kv_injection     | INFO  | KVInjector installed on 10 layers: [22, 23, 24, 25, 26, 27, 28, 29, 30, 31]
+2026-08-11 15:52:49 | sleep.weights                  | INFO  | KV memory mode enabled | adapted_layers=[10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20] | num_kv_heads=8 | head_dim=128 | max_total_tokens=20000 | top_k=64 | device=cuda:0 | dtype=torch.bfloat16
+2026-08-11 15:52:49 | sleep.weights                  | INFO  | DualWeightSystem initialized | W_fast: 6,488,064 params | W_cons: 6,488,064 params | Adapted layers: [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20] | Plasticity: 0.188–0.452 | KV bank installed
+2026-08-11 15:52:49 | sleep.experiment.13            | INFO  | Adapter layers: [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20] | injection layers: [22, 23, 24, 25, 26, 27, 28, 29, 30, 31]
+/usr/local/lib/python3.11/dist-packages/peft/tuners/lora/layer.py:983: UserWarning: Already unmerged. Nothing to do.
+  warnings.warn("Already unmerged. Nothing to do.")
+2026-08-11 15:52:50 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=9.1220 (mean_loss=2.2107, 31 tokens)
+2026-08-11 15:52:50 | sleep.experiment.13            | INFO  | WAKE: feeding 200 facts
+2026-08-11 15:52:50 | sleep.tagging                  | INFO  | step=1 | 2 tags created from 2 spans | buffer: 2/40216 (0.0%)
+2026-08-11 15:52:50 | sleep.tagging                  | INFO  | step=2 | 1 tags created from 1 spans | buffer: 3/40216 (0.0%)
+2026-08-11 15:52:50 | sleep.tagging                  | INFO  | step=3 | 2 tags created from 2 spans | buffer: 5/40216 (0.0%)
+2026-08-11 15:52:50 | sleep.tagging                  | INFO  | step=4 | 1 tags created from 1 spans | buffer: 6/40216 (0.0%)
+2026-08-11 15:52:50 | sleep.tagging                  | INFO  | step=7 | 1 tags created from 1 spans | buffer: 7/40216 (0.0%)
+2026-08-11 15:52:50 | sleep.tagging                  | INFO  | step=8 | 1 tags created from 1 spans | buffer: 8/40216 (0.0%)
+2026-08-11 15:52:51 | sleep.tagging                  | INFO  | step=11 | 1 tags created from 1 spans | buffer: 9/40216 (0.0%)
+2026-08-11 15:52:51 | sleep.tagging                  | INFO  | step=12 | 1 tags created from 1 spans | buffer: 10/40216 (0.0%)
+2026-08-11 15:52:51 | sleep.tagging                  | INFO  | step=13 | 1 tags created from 1 spans | buffer: 11/40216 (0.0%)
+2026-08-11 15:52:51 | sleep.tagging                  | INFO  | step=14 | 1 tags created from 1 spans | buffer: 12/40216 (0.0%)
+2026-08-11 15:52:51 | sleep.tagging                  | INFO  | step=17 | 1 tags created from 1 spans | buffer: 13/40216 (0.0%)
+2026-08-11 15:52:51 | sleep.tagging                  | INFO  | step=18 | 1 tags created from 1 spans | buffer: 14/40216 (0.0%)
+2026-08-11 15:52:51 | sleep.tagging                  | INFO  | step=21 | 1 tags created from 1 spans | buffer: 15/40216 (0.0%)
+2026-08-11 15:52:51 | sleep.tagging                  | INFO  | step=22 | 1 tags created from 1 spans | buffer: 16/40216 (0.0%)
+2026-08-11 15:52:52 | sleep.tagging                  | INFO  | step=23 | 1 tags created from 1 spans | buffer: 17/40216 (0.0%)
+2026-08-11 15:52:52 | sleep.tagging                  | INFO  | step=24 | 1 tags created from 1 spans | buffer: 18/40216 (0.0%)
+2026-08-11 15:52:52 | sleep.tagging                  | INFO  | step=26 | 1 tags created from 1 spans | buffer: 19/40216 (0.0%)
+2026-08-11 15:52:52 | sleep.tagging                  | INFO  | step=31 | 1 tags created from 1 spans | buffer: 20/40216 (0.0%)
+2026-08-11 15:52:52 | sleep.tagging                  | INFO  | step=32 | 1 tags created from 1 spans | buffer: 21/40216 (0.1%)
+2026-08-11 15:52:52 | sleep.tagging                  | INFO  | step=33 | 1 tags created from 1 spans | buffer: 22/40216 (0.1%)
+2026-08-11 15:52:52 | sleep.tagging                  | INFO  | step=35 | 1 tags created from 1 spans | buffer: 23/40216 (0.1%)
+2026-08-11 15:52:53 | sleep.tagging                  | INFO  | step=36 | 1 tags created from 1 spans | buffer: 24/40216 (0.1%)
+2026-08-11 15:52:53 | sleep.tagging                  | INFO  | step=37 | 1 tags created from 1 spans | buffer: 25/40216 (0.1%)
+2026-08-11 15:52:53 | sleep.tagging                  | INFO  | step=38 | 1 tags created from 1 spans | buffer: 26/40216 (0.1%)
+2026-08-11 15:52:53 | sleep.tagging                  | INFO  | step=39 | 1 tags created from 1 spans | buffer: 27/40216 (0.1%)
+2026-08-11 15:52:53 | sleep.tagging                  | INFO  | step=41 | 1 tags created from 1 spans | buffer: 28/40216 (0.1%)
+2026-08-11 15:52:53 | sleep.tagging                  | INFO  | step=42 | 1 tags created from 1 spans | buffer: 29/40216 (0.1%)
+2026-08-11 15:52:53 | sleep.tagging                  | INFO  | step=44 | 1 tags created from 1 spans | buffer: 30/40216 (0.1%)
+2026-08-11 15:52:53 | sleep.tagging                  | INFO  | step=45 | 1 tags created from 1 spans | buffer: 31/40216 (0.1%)
+2026-08-11 15:52:53 | sleep.tagging                  | INFO  | step=46 | 1 tags created from 1 spans | buffer: 32/40216 (0.1%)
+2026-08-11 15:52:53 | sleep.tagging                  | INFO  | step=47 | 1 tags created from 1 spans | buffer: 33/40216 (0.1%)
+2026-08-11 15:52:54 | sleep.tagging                  | INFO  | step=49 | 1 tags created from 1 spans | buffer: 34/40216 (0.1%)
+2026-08-11 15:52:54 | sleep.tagging                  | INFO  | step=51 | 2 tags created from 2 spans | buffer: 36/40216 (0.1%)
+2026-08-11 15:52:54 | sleep.tagging                  | INFO  | step=52 | 1 tags created from 1 spans | buffer: 37/40216 (0.1%)
+2026-08-11 15:52:54 | sleep.tagging                  | INFO  | step=53 | 1 tags created from 1 spans | buffer: 38/40216 (0.1%)
+2026-08-11 15:52:54 | sleep.tagging                  | INFO  | step=54 | 1 tags created from 1 spans | buffer: 39/40216 (0.1%)
+2026-08-11 15:52:54 | sleep.tagging                  | INFO  | step=56 | 1 tags created from 1 spans | buffer: 40/40216 (0.1%)
+2026-08-11 15:52:54 | sleep.tagging                  | INFO  | step=57 | 1 tags created from 1 spans | buffer: 41/40216 (0.1%)
+2026-08-11 15:52:54 | sleep.tagging                  | INFO  | step=58 | 1 tags created from 1 spans | buffer: 42/40216 (0.1%)
+2026-08-11 15:52:55 | sleep.tagging                  | INFO  | step=61 | 1 tags created from 1 spans | buffer: 43/40216 (0.1%)
+2026-08-11 15:52:55 | sleep.tagging                  | INFO  | step=62 | 1 tags created from 1 spans | buffer: 44/40216 (0.1%)
+2026-08-11 15:52:55 | sleep.tagging                  | INFO  | step=63 | 1 tags created from 1 spans | buffer: 45/40216 (0.1%)
+2026-08-11 15:52:55 | sleep.tagging                  | INFO  | step=64 | 1 tags created from 1 spans | buffer: 46/40216 (0.1%)
+2026-08-11 15:52:55 | sleep.tagging                  | INFO  | step=66 | 1 tags created from 1 spans | buffer: 47/40216 (0.1%)
+2026-08-11 15:52:55 | sleep.tagging                  | INFO  | step=67 | 2 tags created from 2 spans | buffer: 49/40216 (0.1%)
+2026-08-11 15:52:55 | sleep.tagging                  | INFO  | step=68 | 1 tags created from 1 spans | buffer: 50/40216 (0.1%)
+2026-08-11 15:52:55 | sleep.tagging                  | INFO  | step=69 | 1 tags created from 1 spans | buffer: 51/40216 (0.1%)
+2026-08-11 15:52:56 | sleep.tagging                  | INFO  | step=71 | 1 tags created from 1 spans | buffer: 52/40216 (0.1%)
+2026-08-11 15:52:56 | sleep.tagging                  | INFO  | step=73 | 1 tags created from 1 spans | buffer: 53/40216 (0.1%)
+2026-08-11 15:52:56 | sleep.tagging                  | INFO  | step=74 | 1 tags created from 1 spans | buffer: 54/40216 (0.1%)
+2026-08-11 15:52:56 | sleep.tagging                  | INFO  | step=75 | 1 tags created from 1 spans | buffer: 55/40216 (0.1%)
+2026-08-11 15:52:56 | sleep.tagging                  | INFO  | step=76 | 1 tags created from 1 spans | buffer: 56/40216 (0.1%)
+2026-08-11 15:52:56 | sleep.tagging                  | INFO  | step=77 | 1 tags created from 1 spans | buffer: 57/40216 (0.1%)
+2026-08-11 15:52:56 | sleep.tagging                  | INFO  | step=81 | 1 tags created from 1 spans | buffer: 58/40216 (0.1%)
+2026-08-11 15:52:56 | sleep.tagging                  | INFO  | step=82 | 1 tags created from 1 spans | buffer: 59/40216 (0.1%)
+2026-08-11 15:52:56 | sleep.tagging                  | INFO  | step=83 | 1 tags created from 1 spans | buffer: 60/40216 (0.1%)
+2026-08-11 15:52:57 | sleep.tagging                  | INFO  | step=86 | 1 tags created from 1 spans | buffer: 61/40216 (0.2%)
+2026-08-11 15:52:57 | sleep.tagging                  | INFO  | step=87 | 1 tags created from 1 spans | buffer: 62/40216 (0.2%)
+2026-08-11 15:52:57 | sleep.tagging                  | INFO  | step=89 | 1 tags created from 1 spans | buffer: 63/40216 (0.2%)
+2026-08-11 15:52:57 | sleep.tagging                  | INFO  | step=91 | 1 tags created from 1 spans | buffer: 64/40216 (0.2%)
+2026-08-11 15:52:57 | sleep.tagging                  | INFO  | step=93 | 1 tags created from 1 spans | buffer: 65/40216 (0.2%)
+2026-08-11 15:52:57 | sleep.tagging                  | INFO  | step=94 | 1 tags created from 1 spans | buffer: 66/40216 (0.2%)
+2026-08-11 15:52:58 | sleep.tagging                  | INFO  | step=97 | 2 tags created from 2 spans | buffer: 68/40216 (0.2%)
+2026-08-11 15:52:58 | sleep.tagging                  | INFO  | step=101 | 1 tags created from 1 spans | buffer: 69/40216 (0.2%)
+2026-08-11 15:52:58 | sleep.tagging                  | INFO  | step=102 | 1 tags created from 1 spans | buffer: 70/40216 (0.2%)
+2026-08-11 15:52:58 | sleep.tagging                  | INFO  | step=103 | 1 tags created from 1 spans | buffer: 71/40216 (0.2%)
+2026-08-11 15:52:58 | sleep.tagging                  | INFO  | step=104 | 1 tags created from 1 spans | buffer: 72/40216 (0.2%)
+2026-08-11 15:52:58 | sleep.tagging                  | INFO  | step=105 | 1 tags created from 1 spans | buffer: 73/40216 (0.2%)
+2026-08-11 15:52:58 | sleep.tagging                  | INFO  | step=106 | 1 tags created from 1 spans | buffer: 74/40216 (0.2%)
+2026-08-11 15:52:59 | sleep.tagging                  | INFO  | step=111 | 1 tags created from 1 spans | buffer: 75/40216 (0.2%)
+2026-08-11 15:52:59 | sleep.tagging                  | INFO  | step=113 | 1 tags created from 1 spans | buffer: 76/40216 (0.2%)
+2026-08-11 15:52:59 | sleep.tagging                  | INFO  | step=114 | 1 tags created from 1 spans | buffer: 77/40216 (0.2%)
+2026-08-11 15:52:59 | sleep.tagging                  | INFO  | step=115 | 1 tags created from 1 spans | buffer: 78/40216 (0.2%)
+2026-08-11 15:52:59 | sleep.tagging                  | INFO  | step=116 | 1 tags created from 1 spans | buffer: 79/40216 (0.2%)
+2026-08-11 15:52:59 | sleep.tagging                  | INFO  | step=117 | 1 tags created from 1 spans | buffer: 80/40216 (0.2%)
+2026-08-11 15:52:59 | sleep.tagging                  | INFO  | step=121 | 1 tags created from 1 spans | buffer: 81/40216 (0.2%)
+2026-08-11 15:52:59 | sleep.tagging                  | INFO  | step=122 | 1 tags created from 1 spans | buffer: 82/40216 (0.2%)
+2026-08-11 15:53:00 | sleep.tagging                  | INFO  | step=123 | 1 tags created from 1 spans | buffer: 83/40216 (0.2%)
+2026-08-11 15:53:00 | sleep.tagging                  | INFO  | step=124 | 1 tags created from 1 spans | buffer: 84/40216 (0.2%)
+2026-08-11 15:53:00 | sleep.tagging                  | INFO  | step=125 | 1 tags created from 1 spans | buffer: 85/40216 (0.2%)
+2026-08-11 15:53:00 | sleep.tagging                  | INFO  | step=127 | 1 tags created from 1 spans | buffer: 86/40216 (0.2%)
+2026-08-11 15:53:00 | sleep.tagging                  | INFO  | step=128 | 1 tags created from 1 spans | buffer: 87/40216 (0.2%)
+2026-08-11 15:53:00 | sleep.tagging                  | INFO  | step=129 | 1 tags created from 1 spans | buffer: 88/40216 (0.2%)
+2026-08-11 15:53:00 | sleep.tagging                  | INFO  | step=132 | 1 tags created from 1 spans | buffer: 89/40216 (0.2%)
+2026-08-11 15:53:00 | sleep.tagging                  | INFO  | step=133 | 1 tags created from 1 spans | buffer: 90/40216 (0.2%)
+2026-08-11 15:53:00 | sleep.tagging                  | INFO  | step=134 | 1 tags created from 1 spans | buffer: 91/40216 (0.2%)
+2026-08-11 15:53:01 | sleep.tagging                  | INFO  | step=135 | 1 tags created from 1 spans | buffer: 92/40216 (0.2%)
+2026-08-11 15:53:01 | sleep.tagging                  | INFO  | step=136 | 1 tags created from 1 spans | buffer: 93/40216 (0.2%)
+2026-08-11 15:53:01 | sleep.tagging                  | INFO  | step=138 | 1 tags created from 1 spans | buffer: 94/40216 (0.2%)
+2026-08-11 15:53:01 | sleep.tagging                  | INFO  | step=139 | 1 tags created from 1 spans | buffer: 95/40216 (0.2%)
+2026-08-11 15:53:01 | sleep.tagging                  | INFO  | step=141 | 1 tags created from 1 spans | buffer: 96/40216 (0.2%)
+2026-08-11 15:53:01 | sleep.tagging                  | INFO  | step=142 | 1 tags created from 1 spans | buffer: 97/40216 (0.2%)
+2026-08-11 15:53:01 | sleep.tagging                  | INFO  | step=144 | 1 tags created from 1 spans | buffer: 98/40216 (0.2%)
+2026-08-11 15:53:02 | sleep.tagging                  | INFO  | step=148 | 1 tags created from 1 spans | buffer: 99/40216 (0.2%)
+2026-08-11 15:53:02 | sleep.tagging                  | INFO  | step=149 | 1 tags created from 1 spans | buffer: 100/40216 (0.2%)
+2026-08-11 15:53:02 | sleep.tagging                  | INFO  | step=151 | 1 tags created from 1 spans | buffer: 101/40216 (0.3%)
+2026-08-11 15:53:02 | sleep.tagging                  | INFO  | step=152 | 2 tags created from 2 spans | buffer: 103/40216 (0.3%)
+2026-08-11 15:53:02 | sleep.tagging                  | INFO  | step=153 | 1 tags created from 1 spans | buffer: 104/40216 (0.3%)
+2026-08-11 15:53:02 | sleep.tagging                  | INFO  | step=154 | 1 tags created from 1 spans | buffer: 105/40216 (0.3%)
+2026-08-11 15:53:02 | sleep.tagging                  | INFO  | step=155 | 1 tags created from 1 spans | buffer: 106/40216 (0.3%)
+2026-08-11 15:53:02 | sleep.tagging                  | INFO  | step=156 | 1 tags created from 1 spans | buffer: 107/40216 (0.3%)
+2026-08-11 15:53:02 | sleep.tagging                  | INFO  | step=158 | 1 tags created from 1 spans | buffer: 108/40216 (0.3%)
+2026-08-11 15:53:03 | sleep.tagging                  | INFO  | step=161 | 1 tags created from 1 spans | buffer: 109/40216 (0.3%)
+2026-08-11 15:53:03 | sleep.tagging                  | INFO  | step=162 | 1 tags created from 1 spans | buffer: 110/40216 (0.3%)
+2026-08-11 15:53:03 | sleep.tagging                  | INFO  | step=163 | 1 tags created from 1 spans | buffer: 111/40216 (0.3%)
+2026-08-11 15:53:03 | sleep.tagging                  | INFO  | step=164 | 1 tags created from 1 spans | buffer: 112/40216 (0.3%)
+2026-08-11 15:53:03 | sleep.tagging                  | INFO  | step=166 | 1 tags created from 1 spans | buffer: 113/40216 (0.3%)
+2026-08-11 15:53:03 | sleep.tagging                  | INFO  | step=167 | 1 tags created from 1 spans | buffer: 114/40216 (0.3%)
+2026-08-11 15:53:03 | sleep.tagging                  | INFO  | step=168 | 1 tags created from 1 spans | buffer: 115/40216 (0.3%)
+2026-08-11 15:53:04 | sleep.tagging                  | INFO  | step=173 | 1 tags created from 1 spans | buffer: 116/40216 (0.3%)
+2026-08-11 15:53:04 | sleep.tagging                  | INFO  | step=174 | 1 tags created from 1 spans | buffer: 117/40216 (0.3%)
+2026-08-11 15:53:04 | sleep.tagging                  | INFO  | step=175 | 1 tags created from 1 spans | buffer: 118/40216 (0.3%)
+2026-08-11 15:53:04 | sleep.tagging                  | INFO  | step=176 | 1 tags created from 1 spans | buffer: 119/40216 (0.3%)
+2026-08-11 15:53:04 | sleep.tagging                  | INFO  | step=177 | 2 tags created from 2 spans | buffer: 121/40216 (0.3%)
+2026-08-11 15:53:04 | sleep.tagging                  | INFO  | step=179 | 1 tags created from 1 spans | buffer: 122/40216 (0.3%)
+2026-08-11 15:53:04 | sleep.tagging                  | INFO  | step=181 | 1 tags created from 1 spans | buffer: 123/40216 (0.3%)
+2026-08-11 15:53:04 | sleep.tagging                  | INFO  | step=182 | 1 tags created from 1 spans | buffer: 124/40216 (0.3%)
+2026-08-11 15:53:05 | sleep.tagging                  | INFO  | step=183 | 1 tags created from 1 spans | buffer: 125/40216 (0.3%)
+2026-08-11 15:53:05 | sleep.tagging                  | INFO  | step=184 | 1 tags created from 1 spans | buffer: 126/40216 (0.3%)
+2026-08-11 15:53:05 | sleep.tagging                  | INFO  | step=186 | 1 tags created from 1 spans | buffer: 127/40216 (0.3%)
+2026-08-11 15:53:05 | sleep.tagging                  | INFO  | step=187 | 1 tags created from 1 spans | buffer: 128/40216 (0.3%)
+2026-08-11 15:53:05 | sleep.tagging                  | INFO  | step=191 | 1 tags created from 1 spans | buffer: 129/40216 (0.3%)
+2026-08-11 15:53:05 | sleep.tagging                  | INFO  | step=192 | 1 tags created from 1 spans | buffer: 130/40216 (0.3%)
+2026-08-11 15:53:05 | sleep.tagging                  | INFO  | step=193 | 1 tags created from 1 spans | buffer: 131/40216 (0.3%)
+2026-08-11 15:53:05 | sleep.tagging                  | INFO  | step=194 | 1 tags created from 1 spans | buffer: 132/40216 (0.3%)
+2026-08-11 15:53:06 | sleep.tagging                  | INFO  | step=196 | 1 tags created from 1 spans | buffer: 133/40216 (0.3%)
+2026-08-11 15:53:06 | sleep.tagging                  | INFO  | step=197 | 2 tags created from 2 spans | buffer: 135/40216 (0.3%)
+2026-08-11 15:53:06 | sleep.experiment.13            | INFO  | WAKE done: 135 tags, 127 episodes in bank
+2026-08-11 15:53:06 | sleep.prp                      | INFO  | step=200 | PRP update: 41/4021 allocated (1%) | +41 -0 | threshold=0.317 | mean_score=0.286
+2026-08-11 15:53:06 | sleep.experiment.13            | INFO  | PRP: 41/135 allocated
+2026-08-11 15:53:06 | sleep.sleep_engine             | INFO  | === Sleep cycle START | 41 candidates ===
+2026-08-11 15:53:06 | sleep.sleep_engine             | INFO  | Phase 1/5: GENERATE (strategy=paraphrase)
+2026-08-11 15:53:06 | sleep.sleep_engine             | INFO  | KV memory injection: DISABLED
+2026-08-11 15:53:06 | sleep.sleep_engine             | INFO  | Phase 1 (paraphrase strategy): 950 wordings from 41 unique sources (41 candidates)
+[transformers] Ignoring clean_up_tokenization_spaces=True for BPE tokenizer TokenizersBackend. The clean_up_tokenization post-processing step is designed for WordPiece tokenizers and is destructive for BPE (it strips spaces before punctuation). Set clean_up_tokenization_spaces=False to suppress this warning, or set clean_up_tokenization_spaces_for_bpe_even_though_it_will_corrupt_output=True to force cleanup anyway.
+2026-08-11 15:53:06 | sleep.sleep_engine             | INFO  | Phase 1 complete: 950/41 replays generated
+2026-08-11 15:53:06 | sleep.sleep_engine             | INFO  | Phase 2/5: QUALITY CHECK
+2026-08-11 15:53:06 | sleep.sleep_engine             | INFO  | Phase 2 complete: 950/950 replays accepted
+2026-08-11 15:53:06 | sleep.sleep_engine             | INFO  | Phase 3/5: TRAIN (950 accepted replays)
+2026-08-11 15:53:06 | sleep.sleep_engine             | INFO  | KV memory injection: DISABLED
+2026-08-11 15:53:06 | sleep.weights.plasticity       | INFO  | Saved checkpoint for adapter 'w_cons': 44 parameters.
+2026-08-11 15:53:07 | sleep.weights.plasticity       | INFO  | Saved checkpoint for adapter 'w_cons': 44 parameters.
+2026-08-11 15:53:07 | sleep.sleep_engine.train       | INFO  | Starting sleep training | n_steps=1500 | n_replay=950 | lr=1.00e-04 | device=cuda
+2026-08-11 15:54:20 | sleep.sleep_engine.train       | INFO  |   step 150/1500 | loss=0.7603 | mean_loss=2.4880 | eta=9 | lr=1.00e-04
+2026-08-11 15:55:34 | sleep.sleep_engine.train       | INFO  |   step 300/1500 | loss=0.4753 | mean_loss=1.5518 | eta=9 | lr=9.70e-05
+2026-08-11 15:56:12 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:12 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:13 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:13 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:14 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:14 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:15 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:15 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:16 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:16 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:17 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:17 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:18 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:18 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:19 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:19 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:20 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:20 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:21 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:21 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:22 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:22 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:23 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:23 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:24 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:24 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:25 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:25 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:26 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:26 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:27 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:27 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:28 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:28 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:29 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:29 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:30 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:48 | sleep.sleep_engine.train       | INFO  |   step 450/1500 | loss=0.3266 | mean_loss=1.1732 | eta=4 | lr=8.83e-05
+2026-08-11 15:56:57 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:58 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:58 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:59 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:56:59 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:00 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:00 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:07 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:07 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:08 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:08 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:16 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:17 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:17 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:18 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:18 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:19 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:19 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:20 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:27 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:27 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:28 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:28 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:29 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:29 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:38 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:39 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:39 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:40 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:40 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:46 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:46 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:47 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:47 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:48 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:48 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:49 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:52 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:52 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:53 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:53 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:54 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:54 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:55 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:57:55 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:01 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:01 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:02 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:02 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:03 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:03 | sleep.sleep_engine.train       | INFO  |   step 600/1500 | loss=0.3218 | mean_loss=0.9577 | eta=4 | lr=7.50e-05
+2026-08-11 15:58:03 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:04 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:04 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:05 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:05 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:06 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:06 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:07 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:17 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:17 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:18 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:18 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:19 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:19 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:20 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:20 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:21 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:26 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:27 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:27 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:28 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:28 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:29 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:30 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:31 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:31 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:32 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:32 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:33 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:33 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:34 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:34 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:35 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:35 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:36 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:36 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:37 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:37 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:44 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:44 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:45 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:45 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:46 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:46 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:47 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:47 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:48 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:48 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:49 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:49 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:50 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:50 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:51 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:52 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:58 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:59 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:58:59 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:00 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:00 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:01 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:02 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:02 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:03 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:03 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:04 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:04 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:05 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:06 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:06 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:07 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:07 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:07 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:08 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:08 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:09 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:09 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:10 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:10 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:11 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:13 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:14 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:14 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:15 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:15 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:15 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:16 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:16 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:17 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:17 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:17 | sleep.sleep_engine.train       | INFO  |   step 750/1500 | loss=0.2929 | mean_loss=0.8229 | eta=4 | lr=5.87e-05
+2026-08-11 15:59:18 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:18 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:19 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:24 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:25 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:25 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:26 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:26 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:27 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:27 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:28 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:28 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:29 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:29 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:30 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:30 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:31 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:31 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:32 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:32 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:33 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:34 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:34 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:35 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:35 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:36 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:36 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:41 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:41 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:42 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:42 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:43 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:44 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:45 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:45 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:46 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:46 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:47 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:47 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:48 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:48 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:49 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:49 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:50 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:55 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:56 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:56 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:57 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:57 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:58 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:58 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:59 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 15:59:59 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:00 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:06 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:07 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:07 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:08 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:11 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:11 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:12 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:12 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:13 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:13 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:14 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:15 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:15 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:16 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:16 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:17 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:20 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:21 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:21 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:22 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:23 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:23 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:24 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:29 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:30 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:30 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:31 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:31 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:32 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:32 | sleep.sleep_engine.train       | INFO  |   step 900/1500 | loss=0.2777 | mean_loss=0.7309 | eta=4 | lr=4.13e-05
+2026-08-11 16:00:42 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:42 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:43 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:43 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:44 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:44 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:45 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:54 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:55 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:57 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:00:58 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:05 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:06 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:06 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:08 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:09 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:09 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:10 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:10 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:11 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:11 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:12 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:12 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:13 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:13 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:14 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:14 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:15 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:15 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:30 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:30 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:31 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:31 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:39 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:39 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:40 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:40 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:41 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:41 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:42 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:42 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:43 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:43 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:44 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:44 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:46 | sleep.sleep_engine.train       | INFO  |   step 1050/1500 | loss=0.2862 | mean_loss=0.6647 | eta=4 | lr=2.50e-05
+2026-08-11 16:01:53 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:53 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:54 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:54 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:55 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:01:55 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:04 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:05 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:05 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:06 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:06 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:07 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:07 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:13 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:14 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:14 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:15 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:15 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:16 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:24 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:25 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:25 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:26 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:26 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:27 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:27 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:28 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:28 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:29 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:49 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:50 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:50 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:51 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:51 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:52 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:52 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:53 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:53 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:54 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:58 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:59 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:02:59 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:03:00 | sleep.sleep_engine.train       | INFO  |   step 1200/1500 | loss=0.2703 | mean_loss=0.6143 | eta=9 | lr=1.17e-05
+2026-08-11 16:03:13 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:03:14 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:03:14 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:03:15 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:03:15 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:03:16 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:03:16 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:03:17 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:03:17 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:03:18 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:03:18 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:03:19 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:03:19 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:03:20 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:09 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:10 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:10 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:11 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:11 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:12 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:12 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:13 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:13 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:14 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:14 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:14 | sleep.sleep_engine.train       | INFO  |   step 1350/1500 | loss=0.2606 | mean_loss=0.5749 | eta=9 | lr=3.02e-06
+2026-08-11 16:04:15 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:15 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:16 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:16 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:17 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:17 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:20 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:20 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:21 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:21 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:22 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:22 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:23 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:23 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:24 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:24 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:25 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:26 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:27 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:27 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:28 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:53 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:53 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:54 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:04:54 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:05:04 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:05:05 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:05:05 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:05:06 | sleep.weights.plasticity       | INFO  | Hard-clipped 1 w_cons parameters to delta_max=0.1000 bound.
+2026-08-11 16:05:29 | sleep.sleep_engine.train       | INFO  |   step 1500/1500 | loss=0.2639 | mean_loss=0.5433 | eta=9 | lr=0.00e+00
+2026-08-11 16:05:29 | sleep.sleep_engine.train       | INFO  | Sleep training complete | n_steps=1500 | final_loss=0.2639 | mean_loss=0.5433
+2026-08-11 16:05:29 | sleep.metrics                  | INFO  | summary | {'sleep_train/final_loss': 0.2639043629169464, 'sleep_train/mean_loss': 0.5432931409279506, 'sleep_train/n_steps': 1500}
+2026-08-11 16:05:29 | sleep.sleep_engine             | INFO  | Phase 3 complete: 1500 steps, final_loss=0.2639, mean_loss=0.5433
+2026-08-11 16:05:29 | sleep.sleep_engine             | INFO  | Phase 4/5: PPL CHECK (skipped — no benchmark data)
+2026-08-11 16:05:29 | sleep.sleep_engine             | INFO  | Phase 5/5: VALIDATE & CLEANUP
+2026-08-11 16:05:29 | sleep.weights.plasticity       | INFO  | Saved checkpoint for adapter 'w_cons': 44 parameters.
+2026-08-11 16:05:29 | sleep.weights.plasticity       | INFO  | Restored 44 parameters for adapter 'w_cons' from checkpoint.
+2026-08-11 16:05:30 | sleep.weights.plasticity       | INFO  | Restored 44 parameters for adapter 'w_cons' from checkpoint.
+[transformers] The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+2026-08-11 16:06:30 | sleep.sleep_engine             | INFO  | Two-stage validation: 41/41 passed surprise, 32 also passed the mini-recall gate (self-grading gap = 9)
+2026-08-11 16:06:30 | sleep.sleep_engine.cleanup     | INFO  | Cleanup complete | passed=32 | failed=9 | permanently_removed=0
+2026-08-11 16:06:30 | sleep.sleep_engine             | INFO  | Phase 5 complete: consolidated=32, failed=9, permanently_removed=0
+2026-08-11 16:06:30 | sleep.metrics                  | INFO  | summary | {'sleep_engine/n_candidates': 41, 'sleep_engine/n_replays_generated': 950, 'sleep_engine/n_replays_accepted': 950, 'sleep_engine/n_consolidated': 32, 'sleep_engine/n_failed': 9, 'sleep_engine/n_permanently_removed': 0, 'sleep_engine/rolled_back': False}
+2026-08-11 16:06:30 | sleep.weights.kv_memory        | INFO  | bank cleared: freed 127 tags / 4914 tokens
+2026-08-11 16:06:30 | sleep.sleep_engine             | INFO  | KV bank cleared (127 entries removed)
+2026-08-11 16:06:30 | sleep.sleep_engine             | INFO  | KV memory injection: ENABLED
+2026-08-11 16:06:30 | sleep.sleep_engine             | INFO  | === Sleep cycle END ===
+2026-08-11 16:06:38 | sleep.evaluation.recall_formats | INFO  | MC recall: accuracy=0.2700, mean_correct_prob=0.2405 across 200 facts
+2026-08-11 16:08:59 | sleep.evaluation.recall_formats | INFO  | Cloze recall: accuracy=0.2150 across 200 facts
+2026-08-11 16:14:50 | sleep.evaluation.recall_formats | INFO  | Free-form recall (greedy): mean_score=0.1883, accuracy=0.2950 across 200 facts
+2026-08-11 16:14:51 | sleep.evaluation.preservation  | INFO  | Perplexity evaluation: PPL=39.6413 (mean_loss=3.6799, 31 tokens)
+2026-08-11 16:14:51 | sleep.evaluation.preservation  | INFO  | BCP: 4.3457 (current_ppl=39.6413, original_ppl=9.1220)
+2026-08-11 16:16:04 | sleep.evaluation.recall_formats | INFO  | Free-form recall (greedy): mean_score=0.6585, accuracy=0.7805 across 41 facts
+2026-08-11 16:16:04 | sleep.experiment.common        | INFO  | Wrote results to /workspace/results/d_llama_pce_mod_s0.json
+
+================================================================
+FULL PIPELINE v2 — recipe=paraphrase_ce seed=0
+================================================================
+  tags=135  PRP=41  consolidated=32  recall-gate=32
+  DRA (greedy):   0.1883  (trained subset: 0.6585 over 41)
+  cloze:          0.2150
+  MC:             0.2700
+  BCP:            4.3457
+  rolled_back:    False
+  Results: /workspace/results/d_llama_pce_mod_s0.json
+2026-08-11 16:16:04 | sleep.weights.kv_injection     | INFO  | KVInjector uninstalled from 10 layers
