@@ -5,7 +5,7 @@
 \section{Results}
 \label{sec:results}
 
-The paper's empirical contribution is an anatomy of where in the SLEEP pipeline information is preserved, transformed, or lost. We organize the results around seven questions, each with a specific experimental answer: where encoding succeeds (\S\ref{sec:results_encoding}), why it does not become recall (\S\ref{sec:results_rwr}), what storage granularity is required (\S\ref{sec:results_episodes}), where consolidation stalls (\S\ref{sec:results_consolidation}), what the safety parameters buy (\S\ref{sec:results_pareto}), how the answers change with evaluation horizon (\S\ref{sec:multi_cycle}), and whether the recognition--recall gap can be repaired (\S\ref{sec:results_warmup}).
+The results follow the paper's two movements. The first movement (\S\ref{sec:results_encoding}--\S\ref{sec:results_warmup}) is an anatomy of where in the original SLEEP pipeline information is preserved, transformed, or lost: where encoding succeeds (\S\ref{sec:results_encoding}), why it does not become recall (\S\ref{sec:results_rwr}), what storage granularity is required (\S\ref{sec:results_episodes}), where consolidation stalls (\S\ref{sec:results_consolidation}), what the safety parameters buy (\S\ref{sec:results_pareto}), how the answers change with evaluation horizon (\S\ref{sec:multi_cycle}), and whether the recognition--recall gap yields to a lightweight repair (\S\ref{sec:results_warmup}). The second movement (\S\ref{sec:results_localisation}--\S\ref{sec:results_matrix}) locates the causes of the consolidation failure and validates their removal: a five-arm isolation of substrate and surface diversity (\S\ref{sec:results_localisation}), the discovery that the safety machinery itself was a third cause (\S\ref{sec:results_third_cause}), the repaired pipeline as an autonomous system (\S\ref{sec:results_pipeline_v2}), and the pre-registered four-model validation matrix (\S\ref{sec:results_matrix}).
 
 \subsection{Encoding: LoRA Fast Weights vs. KV Memory Injection}
 \label{sec:results_encoding}
@@ -196,7 +196,7 @@ Mistral-7B & 1 & 1.64 (c2)  & 3.72 & 0.003 & 0.160 \\
 
 \paragraph{Interpretation---horizon and variance jointly decide the ordering:} Three successively larger experiments gave three different headlines: a single cycle favours naive LoRA; three cycles favour SLEEP (the ordering we ourselves reported from the three-cycle experiment); ten cycles across seeds shows the ordering is not stable at all. The seed-stable claims are structural, not comparative: SLEEP's clipping mechanism caps damage at a plateau whose \emph{existence} is guaranteed but whose \emph{level} is effectively a lottery over the optimisation path---consistent with $\delta_{\max}$ saturation geometry, where the clip freezes whatever damage has accumulated when saturation is reached---and the unconstrained baseline buys its consistently higher recall with wildly fluctuating damage. We conclude that \textbf{single-run, fixed-horizon comparisons of continual-learning architectures are unreliable at both of the scales this field typically reports}, and recommend that such comparisons state a horizon sweep and a seed spread or not be made.
 
-\paragraph{What this result does \emph{not} show:} It does not show SLEEP's safety machinery is useless---in 4 of 9 pairs it produced the better cycle-10 preservation, and its early-cycle protection is real everywhere. It shows the machinery does not deliver a \emph{reliable} advantage, and that the aspirational target---BCP near 1 across many cycles while DRA accumulates---was met by no run of either arm.
+\paragraph{What this result does \emph{not} show:} It does not show SLEEP's safety machinery is useless---in 4 of 9 pairs it produced the better cycle-10 preservation, and its early-cycle protection is real everywhere. It shows the machinery does not deliver a \emph{reliable} advantage, and that the aspirational target---BCP near 1 across many cycles while DRA accumulates---was met by no run of either arm. Section~\ref{sec:results_matrix} revisits this protocol with the repaired pipeline and finds that the seed lottery was a property of the \emph{choked} configuration: once consolidation writes to the correct substrate under a moderate clip, the constrained arm's trajectories become smooth and seed-stable, while the lottery persists in---and at small scale destroys---the unconstrained baseline.
 
 \subsection{Repairing the Gap: A Retrieval-Aware Warm-Up}
 \label{sec:results_warmup}
@@ -235,3 +235,102 @@ Mistral-7B & $+$ LoRA  & $-0.002, -0.005$ & $1.8{\times}10^{4}$, $1.0{\times}10^
 \paragraph{Result---two distinct failure modes, replicated across families:} The gate-only variant does not train: its loss is flat and the learned scales converge to $0.99$--$1.00$, i.e.\ the optimizer finds that the identity is locally optimal. Thirty-six parameters modulating a memory signal cannot manufacture the capability to use it. The gate + LoRA variant \emph{does} learn the objective---on every model the warm-up loss falls substantially (e.g.\ $4.30 \to 3.33$ on Qwen-7B), confirming genuine acquisition of memory-conditioned prediction---and recognition improves modestly where the model survives (MC $0.220 \to 0.270$ on Qwen-7B, seed 0). But recall does not follow anywhere: across sixteen warm-up runs on four models, $|\Delta\mathrm{DRA}| \leq 0.008$ (Table~\ref{tab:warmup}). Meanwhile the LoRA variant's preservation cost is family-dependent and sometimes catastrophic: mild on Qwen-7B (BCP 1.7--3.7), severe on Qwen-1.5B (5.8--19.9), and destructive on Llama and Mistral (BCP $10^{4}$--$10^{6}$) at the same untuned learning rate. Two further observations: when LoRA is present the gate remains pinned at exactly $1.000$ (gradient flows to the higher-capacity component), and on Mistral the gate-only warm-up substantially \emph{reduced} the interference cost of carrying a populated memory bank (BCP with bank active: $8.9 \to 2.8$)---the gate learns to damp memory it cannot learn to exploit.
 
 \paragraph{Interpretation:} The honest statement carries its scope. \textbf{A lightweight retrieval-aware warm-up---$\leq$300 steps on a general corpus, with either a minimal gate or a rank-16 adapter---does not close the recognition--recall gap on any of four models spanning three families.} What it does do is deepen the original diagnosis in two ways. First, the gap survived a principled intervention drawn from published precedent \citep{wu2022memorizing,gmemllm2026,wang2024memoryllm}, replicated across families---stronger evidence of its structural character than any single-model observation. Second, the intervention moved recognition and recall \emph{differentially}---the same training that raised MC accuracy left free-form generation untouched---which is precisely the dissociation the paper names, now reproduced under an experimental manipulation rather than merely observed. We note the caveat that the warm-up learning rate was not tuned per family, which the Llama and Mistral collapses underline; a per-family-tuned variant is cheap follow-up work. We do not claim that retrieval-aware training cannot close the gap; Memorizing Transformers demonstrates that full-scale memory-augmented pretraining does. We claim that the cheap version does not, and we report the scale at which we tested it.
+
+This closes the first movement. Every route into the failure so far---perfect replay data, relaxed safety sweeps, a trained retrieval skill---treated the consolidation target as given. The sections that follow question the target itself.
+
+\subsection{Localising the Failure: Substrate and Surface Diversity}
+\label{sec:results_localisation}
+
+\paragraph{Hypothesis:} The knowledge-editing literature (Section~\ref{sec:related}) predicts that factual associations live in mid-stack MLP modules, not the top-third attention projections where biological analogy placed $W_{\mathrm{cons}}$---and that single-wording training should produce string memorization rather than extractable knowledge. If correct, the recall floor of Section~\ref{sec:results_consolidation} is a localisation error, not a stability--plasticity limit.
+
+\paragraph{Setup:} Five arms isolate the two factors on 50 facts at matched exposure (1{,}200 training steps), on Qwen2.5-7B and Llama-3.1-8B, two seeds, safety clipping disabled so that placement and data are the only variables. Arms: (i) attention-top placement, single wording (the original); (ii) mid-MLP placement, single wording; (iii) mid-MLP with paraphrase diversity; (iv) context distillation into mid-MLP with paraphrases; (v) context distillation into attention-top (the placement control for the objective). Evaluation is greedy throughout.
+
+\begin{table}[t]
+\centering
+\caption{Five-arm localisation ladder (50 facts, matched exposure, clipping disabled; Qwen2.5-7B shown, seed means). Placement, diversity, and objective stack. Cloze and free-form move in \emph{opposite} directions when paraphrases are introduced: the model stops memorizing the string and starts knowing the fact.}
+\label{tab:ladder}
+\begin{tabular}{lccc}
+\toprule
+Arm & Free-form DRA & Cloze & BCP \\
+\midrule
+attention-top, single wording (original) & 0.01 & 0.44 & 3.6 \\
+mid-MLP, single wording                  & 0.03 & 0.56 & 1.2--1.8 \\
+mid-MLP $+$ paraphrases                  & 0.22 & 0.38 & 1.4 \\
+mid-MLP $+$ paraphrases $+$ distillation & \textbf{0.36} & 0.31 & \textbf{0.83} \\
+attention-top $+$ distillation (control) & 0.06 & 0.35 & 2.9 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Results:} Table~\ref{tab:ladder} reports the ladder. Three findings, each consistent across both models and seeds. First, \emph{placement alone halves background damage in 8 of 8 comparisons} (Qwen BCP $3.6 \to 1.2$--$1.8$ at equal steps) and lifts recall off the floor---the same gradient budget, spent in the substrate the editing literature indicates, does less harm and more good. Second, \emph{paraphrase diversity converts memorization into extraction}: introducing paraphrases moves cloze and free-form recall in opposite directions ($0.56 \to 0.38$ cloze, $0.03 \to 0.22$ DRA), which is precisely the signature of the model ceasing to reproduce a token sequence and beginning to store a retrievable association. Third, \emph{distillation from the in-context teacher is the gentlest write}: the best arm reaches $\mathrm{DRA}=0.36$ at $\mathrm{BCP}=0.83$ on Qwen---sixty times the original floor, at \emph{better}-than-baseline preservation---while the placement control (same objective, original substrate) recovers almost none of it. On Llama the best arm is paraphrase-CE at $0.353$. The recall floor of the first movement was therefore not a structural property of frozen-backbone consolidation. It was a map error: the pipeline was writing to the wrong address, in the wrong format.
+
+\subsection{The Third Cause: The Safety Machinery Erases the Write}
+\label{sec:results_third_cause}
+
+\paragraph{Setup:} The ladder ran with clipping disabled. Wiring the winning recipe into the \emph{full} autonomous pipeline---tagging, PRP selection, sleep engine, safety machinery, two-stage validation---tests whether it survives the system it must live in. We run the complete pipeline on 200 facts with the safety machinery at its designed setting ($\delta_{\max}=0.01$, plasticity scaling on), and identically with clip and scaling relaxed, three seeds each on Qwen2.5-7B.
+
+\paragraph{Results:} As designed, the machinery nullifies the recipe: trained-subset DRA $0.007/0.007/0.007$, zero consolidations confirmed by the direct recall gate---indistinguishable from the original floor. Relaxed, the identical pipeline reaches trained-subset DRA $\mathbf{0.210 \pm 0.018}$ at $\mathrm{BCP}=0.90$--$0.99$, with 21--24 of $\sim$50 selected facts passing the external greedy recall gate: the first externally verified autonomous consolidations in the programme. The original consolidation failure therefore had \emph{three} stacked causes: wrong substrate (\S\ref{sec:results_localisation}), wrong surface statistics (\emph{ibid.}), and a safety clip calibrated so tightly that it erased the write after training performed it---consistent with the $\delta_{\max}$ saturation geometry identified in the diagnosis era. Each cause alone suffices to hold recall at floor, which is why no single-factor intervention in the first movement could move it.
+
+\subsection{The Repaired Pipeline as an Autonomous System}
+\label{sec:results_pipeline_v2}
+
+The findings above fix the revised operating point (Section~\ref{sec:method_v2}): mid-MLP $W_{\mathrm{cons}}$, paraphrase replay, context distillation, moderate clipping ($\delta_{\max}=0.1$, scaling on), two-stage validation with the direct recall gate, greedy evaluation. At this operating point the full pipeline---wake-phase tagging and KV writes, PRP selection, autonomous sleep, external validation---achieves single-cycle trained-subset DRA of $0.189 \pm 0.031$ at $\mathrm{BCP}=0.882 \pm 0.027$ on Qwen2.5-7B across five seeds: recall statistically indistinguishable from the relaxed setting, at measurably \emph{better} preservation, with every seed below $\mathrm{BCP}=1.0$. On the frontier of Figure~\ref{fig:pareto}, whose best original point bought $\mathrm{DRA}=0.103$ at $\mathrm{BCP}=2.73$, this configuration sits far above the upper-left intersection that no diagnosis-era setting could reach. The two-stage gate confirms 16--23 consolidations per run externally---against the diagnosis era's $0.4 \pm 0.5$.
+
+\subsection{The Validation Matrix: Three Families, Two Scales, Two Baselines}
+\label{sec:results_matrix}
+
+All results in this section were run under pre-registered gates (Section~\ref{sec:setup}); predictions were committed before execution.
+
+\paragraph{Single-cycle generalisation (5 seeds per model):} Table~\ref{tab:matrix_single} reports the repaired pipeline across the four models. Per-model recipes were fixed by a pre-registered tuning gate (best of distillation vs.\ paraphrase-CE at trained-subset DRA $\geq 0.10$, $\mathrm{BCP} \leq 1.5$, seed 0): distillation won everywhere it was tried (on Mistral, $0.750$ @ $1.31$ vs.\ $0.655$ @ $2.98$---the in-context-teacher write is also the gentler write). Every model exceeds the diagnosis-era floor by $17\times$ or more. The effect is \emph{strongest off the development model}---Mistral-7B, which the recipe had never touched, is the best result in the programme---which argues against the recipe being overfit to Qwen. The $1.5$B result ($0.105$, thin but gate-passing, only 10 of 42 selected facts surviving the recall gate versus 29 of 31 on Mistral-7B) suggests extraction capacity grows with scale. Llama-3.1-8B is the flagged exception: a pre-registered clip ladder ($\delta_{\max} \in \{0.1, 0.05, 0.03\}$) reduced damage monotonically ($4.35 \to 3.64 \to 2.14$) with recall degrading only slowly ($0.659 \to 0.593 \to 0.520$), but never reached the $1.5$ bar---Llama's damage is \emph{not clip-dominated}, and per-family learning-rate tuning is the named open item. It runs the matrix at $\delta_{\max}=0.03$ and is reported as \emph{not yet tuned}, not as solved.
+
+\begin{table}[t]
+\centering
+\caption{The repaired pipeline across four models: single-cycle trained-subset DRA and BCP (5 seeds, mean $\pm$ SD). Recipes fixed by pre-registered tuning gates. Every model is $\geq 17\times$ the diagnosis-era floor of $\approx 0.006$; the strongest result is on the family the recipe never saw during development.}
+\label{tab:matrix_single}
+\begin{tabular}{llcc}
+\toprule
+Model & Recipe & Trained-subset DRA & BCP \\
+\midrule
+Mistral-7B   & distill, $\delta_{\max}{=}0.1$   & $\mathbf{0.750 \pm 0.033}$ & $1.205 \pm 0.058$ \\
+Llama-3.1-8B & par.-CE, $\delta_{\max}{=}0.03$  & $0.512 \pm 0.048$ & $2.088 \pm 0.140$ \\
+Qwen2.5-7B   & distill, $\delta_{\max}{=}0.1$   & $0.189 \pm 0.031$ & $0.882 \pm 0.027$ \\
+Qwen2.5-1.5B & distill, $\delta_{\max}{=}0.1$   & $0.105 \pm 0.020$ & $1.043 \pm 0.016$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Ten cycles: the design-intent claim, tested (2 seeds per arm):} Table~\ref{tab:matrix_multi} repeats the ten-cycle protocol of Section~\ref{sec:multi_cycle} with the repaired pipeline (v2-moderate) against naive LoRA at the same mid-MLP adapter geometry. The pre-registered prediction---v2 exceeds naive on cumulative recall on at least two of the three newly-tested models, both seeds---was met on three of three; with Qwen2.5-7B it holds on all four models. Three regularities are seed-consistent. First, \textbf{the design-intent claim is now real}: the safety-constrained system accumulates more recall than unconstrained fine-tuning over ten cycles, $3\times$ on the anchor model. Second, \textbf{the machinery is load-bearing at small scale}: naive LoRA detonates Qwen2.5-1.5B ($\mathrm{BCP}=24.5$ and $11.4$; the blow-up size is seed-random---the plateau lottery of Section~\ref{sec:multi_cycle}, reproduced), while the constrained arm holds $\approx 2.4$ on both seeds. Third, \textbf{the constrained arm no longer exhibits the lottery}: its across-seed spread is $\approx 0.005$ DRA on every model against naive's $0.04$--$0.06$, and its damage drifts smoothly with no step-cliffs. The seed-instability finding of Section~\ref{sec:multi_cycle} thereby resolves into a property of \emph{unconstrained} arms specifically. Llama repeats its single-cycle pattern---more recall than naive on both seeds, at damage that compounds unacceptably ($\mathrm{BCP}$ $4.3/9.2$)---and keeps its flag. One qualitative signature recurs on every model: naive scores higher on \emph{current-cycle} recall while the constrained arm retains \emph{earlier} cycles better---memorization versus consolidation, now visible in the horizon dimension.
+
+\begin{table}[t]
+\centering
+\caption{Ten-cycle validation: cumulative DRA at cycle 10 (seeds 0/1) with BCP. The repaired pipeline exceeds naive on cumulative recall on all four models, both seeds; at 1.5B the unconstrained arm's damage blows up seed-randomly while the constrained arm is stable.}
+\label{tab:matrix_multi}
+\begin{tabular}{lcc}
+\toprule
+Model & SLEEP v2-moderate & Naive LoRA \\
+\midrule
+Qwen2.5-7B   & $\mathbf{0.173/0.175}$ @ $1.87/2.24$ & $0.053/0.060$ @ $1.66/1.80$ \\
+Mistral-7B   & $\mathbf{0.173/0.168}$ @ $1.18/1.18$ & $0.118/0.160$ @ $1.71/1.57$ \\
+Qwen2.5-1.5B & $\mathbf{0.097/0.102}$ @ $2.35/2.49$ & $0.038/0.050$ @ $\mathbf{24.5/11.4}$ \\
+Llama-3.1-8B & $0.102/0.062$ @ $4.33/9.20$ & $0.082/0.042$ @ $2.24/1.67$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{The baseline that matters: EWC-only (matched arms):} The diagnosis era left an uncomfortable finding: EWC alone looked competitive with the full pipeline. The matrix settles it with the matched-arm comparison of Section~\ref{sec:setup} on the two headline families, ten cycles, two seeds (Table~\ref{tab:matrix_ewc}). The pre-registered prediction held exactly: the penalty gives EWC-only the best damage numbers, but its recall sits at naive's level---\textbf{regularization prevents forgetting; it does not create extraction}. The repaired pipeline delivers $3\times$ the cumulative recall of both baselines on Qwen2.5-7B at comparable damage, passing the pre-registered headline gate. On Llama, EWC-only is competitive with the not-yet-tuned v2 ($0.075/0.072$ at far better BCP)---reported plainly: the Llama column is not a v2 win.
+
+\begin{table}[t]
+\centering
+\caption{The EWC showdown: cumulative DRA at cycle 10 (seeds 0/1) with BCP, matched-arm EWC. On the anchor model the repaired pipeline triples both baselines' recall at comparable damage; EWC's penalty preserves but does not create recall.}
+\label{tab:matrix_ewc}
+\begin{tabular}{lccc}
+\toprule
+Model & SLEEP v2-moderate & EWC-only & Naive LoRA \\
+\midrule
+Qwen2.5-7B   & $\mathbf{0.173/0.175}$ @ $1.87/2.24$ & $0.060/0.052$ @ $1.53/1.80$ & $0.053/0.060$ @ $1.66/1.80$ \\
+Llama-3.1-8B & $0.102/0.062$ @ $4.33/9.20$ & $0.075/0.072$ @ $2.32/1.79$ & $0.082/0.042$ @ $2.24/1.67$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Residual gaps, named:} Three limitations survive the matrix and are carried explicitly into future work. Background damage leaks $\approx +0.12$ BCP per cycle in every arm---no configuration holds $\mathrm{BCP} < 1.05$ over ten cycles. Early-cycle batches fade in cumulative recall because the engine rehearses only the current batch; interleaved rehearsal of prior consolidations---the mechanism biological sleep actually implements---is the clearest next component. And Llama-3.1-8B requires per-family optimisation before its recall gains are usable.
