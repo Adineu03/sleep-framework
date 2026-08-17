@@ -288,6 +288,34 @@ slide("""
 </div>
 """, """Explain the experimental design. Synthetic facts are deliberate - with real facts you can't distinguish 'learned it from us' from 'knew it from pretraining'. The three metrics matter for what comes next: MC is recognition (multiple choice), DRA is free-form recall (generation - the hard one), BCP is damage to general capability. Key protocol detail: at evaluation the KV memory bank is switched OFF - we only credit knowledge that made it into the weights.""")
 
+# 6b -- How we tested it (walkthrough for everyone) -----------------------------
+slide("""
+<div class="frame">
+  <p class="eyebrow">The test, step by step</p>
+  <h1 class="title" style="margin-bottom:26px;">One fact's journey through the exam</h1>
+  <div class="content" style="gap:18px;">
+    <div class="cols" style="flex:0 0 auto; gap:24px;">
+      <div class="panel" style="gap:10px;"><span class="k" style="color:#3D52C9;">1 &middot; We show it once</span>
+        <p style="font-size:24px; font-style:italic;">"The Vortex Corporation reported Q3 2024 revenue of $4,062 million, a 9.4% increase, driven by their expansion into North Macedonia."</p>
+        <p style="font-size:21px; color:#5C6577;">One of 200 fictional facts &mdash; invented, so the model cannot already know it.</p></div>
+      <div class="panel" style="gap:10px;"><span class="k" style="color:#A96D12;">2 &middot; We ask &mdash; before</span>
+        <p style="font-size:24px;">"What was Vortex Corporation's Q3 revenue and what drove the change?"</p>
+        <p style="font-size:24px;"><b style="color:#A96D12;">Answer contains 0 of 3 key details.</b> The fact was seen; nothing was learned yet.</p></div>
+    </div>
+    <div class="cols" style="flex:0 0 auto; gap:24px;">
+      <div class="panel" style="gap:10px;"><span class="k" style="color:#2C7D57;">3 &middot; The model sleeps</span>
+        <p style="font-size:24px;">It replays the fact in <b>20+ wordings</b> and writes it into its <b>mid-stack weights</b>. Then we <b>wipe its notes</b> &mdash; the short-term memory bank is cleared.</p></div>
+      <div class="panel" style="gap:10px;"><span class="k" style="color:#2C7D57;">4 &middot; We ask again &mdash; after</span>
+        <p style="font-size:24px;">Same question. No notes, no dice-rolling (greedy decoding).</p>
+        <p style="font-size:24px;"><b style="color:#2C7D57;">Answer contains "$4,062", "9.4%", "North Macedonia" &mdash; 3 of 3.</b> The knowledge now lives in the weights.</p></div>
+    </div>
+    <div class="panel" style="flex:0 0 auto; background:#E2F1EA; border-color:#2C7D57;">
+      <p style="font-size:25px; color:#2C7D57;"><b>&#10003; And after every exam, a damage meter (BCP)</b> verifies the model didn't forget anything it already knew &mdash; general ability is re-measured against its pre-learning self.</p>
+    </div>
+  </div>
+</div>
+""", """This slide makes the method concrete for everyone. Walk it slowly. Step 1: the fact is fictional by design; if the model answers correctly later, the knowledge can only have come from us, from a single exposure. Step 2: before sleep, the score is keyword-based; zero of three key details appear. Step 3: sleep = replay in 20+ wordings + consolidation into mid-stack weights; then the crucial part, we wipe the short-term memory bank; nothing is hiding in a cache. Step 4: same question, greedy decoding so there are no lucky samples; on gate-passing facts all three details appear; on Mistral, 29 of 31 selected facts passed this exact gate. And the BCP meter answers the other half of the question: did learning this break anything else.""")
+
 # 7 -- First results -----------------------------------------------------------
 slide("""
 <div class="frame">
@@ -550,6 +578,27 @@ slide("""
   </div>
 </div>
 """, """Real-world implications, kept honest. Personal assistants with genuine long-term memory; enterprise 'sleep on it' ingestion - learning as a nightly rhythm instead of a retraining project; on-device continual learning, where our small-model result is most relevant. Give the safety paragraph its full weight: a working consolidation path makes silent data retention a real concern - user controls and external validation gates should ship with the capability. And close the research loop: interleaved rehearsal is next.""")
+
+# 21b -- Sector deep-dive: financial services -----------------------------------
+slide("""
+<div class="frame">
+  <p class="eyebrow">One sector, concretely</p>
+  <h1 class="title">What this looks like in <b>financial services</b></h1>
+  <div class="content">
+    <div class="cols" style="flex:0 0 auto;">
+      <div class="panel"><span class="k">Research desk</span><p><b>Overnight ingestion.</b> The model "sleeps on" the day's filings, earnings transcripts, and analyst notes &mdash; and answers from its own weights tomorrow, instead of dragging a 200-page prompt into every query.</p></div>
+      <div class="panel"><span class="k">Client advisory</span><p><b>Told once, remembered always.</b> A client's mandate, risk limits, and preferences stated in one meeting become permanent working knowledge &mdash; no re-briefing, no lost context between sessions.</p></div>
+    </div>
+    <div class="cols" style="flex:0 0 auto;">
+      <div class="panel"><span class="k">Compliance &amp; audit</span><p><b>Provable learning.</b> New regulatory circulars are consolidated nightly &mdash; and the external validation gate produces a per-fact record of what was verifiably learned. Memory with an <b>audit trail</b>, which self-certifying systems cannot offer.</p></div>
+      <div class="panel"><span class="k">Why the safety machinery sells here</span><p>Finance cannot tolerate a model that damages itself learning yesterday's news. SLEEP's right-sized rails held damage to <b>&times;2.4 where unconstrained training hit &times;24</b> &mdash; on exactly the smaller, deployable model sizes banks prefer.</p></div>
+    </div>
+    <div class="panel" style="flex:0 0 auto; background:#F7EDDA; border-color:#A96D12;">
+      <p style="font-size:26px; color:#A96D12;"><b>Honest scope:</b> this is a validated research prototype at 7&ndash;8B scale on synthetic facts &mdash; the recipe, its receipts, and its open gaps are all published. Production readiness is future work, not a claim.</p>
+    </div>
+  </div>
+</div>
+""", """Ground the applications in one sector the audience knows. Research desk: the 'sleep on it' rhythm - ingestion as an overnight batch process, answering from weights next day. Client advisory: single-exposure learning is exactly the 'told once' problem. Compliance is the underrated angle: our external validation gate produces a per-fact record of what was verifiably consolidated - that's memory with an audit trail, something self-certifying systems can't offer (recall our 93-100% proxy false-confirmation finding). And the safety machinery is a feature for this sector, not overhead - point at the small-model result. Close on the honest-scope banner before anyone in the audience does it for you.""")
 
 # 22 -- Thank you ------------------------------------------------------------------------
 slide("""
