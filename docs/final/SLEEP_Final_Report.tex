@@ -5,6 +5,7 @@
 \usepackage{lmodern}
 \usepackage{microtype}
 \usepackage{amsmath,amssymb}
+\usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{array}
 \usepackage{xcolor}
@@ -34,9 +35,6 @@
 \setlist[itemize]{leftmargin=1.4em, itemsep=0.2em, topsep=0.25em}
 \setlist[enumerate]{leftmargin=1.6em, itemsep=0.25em, topsep=0.25em}
 
-\newcommand{\good}{\textcolor{gooddk}{\textbf{Pass}}}
-\newcommand{\flag}{\textcolor{pend}{\textbf{Flagged}}}
-
 \setlength{\parskip}{0.45em}
 \setlength{\parindent}{0pt}
 
@@ -45,7 +43,7 @@
 
 % ===== Title block =========================================================
 \begin{center}
-{\color{accent}\LARGE\bfseries What SLEEP Was, What the Evidence Forced, and What It Became}\\[0.35em]
+{\color{accent}\LARGE\bfseries What SLEEP Was, What the Evidence Forced,\\[0.15em] and What It Became}\\[0.45em]
 {\large SLEEP: Final Report --- the Complete Arc, April to August 2026}\\[0.6em]
 {\color{softgrey}\normalsize Supersedes the 8 August final report; covers the full programme from the
 original system through the localisation repair and the four-model validation matrix}
@@ -72,49 +70,166 @@ original system through the localisation repair and the four-model validation ma
 Professor Guha,
 
 This report replaces the 8~August final and tells the programme's story whole, in the order the
-evidence arrived: the system as originally built, the failure it exhibited, the replication
-programme that made that failure rigorous, the re-examination that located its causes, and the
-validation matrix that turned it into a working, baseline-controlled result. The one-line arc:
-\textbf{a recall floor of $0.006$ that survived every within-paradigm repair rose to $0.750$ once we
-moved the consolidation write to where the transformer actually stores facts} --- and the repaired
-system now beats both naive fine-tuning and an EWC baseline in its design regime, under
-pre-registered gates. Every number below traces to a released run file.
+evidence arrived: the system as originally built and the failure it exhibited (\S1); the review
+that demanded rigour (\S2); the replication programme that made the failure universal (\S3); the
+extensions we added on our own initiative, including a pre-registered repair attempt that failed
+informatively (\S4); the re-examination that located the failure's three stacked causes (\S5); the
+pre-registered four-model validation of the repaired system (\S6); and where SLEEP now stands,
+with the questions on which we seek your judgement (\S7).
 
-% ===== 1 ====================================================================
+The one-line arc: \textbf{a free-form recall floor of $0.006$ that survived every within-paradigm
+repair rose to $0.750$ once the consolidation write was moved to where the transformer actually
+stores facts} --- and the repaired system now beats both naive fine-tuning and a matched EWC
+baseline in its design regime, under gates and predictions committed before the experiments ran.
+Every number in this report traces to a machine-readable run file in the project repository.
+
+% ===========================================================================
 \section{What SLEEP was}
 
-By late April, SLEEP was a complete, pre-registered implementation of biological memory
-consolidation in a transformer: a tagging layer that flags surprising spans by prediction error, a
-direct-write KV memory bank, a PRP-style resource allocator, and a sleep engine that replays
-selected memories into a LoRA consolidation adapter under four safety mechanisms (EWC, hard
-clipping, interleaving, validation rollback). Thirty-six design questions were resolved in a
-formalization document before any code was written.
+\subsection{The problem and the biological bet}
 
-The first campaign (Qwen2.5-7B, 200 synthetic single-exposure facts) produced the observation that
-named the paper: injected memories bias four-way \emph{recognition} by $+0.16$ over untagged facts,
-yet \emph{free-form recall} of the same facts is $0.00$ --- and no safety setting in a four-point
-sweep achieved useful recall at acceptable damage. Around it sat two more single-run observations:
-the internal validator certified consolidations that failed any direct test, and a three-cycle
-comparison suggested SLEEP preserved capability better than naive fine-tuning. Everything rested on
-one model and one seed.
+Large language models exhibit a form of architectural anterograde amnesia: weights are frozen at
+deployment, and anything acquired during inference lives only in the context window. Retrieval
+augmentation treats this as plumbing --- a database lookup appended to every query --- rather than
+as a representational gap. Biology faces the same problem and solves it with a structured
+pipeline: surprising experiences are tagged at the synapse by prediction error (synaptic tagging
+and capture); tags compete for a limited pool of plasticity-related proteins; winners are replayed
+by the hippocampus during sleep, gradually training the neocortex without overwriting it
+(complementary learning systems). The output specification of that pipeline --- continuous,
+selective, single-exposure learning without catastrophic forgetting --- is exactly what an LLM
+lacks. SLEEP's bet was that implementing the pipeline faithfully would transfer its properties.
 
-% ===== 2 ====================================================================
+\subsection{The system as built}
+
+SLEEP augments a frozen pretrained transformer with five interacting components:
+
+\begin{itemize}
+\item \textbf{Tagging layer} --- flags surprising spans during normal inference via an adaptive
+      z-score on per-token cross-entropy ($\kappa = 1.5$, EMA $\beta = 0.99$), merging adjacent
+      flags into spans and attaching decay/reinforcement dynamics.
+\item \textbf{KV memory bank ($W_{\mathrm{fast}}$)} --- one-shot episodic storage written directly
+      into attention: pre-RoPE keys and values for the full episode containing a tag, injected at
+      negative position IDs with per-query top-$k$ retrieval gating.
+\item \textbf{PRP allocator} --- a budgeted competition over tags scoring surprise, access,
+      cross-reference density, and recency; only allocated tags become consolidation candidates.
+\item \textbf{Sleep engine} --- a five-phase cycle (generate replays $\to$ quality-check $\to$
+      train $\to$ perplexity-check $\to$ validate and clean up) that trains a LoRA consolidation
+      adapter ($W_{\mathrm{cons}}$, rank 16) on replayed content, then clears the bank.
+\item \textbf{Safety machinery} --- four simultaneous mechanisms: a Fisher-weighted EWC penalty, a
+      hard per-parameter clip $\delta_{\max}$ against the pre-cycle checkpoint, 1:1 interleaving
+      with self-generated ``old knowledge,'' and per-candidate validation with rollback.
+\end{itemize}
+
+Discipline was front-loaded: \textbf{36 design questions were resolved in a pre-registered
+formalization before any code was written}; every hyperparameter default traces to it, and every
+later deviation carries a dated logbook entry. The implementation grew to $\approx$4{,}000 lines
+across eight modules, with (by programme end) 410 unit and integration tests --- including
+ground-truth equality tests on every critical numerical path, a practice that repeatedly caught
+silent-failure bugs (a missing layer-norm in K/V extraction; a cache-ordering error duplicating
+memory each generation step) before they could contaminate results.
+
+\subsection{The first campaign and the April headline}
+
+The benchmark: 200 synthetic single-sentence facts across 10 templates, with fictional entities so
+that pretraining cannot supply the answers --- if the model knows a fact, it learned it from us, in
+one exposure. Three metric families: multiple-choice accuracy (MC; recognition against three
+same-template distractors, chance $0.25$), free-form Delayed Recall Accuracy (DRA; keyword recall
+from a question prompt --- the real test), and Base Capability Preservation (BCP; perplexity ratio
+after/before on held-out controls, $1.0$ = unharmed). At evaluation the memory bank is disabled:
+only what reached the weights counts.
+
+Three April findings framed everything after:
+
+\begin{enumerate}
+\item \textbf{The fast-weight substrate had to change.} LoRA fast weights at the formalization's
+      $\alpha_{\mathrm{fast}} = 10^{-4}$ produce no detectable encoding from single exposures
+      (below the bfloat16 precision floor); direct-write KV injection with top-$k$ gating does:
+      tagged-fact MC $0.28$ vs.\ untagged $0.12$ ($+0.16$) at BCP $1.08$. Without gating, an
+      injected bank destroys the model (BCP $\approx 97$).
+\item \textbf{Recognition without recall.} The same memories that bias recognition by $+0.16$
+      yield cloze accuracy $0.00$ and free-form recall $0.00$. Attention-injected memory acts as a
+      small logit perturbation: enough to tilt a four-way comparison, overwhelmed across fifty
+      autoregressive steps against a prior trained on trillions of tokens.
+\item \textbf{Consolidation stalled even on perfect data.} Replacing generative replay with the
+      original fact tokens (eliminating replay quality as a confound) left recall at
+      $\mathrm{DRA} = 0.006 \pm 0.003$ under default safety; a four-point relaxation sweep traced
+      a monotonic frontier with no operating point achieving $\mathrm{DRA} > 0.05$ at
+      $\mathrm{BCP} < 1.05$. Meanwhile the engine's internal surprise-based validator kept
+      certifying $\sim$39 consolidations per run.
+\end{enumerate}
+
+A fourth correction from this period is worth recording because it validated the proposal's own
+framing: \textbf{tags are pointers, not storage.} The formalization stored only the K/V of tagged
+tokens; tagged tokens are short novel-entity mentions that capture the \emph{location} of a
+surprise without its \emph{content}, and replays seeded from them fabricated plausible-sounding
+values (``\$32.6 million'') not present in the source. Expanding storage to the full episode
+containing the tag raised the internal consolidation rate from $40\%$ to $62\%$ and improved BCP
+from $1.06$ to $1.008$ --- the implementation must store what the pointer indexes.
+
+Alongside these: an early three-cycle comparison suggested SLEEP preserved capability
+$\approx 2\times$ better than naive fine-tuning --- a claim that would later fail replication and
+be withdrawn (\S3.3). At this stage, everything rested on one model (Qwen2.5-7B) and one seed.
+
+% ===========================================================================
 \section{What the review named}
 
-Your review of that first evidence, together with the external review, converged on one demand in
-eleven items: \emph{nothing is replicated, nothing is compared properly, and the repair the
-diagnosis implies has not been tried.} Concretely: multiple seeds, extended horizons (10+ cycles),
-more models and precisions, real baselines (RAG, EWC-only, in-context), an external validation
-gate, tightened biological framing, and the retrieval-aware fine-tune.
+Your review of that first evidence, together with the external (IBM) review, converged on eleven
+items in three priorities --- in one sentence: \emph{the findings are interesting, but nothing is
+replicated, nothing is compared properly, and the repair the diagnosis implies has not been
+tried.}
 
-% ===== 3 ====================================================================
+\begin{center}
+\small
+\begin{tabular}{@{}l l l@{}}
+\toprule
+\# & Item & The gap it named \\
+\midrule
+1  & Multiple random seeds        & every number was a single run \\
+2  & Extended multi-cycle (10--20) & three cycles cannot show a plateau \\
+3  & More models and precisions   & everything was Qwen-7B bfloat16 \\
+4  & Standard benchmarks          & synthetic facts are not comparable \\
+5  & Missing baselines            & RAG named in the introduction, never measured \\
+6  & Fix internal validation      & the system graded its own homework \\
+7  & Tighten biological framing   & biology motivated but did not constrain \\
+8  & Retrieval-aware fine-tune    & the obvious repair was ``future work'' \\
+9--11 & Failure table, calibration plot, repo & packaging and reproducibility \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Items 1--3, 5, 6, and 8 restructured the programme (\S3--\S4); item 4 produced tested loaders for
+LAMA, CounterFact, and post-cutoff facts whose large-scale runs remain honestly pending; items 7
+and 9--11 reshaped the paper.
+
+% ===========================================================================
 \section{Hostile replication: what we did, what it found}
 
-We rebuilt the programme around those demands --- five seeds per result, four models across three
-families (Qwen2.5-7B/1.5B, Llama-3.1-8B, Mistral-7B), ten-cycle horizons, all baselines, a
-two-stage validation gate, and a ground-truth verification harness that checks the injection path
-on real hardware before any run (it rejected two defective configurations; no invalid number ever
-entered the record). The findings:
+\subsection{Infrastructure first}
+
+Three pieces of infrastructure were built before any replication number was collected:
+
+\begin{itemize}
+\item \textbf{Independent-process seeding.} A single entry point seeds every RNG (Python, NumPy,
+      Torch CPU/CUDA, hash seed); multi-seed experiments run one seed per process so model
+      initialisation, tagging decisions, replay sampling, and option ordering vary independently;
+      an aggregating harness reports mean $\pm$ SD.
+\item \textbf{The ground-truth verification gate.} Before any experiment on a new architecture,
+      three checks run against the real model: an empty bank changes nothing (bit-identical
+      logits), a populated bank changes output, and disabling restores baseline exactly. The gate
+      \textbf{rejected two defective configurations during the programme} --- a config-encoding
+      fault and a Qwen-specific attention attribute that would have corrupted every Llama and
+      Mistral run --- both fixed before a single invalid number was produced. After repair,
+      Llama's identity check passed at $\max|\mathrm{diff}| = 0$.
+\item \textbf{Two-stage validation} (review item \#6). The surprise-reduction proxy was retained
+      as a cheap pre-filter and a second gate added: a deterministic free-form mini-recall test
+      under greedy decoding. A consolidation counts only if both pass, and both numbers are
+      logged.
+\end{itemize}
+
+\subsection{The diagnosis becomes universal}
+
+The full five-stage protocol was then repeated, five seeds per model, on Qwen2.5-7B, Qwen2.5-1.5B,
+Llama-3.1-8B, and Mistral-7B:
 
 \begin{center}
 \small
@@ -122,116 +237,299 @@ entered the record). The findings:
 \toprule
  & Qwen-7B & Qwen-1.5B & Llama-8B & Mistral-7B \\
 \midrule
-Recall from consolidated weights (5 seeds) & $0.006$ & $0.007$ & $0.006$ & $0.007$ \\
-Recall with the fact in context            & $0.760$ & $0.700$ & $0.987$ & $0.927$ \\
-Proxy validation false-confirmation        & $\sim$97\% & 100\% & $\sim$93\% & 100\% \\
+Recall from consolidated weights (DRA, 5 seeds) & $0.006$ & $0.007$ & $0.006$ & $0.007$ \\
+Recall with the fact in context                 & $0.760$ & $0.700$ & $0.987$ & $0.927$ \\
+RAG (top-3 retrieval)                           & $0.213$ & $0.460$ & $0.520$ & $0.563$ \\
+EWC-only DRA (BCP)                              & $0.070$ $(1.12)$ & $0.033$ $(1.43)$ & $0.073$ $(1.47)$ & $0.157$ $(2.53)$ \\
+Proxy confirmations / recall-gate passes        & $38.8/0.4$ & $23.8/0.0$ & $9.2/0.6$ & $4.0/0.0$ \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-The failure was universal: every model reads and uses a fact it can see, and recalls essentially
-nothing consolidated into its weights; internal surprise-based validation is wrong about
-$93$--$100\%$ of the consolidations it certifies, everywhere. The earlier three-cycle preservation
-claim failed replication --- across nine seeded ten-cycle run-pairs the clip-induced damage plateau
-varies by three orders of magnitude on identical hyperparameters ($2.7 \to 1{,}531$), so we
-withdrew that claim and replaced it with the stronger methodological finding that fixed-horizon,
-single-run continual-learning comparisons are unreliable. Most uncomfortably: \textbf{EWC alone
-(DRA $0.070$ at BCP $1.12$) beat every full-pipeline configuration on recall-per-damage.}
+Four conclusions, each now cross-family:
 
-% ===== 4 ====================================================================
-\section{What we added beyond the checklist}
+\begin{enumerate}
+\item \textbf{The recall floor is universal} --- $\approx 0.006$ everywhere, from models that
+      follow the same facts in context at up to $0.99$. Not a comprehension failure; a property of
+      the mechanism. The weaker-prior hypothesis (a smaller model might let memory steer more
+      easily) is falsified at 1.5B.
+\item \textbf{Proxy self-validation is near-totally wrong everywhere}: $93$--$100\%$ of the
+      consolidations the surprise proxy certifies fail the direct recall gate. Families differ
+      greatly in how many candidates they allocate (Mistral a tenth of Qwen); the
+      false-confirmation structure is invariant.
+\item \textbf{RAG's shortfall against in-context is retrieval failure}, not comprehension ---
+      relevant to the paper's framing of RAG as bound rather than baseline.
+\item \textbf{EWC alone embarrassed the pipeline}: $0.070$ recall at BCP $1.12$ on Qwen-7B --- a
+      better recall-per-damage ratio than any full SLEEP configuration. A textbook regularizer,
+      one line of mathematics, beating a five-component architecture. This number shaped
+      everything that followed.
+\end{enumerate}
 
-Two self-initiated additions defined this phase. The \textbf{retrieval-aware warm-up} --- the
-repair the recognition--recall diagnosis implies --- was promoted from side-item to a
-pre-registered extension (success bar fixed in advance: DRA $0.10$--$0.15$ at BCP $<1.5$) and
-tested properly: two variants, two seeds, four models. It is a replicated null: across sixteen runs
-recall moved by at most $\pm 0.008$, while recognition improved where the model survived --- the
-dissociation reproduced under intervention. And the \textbf{plateau lottery} --- the
-three-orders-of-magnitude seed variance above --- emerged only because horizon and seed demands
-were run \emph{together}; it generalises past SLEEP to how the continual-learning literature
-reports results.
+A float32 control isolated the precision question: the original
+$\alpha_{\mathrm{slow}} = 10^{-5}$ fails in \emph{any} precision (loss moves $\sim$1\% in float32,
+zero validation passes), so the formalization default had two separable defects --- a bfloat16
+representability floor \emph{and} an under-scaled magnitude at 7B.
 
-At this point the paper was an honest, universal, well-controlled diagnosis --- of a failure. Its
-title said ``Empirical Limits.'' The question we could not close: is consolidation into frozen
-LLMs impossible, or were we doing it wrong?
+\subsection{The ten-cycle programme and the withdrawal of the preservation claim}
 
-% ===== 5 ====================================================================
-\section{The re-examination: three stacked causes}
-
-Before accepting the negative result, we ran a pre-mortem on the paper: assume the conclusion is
-wrong --- where would the error be? Re-deriving the design from first principles against the
-knowledge-editing literature (Geva et~al.; ROME; MEMIT) exposed an assumption that had never been
-questioned: \textbf{the consolidation adapter's placement was chosen by biological analogy}
-(attention projections, top third of layers, playing ``neocortex''), while causal-tracing evidence
-locates factual associations in \emph{mid-stack MLP} modules. Two further suspects followed from
-the same pass: single-wording training (cloze succeeded while recall failed --- the signature of
-string memorization rather than extractable knowledge) and sampled decoding in
-knowledge-presence evaluation (replaced with greedy throughout).
-
-A five-arm isolation ladder (50 facts, matched exposure, two models, two seeds) tested the
-hypothesis:
+The interim position (single seed, ten cycles) was that naive fine-tuning overtakes SLEEP by cycle
+ten. Nine seeded run-pairs across the four models showed that position was itself under-sampled:
 
 \begin{center}
 \small
-\begin{tabular}{@{}l c c@{}}
+\begin{tabular}{@{}l l c c c c@{}}
 \toprule
-Arm (Qwen2.5-7B) & Free-form recall & BCP \\
+Model & Seed & SLEEP BCP@10 & Naive BCP@10 & SLEEP DRA & Naive DRA \\
 \midrule
-attention-top, single wording (original) & $0.01$ & $3.6$ \\
-mid-MLP, single wording                  & $0.03$ & $1.2$--$1.8$ \\
-mid-MLP $+$ paraphrases                  & $0.22$ & $1.4$ \\
-mid-MLP $+$ paraphrases $+$ distillation & $\mathbf{0.36}$ & $\mathbf{0.83}$ \\
-attention-top $+$ distillation (control) & $0.06$ & $2.9$ \\
+Qwen-7B    & 0 & 4.53   & 3.36  & 0.050 & 0.085 \\
+Qwen-7B    & 1 & 10.20  & 6.42  & 0.032 & 0.080 \\
+Qwen-7B    & 2 & 2.71   & 5.44  & 0.057 & 0.078 \\
+Qwen-1.5B  & 0 & 15.96  & 21.01 & 0.045 & 0.035 \\
+Qwen-1.5B  & 1 & 230.1  & 45.83 & 0.012 & 0.048 \\
+Llama-8B   & 0 & 4.83   & 6.09  & 0.032 & 0.083 \\
+Llama-8B   & 1 & 1530.9 & 7.11  & 0.045 & 0.075 \\
+Mistral-7B & 0 & 3.22   & 2.90  & 0.008 & 0.192 \\
+Mistral-7B & 1 & 1.64   & 3.72  & 0.003 & 0.160 \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-Placement alone halves damage in 8 of 8 comparisons; paraphrase diversity moves cloze \emph{down}
-and recall \emph{up} (memorization becoming extraction); distillation from an in-context teacher is
-the strongest and gentlest write; and the control shows the objective cannot rescue the wrong
-substrate. Integration then revealed a \textbf{third stacked cause}: the safety machinery as
-designed ($\delta_{\max}=0.01$) erased the write inside the full pipeline (trained-subset DRA
-$0.007$, three seeds), while a moderate calibration ($\delta_{\max}=0.1$) preserved both recall and
-protection ($0.189 \pm 0.031$ at BCP $0.882 \pm 0.027$, five seeds, every seed under $1.0$). Each
-cause alone suffices to hold recall at the floor --- which is why no single-factor intervention in
-the diagnosis era ever moved it.
+Three regularities held in all nine pairs: SLEEP's damage always follows a step-then-plateau
+trajectory; naive's recall is higher in eight of nine; and no run of either arm holds
+$\mathrm{BCP} < 1.05$ past cycle two. What did \emph{not} replicate is the plateau \emph{level}:
+$2.7 \to 10.2$ across seeds of the identical Qwen-7B configuration, $4.8$ vs.\ $1{,}531$ on Llama
+--- three orders of magnitude on unchanged hyperparameters, flipping the cycle-ten ``winner'' seed
+to seed (SLEEP 4/9, naive 5/9). We therefore \textbf{withdrew the three-cycle preservation claim}
+and replaced it with the stronger methodological finding: \emph{fixed-horizon, single-run
+comparisons of continual-learning architectures are unreliable at the horizons and seed counts
+this literature typically reports.} (\S6 sharpens this: the lottery turns out to be a property of
+the \emph{choked and unconstrained} configurations, not of consolidation per se.)
 
-% ===== 6 ====================================================================
-\section{The validated system: the four-model matrix}
+% ===========================================================================
+\section{What we added beyond the checklist}
 
-The full validation ran 11--12 August as a staged campaign whose gates, predictions, and stop-loss
-were committed to the repository before execution: 35 runs, 19.7 GPU-hours, $\approx$USD~\$15.5,
-zero failures. Every gate was read as written, including the one Llama fails.
+\subsection{The retrieval-aware warm-up: a pre-registered repair that failed informatively}
 
-\subsection{Single cycle, five seeds per model (trained-subset DRA @ BCP)}
+Review item \#8 asked for retrieval-aware fine-tuning as a baseline. We promoted it instead to the
+paper's designed extension: if the recognition--recall gap is a missing \emph{skill} --- the frozen
+model never learned to condition generation on retrieved K/V --- then a lightweight warm-up should
+teach it. Mechanism: split neutral passages (WikiText, disjoint from all evaluation facts) into
+prefix and continuation; write the prefix into the memory bank; train on the continuation with
+memory injected --- lowering the loss requires routing memory into generation. Trainable
+component: a per-layer, per-KV-head multiplicative gate on memory values (36 parameters,
+identity-initialised --- installing it is a provable no-op, and the equality test asserting this
+caught two mis-placements during development), optionally joined by the rank-16 adapter.
+\textbf{The success bar was pre-registered before any run}: DRA $0.10$--$0.15$ at
+$\mathrm{BCP} < 1.5$.
+
+The result, across sixteen runs (two variants $\times$ two seeds $\times$ four models):
+\textbf{recall never moved} --- $|\Delta \mathrm{DRA}| \leq 0.008$ everywhere.
 
 \begin{center}
 \small
 \begin{tabular}{@{}l l c c@{}}
 \toprule
-Model & Recipe & DRA & BCP \\
+Model & Variant & $\Delta$DRA (2 seeds) & BCP after (2 seeds) \\
 \midrule
-Mistral-7B   & distil, $\delta_{\max}{=}0.1$   & $\mathbf{0.750 \pm 0.033}$ & $1.21 \pm 0.06$ \\
-Llama-3.1-8B & par.-CE, $\delta_{\max}{=}0.03$ & $0.512 \pm 0.048$ & $2.09 \pm 0.14$ \\
-Qwen2.5-7B   & distil, $\delta_{\max}{=}0.1$   & $0.189 \pm 0.031$ & $0.88 \pm 0.03$ \\
-Qwen2.5-1.5B & distil, $\delta_{\max}{=}0.1$   & $0.105 \pm 0.020$ & $1.04 \pm 0.02$ \\
+Qwen-7B    & gate only & $+0.002$, $+0.002$ & $\sim$1.00, $\sim$1.00 \\
+Qwen-7B    & $+$ LoRA  & $+0.003$, $+0.000$ & 1.73, 3.74 \\
+Qwen-1.5B  & gate only & $+0.002$, $-0.002$ & 1.13, 1.13 \\
+Qwen-1.5B  & $+$ LoRA  & $+0.002$, $-0.002$ & 5.83, 19.9 \\
+Llama-8B   & gate only & $-0.007$, $+0.002$ & 1.78, 1.79 \\
+Llama-8B   & $+$ LoRA  & $-0.008$, $-0.002$ & $1.5{\times}10^{5}$, $1.5{\times}10^{6}$ \\
+Mistral-7B & gate only & $+0.008$, $-0.002$ & 2.77, 3.03 \\
+Mistral-7B & $+$ LoRA  & $-0.002$, $-0.005$ & $1.8{\times}10^{4}$, $1.0{\times}10^{5}$ \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-Every model sits $17$--$125\times$ above the old floor; the strongest result is on the family the
-recipe never touched during development, which argues against overfitting. Llama is the flagged
-exception: a pre-registered clip ladder ($0.1 \to 0.05 \to 0.03$) reduced damage monotonically
-($4.35 \to 2.14$) without reaching the $1.5$ bar --- its bleed is not clip-dominated, and it is
-reported as \emph{not yet tuned}, not as solved.
+The two variants fail differently and informatively. The gate alone converges to the identity: 36 parameters cannot
+manufacture the skill. The gate-plus-adapter variant demonstrably \emph{learns the objective}
+(warm-up loss falls $\sim$1 nat everywhere) and lifts recognition where the model survives (MC
+$0.220 \to 0.270$ on Qwen-7B) --- yet free-form recall stays at floor, reproducing the
+dissociation \emph{under intervention} rather than merely observing it. Preservation cost is
+family-dependent and, at the single untuned learning rate, catastrophic on Llama and Mistral (BCP
+$10^{4}$--$10^{6}$). One side-finding: on Mistral the gate learned to \emph{suppress} memory
+interference it could not exploit, cutting the cost of carrying a populated bank from $8.9\times$
+to $2.8\times$.
 
-\subsection{Ten cycles, two seeds, against both baselines (DRA cumulative @ BCP at cycle 10)}
+\subsection{The plateau lottery as a contribution}
+
+The lottery of \S3.3 deserves its own line because of how it emerged: the review asked for longer
+horizons and more seeds \emph{separately}; running them \emph{together} revealed what neither
+would alone. It generalises past SLEEP --- any continual-learning comparison reported at one
+horizon with one seed may be reporting the optimisation-path lottery, not the architecture --- and
+it is, to our knowledge, a new observation about clipped adaptation dynamics.
+
+\subsection{Where this left the paper}
+
+An honest, universal, well-controlled \emph{diagnosis}: recognition without recall; proxy
+validation near-totally wrong; the cheap repair a replicated null; long-horizon comparisons
+seed-unstable; EWC-only embarrassing the compound machinery. The title said ``Empirical Limits.''
+The question we could not close: \textbf{is consolidation into frozen LLMs impossible --- or were
+we doing it wrong?}
+
+% ===========================================================================
+\section{The re-examination: three stacked causes}
+
+\subsection{The pre-mortem}
+
+Before accepting the negative result, we ran a pre-mortem on the paper: assume the conclusion is
+wrong --- where would the error be? The exercise re-derived every design choice from first
+principles against the adjacent literature, with fresh eyes, treating our own defaults as suspect.
+It converged on one assumption that had never been questioned and two that had been questioned too
+gently:
+
+\begin{enumerate}
+\item \textbf{Placement was chosen by anatomy, not by evidence.} $W_{\mathrm{cons}}$ adapted
+      attention V/O projections in the top third of layers because that mapping ``played
+      neocortex'' in the biological analogy. The knowledge-editing literature --- Geva et~al.'s
+      feed-forward key-value memories, ROME's causal tracing, MEMIT's mass edits --- locates
+      factual associations in \emph{mid-stack MLP} modules. Every consolidation gradient we had
+      ever applied went to the wrong substrate.
+\item \textbf{Single wordings teach strings, not facts.} Our own data contained the signature:
+      cloze completion (reproduce the sentence) succeeded while question-answering failed.
+      Memorization without extraction. The correction: train each fact on $\geq 20$ deterministic
+      paraphrases spanning declaratives, clefts, appositives, and question--answer forms ---
+      generated by seeded slot-filling so the 200 base facts remain bit-identical.
+\item \textbf{The teacher was already in the building.} Every model answers at $0.70$--$0.99$
+      with the fact in context. Context distillation makes that the training signal: the teacher
+      is the same model with the fact in its prompt (adapter disabled), and $W_{\mathrm{cons}}$
+      learns to match its token distribution without the context
+      ($T = 2$, KL $+$ $0.5\,$CE, per-token over flattened positions).
+\end{enumerate}
+
+Two hygiene corrections rode along: adaptation and injection were \emph{decoupled} in
+configuration (KV injection keeps its independently verified top-third-attention placement;
+consolidation moves to mid-stack MLPs), and all knowledge-presence evaluation moved to
+\emph{greedy decoding} --- if the model answers, it knows; no lucky samples.
+
+\subsection{The ladder: each factor isolated}
+
+Rather than trusting the reasoning, a five-arm ladder isolated each factor on 50 facts at matched
+exposure (1{,}200 steps, clipping disabled, greedy evaluation, two models, two seeds):
 
 \begin{center}
 \small
 \begin{tabular}{@{}l c c c@{}}
 \toprule
-Model & SLEEP v2-moderate & EWC-only (matched) & Naive LoRA \\
+Arm (Qwen2.5-7B, seed means) & Free-form DRA & Cloze & BCP \\
+\midrule
+attention-top, single wording (original) & $0.01$ & $0.44$ & $3.6$ \\
+mid-MLP, single wording                  & $0.03$ & $0.56$ & $1.2$--$1.8$ \\
+mid-MLP $+$ paraphrases                  & $0.22$ & $0.38$ & $1.4$ \\
+mid-MLP $+$ paraphrases $+$ distillation & $\mathbf{0.36}$ & $0.31$ & $\mathbf{0.83}$ \\
+attention-top $+$ distillation (control) & $0.06$ & $0.35$ & $2.9$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{center}
+\includegraphics[width=0.98\textwidth]{../../paper/figures/figure_localisation_ladder.pdf}\\[0.2em]
+{\color{softgrey}\small The ladder as a picture: recall by arm (left) and damage by arm (right).
+The control arm (rightmost) shows the objective cannot rescue the wrong substrate.}
+\end{center}
+
+Three findings, consistent across both models and seeds. \textbf{Placement alone halves background
+damage in 8 of 8 comparisons} --- the same gradient budget, spent in the substrate the editing
+literature indicates, does less harm and more good. \textbf{Paraphrases convert memorization into
+extraction} --- cloze falls ($0.56 \to 0.38$) while recall rises ($0.03 \to 0.22$); the model
+stops reproducing a token sequence and starts storing a retrievable association. \textbf{The
+in-context teacher is the strongest and gentlest write} --- $0.36$ at BCP $0.83$, sixty times the
+original arm at better-than-baseline preservation, while the placement control (same objective,
+old substrate) recovers almost nothing. On Llama the best arm is paraphrase-CE at $0.353$. The
+recall floor was not a law of nature. It was a map error.
+
+\subsection{The third cause: the safety machinery erased the write}
+
+Wiring the winning recipe into the full autonomous pipeline --- tagging, PRP selection, sleep
+engine, two-stage validation --- initially collapsed it back to the floor: trained-subset DRA
+$0.007/0.007/0.007$ across three seeds, zero externally confirmed consolidations. Rather than
+collecting more identical failures, we killed the queue and A/B-tested the machinery itself. With
+clip and plasticity scaling relaxed, the identical pipeline reached
+$\mathbf{0.210 \pm 0.018}$ at BCP $0.90$--$0.99$, with \textbf{21--24 of $\sim$50 selected facts
+passing the direct greedy recall gate} --- the first externally verified autonomous consolidations
+in the programme. The designed clip ($\delta_{\max}=0.01$) had been erasing the write \emph{after}
+training performed it, consistent with the saturation geometry identified in April (A.1). A
+moderate calibration ($\delta_{\max}=0.1$, scaling on) keeps both the recall and the protection:
+$0.189 \pm 0.031$ at BCP $0.882 \pm 0.027$ across five seeds --- every seed below $1.0$, inside
+the region the diagnosis-era frontier suggested was unreachable.
+
+The original consolidation failure therefore had \textbf{three stacked causes} --- wrong
+substrate, wrong surface statistics, over-tight clip --- \textbf{each alone sufficient to hold
+recall at the floor}. That is why no single-factor intervention in the diagnosis era ever moved
+it, and why the failure looked so convincingly structural.
+
+% ===========================================================================
+\section{The validated system: the four-model matrix}
+
+\subsection{Pre-registration and conduct}
+
+The validation campaign ran 11--12 August on a single A6000 as five staged gates, with the
+criteria, quantitative predictions, and a stop-loss \textbf{committed to the repository before
+launch}; one extension (a clip ladder for Llama) was registered mid-campaign with its selection
+rule fixed before its runs executed. Conduct: \textbf{35 runs, 19.7 GPU-hours, $\approx$USD~\$15.5,
+zero failures, zero re-runs}; every gate read as written, including the one Llama fails.
+
+\textbf{D0 (verify).} All four mid-MLP configurations passed the three-check ground-truth gate on
+real weights --- including Mistral-7B, whose sliding-window attention exercised the
+architecture-generalisation fix for the first time (identity $\max|\mathrm{diff}| = 0$), and
+Qwen2.5-1.5B, both first-timers.
+
+\textbf{D1 (per-family tuning, seed 0; advancement gate: trained-subset DRA $\geq 0.10$ at BCP
+$\leq 1.5$).} Mistral: distillation $0.750$ @ $1.31$ \textbf{pass}; paraphrase-CE $0.655$ @ $2.98$
+fail --- distillation advances (as on Qwen: the in-context-teacher write is also the gentler
+write). Qwen-1.5B: $0.103$ @ $1.03$, a thin but genuine pass (10 of 42 selected facts survive the
+recall gate, against 29 of 31 on Mistral-7B --- extraction capacity appears to grow with scale).
+Llama: the pre-registered clip ladder reduced damage monotonically
+($\delta_{\max}$ $0.1 \to 0.05 \to 0.03$: BCP $4.35 \to 3.64 \to 2.14$) with recall degrading only
+slowly ($0.659 \to 0.593 \to 0.520$), but never reached the bar --- \textbf{Llama's damage is not
+clip-dominated}. Per the rule fixed in advance, it runs the matrix at $\delta_{\max}=0.03$ and is
+reported as \emph{not yet tuned}, not silently excluded.
+
+\subsection{Single cycle, five seeds per model}
+
+\begin{center}
+\small
+\begin{tabular}{@{}l l c c@{}}
+\toprule
+Model & Recipe & Trained-subset DRA & BCP \\
+\midrule
+Mistral-7B   & distil, $\delta_{\max}{=}0.1$   & $\mathbf{0.750 \pm 0.033}$ & $1.205 \pm 0.058$ \\
+Llama-3.1-8B & par.-CE, $\delta_{\max}{=}0.03$ & $0.512 \pm 0.048$ & $2.088 \pm 0.140$ \\
+Qwen2.5-7B   & distil, $\delta_{\max}{=}0.1$   & $0.189 \pm 0.031$ & $0.882 \pm 0.027$ \\
+Qwen2.5-1.5B & distil, $\delta_{\max}{=}0.1$   & $0.105 \pm 0.020$ & $1.043 \pm 0.016$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{center}
+\includegraphics[width=0.98\textwidth]{../../paper/figures/figure_arc.pdf}\\[0.2em]
+{\color{softgrey}\small The programme in one figure: the diagnosis-era dissociation (left) against
+the repaired single-cycle results (right, 5 seeds per model, old floor dashed).}
+\end{center}
+
+Both pre-registered predictions held: Qwen-7B's mean fell inside the predicted $[0.15, 0.30]$, and
+every model exceeds the diagnosis-era floor by at least $17\times$ (the weakest by $\sim$17, the
+strongest by $\sim$125). Two observations matter for interpretation. The effect is
+\textbf{strongest off the development model} --- Mistral-7B, which the recipe never touched during
+development, is the best single-cycle result in the programme, arguing against the recipe being
+overfit to Qwen. And the seed variance is tight everywhere (SD $\leq 0.05$): the repaired pipeline
+is not a lottery.
+
+\subsection{Ten cycles, both arms, and the EWC showdown}
+
+Ten cycles of 20 facts each (400 distillation steps per cycle for the SLEEP arm; the naive arm at
+the same mid-MLP adapter geometry so placement is never a confound), two seeds per arm; plus a
+matched EWC-only arm on the two headline families --- identical adapter, steps, and learning rate
+to naive, the \emph{only} difference an online-EWC Fisher penalty ($\lambda = 100$, accumulated
+per cycle), its accumulation and anchoring verified by ground-truth unit tests before use.
+
+\begin{center}
+\small
+\begin{tabular}{@{}l c c c@{}}
+\toprule
+Cycle-10 endpoints (s0/s1) & SLEEP v2-moderate & EWC-only (matched) & Naive LoRA \\
 \midrule
 Qwen2.5-7B   & $\mathbf{0.173/0.175}$ @ $1.87/2.24$ & $0.060/0.052$ @ $1.53/1.80$ & $0.053/0.060$ @ $1.66/1.80$ \\
 Mistral-7B   & $\mathbf{0.173/0.168}$ @ $1.18/1.18$ & --- & $0.118/0.160$ @ $1.71/1.57$ \\
@@ -241,38 +539,143 @@ Llama-3.1-8B & $0.102/0.062$ @ $4.33/9.20$ & $0.075/0.072$ @ $2.32/1.79$ & $0.08
 \end{tabular}
 \end{center}
 
-Three seed-consistent findings. \textbf{The design-intent claim is now real}: SLEEP exceeds naive
-fine-tuning on cumulative recall on all four models, both seeds ($3\times$ on Qwen-7B; on Mistral
-it wins both axes at once). \textbf{The machinery is load-bearing at small scale}: naive training
-detonates the 1.5B model (BCP $24.5$/$11.4$, seed-random size --- the plateau lottery reproduced)
-while SLEEP holds $\approx 2.4$. \textbf{The EWC dissociation}: the matched EWC arm (identical
-adapter, steps, learning rate; only the penalty differs) posts the best damage numbers with recall
-at naive's level --- regularisation prevents forgetting; it does not create extraction. SLEEP's
-across-seed spread is $\approx 0.005$ everywhere; the seed lottery of Section~3 belongs to
-\emph{unconstrained} arms. On Llama, EWC-only is competitive with the not-yet-tuned SLEEP ---
-reported plainly.
+\begin{center}
+\includegraphics[width=0.98\textwidth]{../../paper/figures/figure_matrix_multi_cycle.pdf}\\[0.2em]
+{\color{softgrey}\small Ten-cycle trajectories on Qwen2.5-7B, all three arms, both seeds, plotted
+from the released run files: the repaired pipeline holds a $\approx 3\times$ separation above both
+baselines for the entire horizon.}
+\end{center}
 
-% ===== 7 ====================================================================
+\begin{center}
+\includegraphics[width=0.98\textwidth]{../../paper/figures/figure_matrix_endpoints.pdf}\\[0.2em]
+{\color{softgrey}\small Cycle-10 endpoints across the matrix (dots = individual seeds). Right, log
+scale: naive fine-tuning detonates the 1.5B model while the constrained arm holds steady;
+the constrained arm's own flagged exception is Llama.}
+\end{center}
+
+The pre-registered prediction (v2 $>$ naive on cumulative recall on at least two of the three
+newly tested models, both seeds) was met on three of three; with Qwen-7B it holds on all four.
+Findings, each seed-consistent:
+
+\begin{enumerate}
+\item \textbf{The design-intent claim is now real.} The safety-constrained system accumulates more
+      recall than unconstrained fine-tuning over ten cycles on every model --- $3\times$ on the
+      anchor model. On Mistral it wins \emph{both axes simultaneously}: more recall and less
+      damage, both seeds.
+\item \textbf{Right-sized machinery is load-bearing at small scale.} Naive training detonates the
+      1.5B model --- BCP $24.5$ on one seed, $11.4$ on the other, the plateau lottery reproduced
+      with seed-random blow-up size --- while the constrained arm holds $\approx 2.4$ on both.
+      The machinery matters most exactly where models are most fragile.
+\item \textbf{The EWC dissociation.} The penalty gives EWC-only the best damage numbers, but its
+      recall never rises above naive's: \emph{regularisation prevents forgetting; it does not
+      create extraction}. Preservation and acquisition are different capabilities, and systems
+      scored only on forgetting metrics would rank this experiment's arms incorrectly. SLEEP
+      passes the pre-registered headline gate --- $3\times$ both baselines at comparable damage on
+      Qwen-7B.
+\item \textbf{Stability is SLEEP's quiet signature.} Across-seed spread $\approx 0.005$ DRA on
+      every model, against naive's $0.04$--$0.06$; damage drifts smoothly with no step-cliffs.
+      The \S3.3 lottery resolves into an asymmetric claim: constrained arms can be made
+      seed-stable; unconstrained arms are the lottery.
+\item \textbf{Honest exceptions, kept visible.} Llama repeats its single-cycle pattern --- more
+      recall than naive on both seeds at damage that compounds unacceptably --- and on Llama,
+      EWC-only is competitive with the not-yet-tuned v2 at far better BCP. The Llama column is not
+      a SLEEP win, and the paper says so. One qualitative signature recurs on every model: naive
+      scores higher on \emph{current-cycle} recall while SLEEP retains \emph{earlier} cycles
+      better --- memorization versus consolidation, visible in the horizon dimension.
+\end{enumerate}
+
+% ===========================================================================
 \section{Where SLEEP stands, and what we ask}
 
-SLEEP set out as a memory system, became a rigorous diagnosis of why the obvious version fails, and
-is now a working consolidation system with receipts: a frozen model reads once, sleeps, and answers
-questions from its own weights --- validated across three families and two scales, against real
-baselines, under pre-registered gates. The diagnostic findings stand on their own (the
-recognition--recall dissociation for injected memory, the near-total proxy-validation failure, the
-seed-instability of unconstrained baselines), and the meta-lesson generalises: \textbf{biological
-mechanisms transfer; biological anatomy does not} --- the substrate must come from the
-transformer's own causal structure. Named gaps, carried into future work rather than hidden:
-cumulative recall decays as early batches fade (interleaved rehearsal --- what biological sleep
-actually does --- is the clearest next mechanism); damage leaks $\approx +0.12$/cycle in every arm;
-Llama requires per-family learning-rate work.
+\subsection{The claim set}
 
-The paper has been restructured around this complete arc (31 pages, two movements, nine figures,
-retitled \emph{``Recognition Without Recall: Diagnosing and Repairing Biologically-Inspired Memory
-Consolidation in Transformers''}) and is ready for review. We would welcome your judgement on:
-(i) whether the diagnosis-era first half is correctly weighted against the repair; (ii) target
-venue and deadline; and (iii) whether the interleaved-rehearsal follow-up should be scoped now or
-after review.
+SLEEP set out as a memory system, became a rigorous diagnosis of why the obvious version fails,
+and is now a working consolidation system with receipts: \textbf{a frozen model reads once,
+sleeps, and answers questions from its own weights} --- $0.750$ on its best family ---
+\textbf{validated across three families and two scales, against real baselines, under
+pre-registered gates}. The diagnostic findings stand independently: the recognition--recall
+dissociation for attention-injected memory (unchanged by the repair, which routes knowledge
+through weights, not injection); the $93$--$100\%$ proxy-validation failure, which we now treat as
+a safety-relevant result about self-certifying learning systems; the sixteen-run warm-up null; and
+the seed-instability of unconstrained continual learning.
+
+The meta-lesson generalises beyond this project: \textbf{biological mechanisms transfer ---
+tagging, selective replay, staged consolidation, sleep-phase scheduling --- but biological anatomy
+does not.} The hippocampus-to-top-layers mapping was the single most expensive assumption in the
+programme; the substrate had to come from the transformer's own causal structure, which the
+knowledge-editing literature had already mapped. Accordingly, the formalization now carries six
+empirical amendments --- documented as first-class results: the record of what the evidence forced
+us to unlearn.
+
+\begin{center}
+\small
+\begin{tabular}{@{}l l@{}}
+\toprule
+Amendment & One-line content \\
+\midrule
+A.1 & $\delta_{\max}$ must scale with model size ($10^{-3}$ saturates in $\sim$30 steps at 7B) \\
+A.2 & $\alpha_{\mathrm{slow}}$ fails twice over: bfloat16 representability \emph{and} magnitude \\
+A.3 & absolute surprise thresholds have a generator--discriminator gap \\
+A.4 & surprise-reduction validation has a data-volume floor \\
+A.5 & tags are pointers, not storage --- store the episode the tag indexes \\
+A.6 & \textbf{consolidation placement must come from causal structure, not anatomy} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Named gaps}
+
+\begin{itemize}
+\item \textbf{Early-batch fade.} Cumulative recall decays across cycles because the engine
+      rehearses only the current batch. Interleaved rehearsal of prior consolidations --- the
+      mechanism biological sleep actually implements --- is the clearest next component, and the
+      one we would scope first.
+\item \textbf{The damage leak.} Every arm leaks $\approx +0.12$ BCP per cycle; no configuration
+      holds $\mathrm{BCP} < 1.05$ over ten cycles. Candidate mechanisms: Fisher refresh against
+      the original base model rather than the drifting anchor; consolidation-aware early stopping.
+\item \textbf{Llama.} Recall gains like every other model; damage no tested clip contains.
+      Per-family learning-rate and signal calibration is required, not optional --- the matrix
+      provides the harness and the sweep is cheap.
+\item \textbf{Scope.} Synthetic template facts (benchmark loaders built, large-scale runs
+      pending); dense decoders $\leq$8B; two seeds multi-cycle (though every multi-cycle claim
+      held on both, and the constrained arm's variance is demonstrably small).
+\end{itemize}
+
+\subsection{The paper and the record}
+
+The paper is restructured around the complete arc in two movements --- diagnosis
+(\S\S1--4 of this report) in full rigour, then repair and validation (\S\S5--6) --- retitled
+\emph{``Recognition Without Recall: Diagnosing and Repairing Biologically-Inspired Memory
+Consolidation in Transformers''}: 31 pages, nine figures (the before/after arc now opens the
+paper), every claim carrying its seeds and its number. Reproducibility is total: the repository
+holds the implementation (410 tests), the 36-question formalization with its six amendments, the
+pre-registration documents, and every result file and execution log.
+
+\begin{center}
+\small
+\begin{tabular}{@{}l l l l@{}}
+\toprule
+Campaign & When & Scope & Cost \\
+\midrule
+Single-cycle diagnosis        & April--May  & Qwen-7B: substrate, episodes, Pareto & $\approx$\$5 \\
+Cross-model replication       & early Aug   & 4 models $\times$ 5 stages, float32, baselines & $\approx$\$14 \\
+Warm-up extension             & early Aug   & 16 runs, 2 variants, 4 models & (incl.\ above) \\
+Localisation ladder           & 11 Aug      & 5 arms $\times$ 2 models $\times$ 2 seeds & $\approx$\$3 \\
+Pipeline integration (B/C)    & 11 Aug      & machinery A/B; 10-cycle, 3 arms & $\approx$\$5 \\
+Validation matrix (D)         & 11--12 Aug  & 35 runs, pre-registered, zero failures & $\approx$\$15.5 \\
+\midrule
+Total & & $\approx$95+ seeded runs & $\approx$\$43 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Requested input}
+
+We would welcome your judgement on three points: \textbf{(i)} whether the diagnosis-era first half
+is correctly weighted against the repair, or should compress further; \textbf{(ii)} the target
+venue and deadline, so the submission draft can be formatted accordingly; and \textbf{(iii)}
+whether the interleaved-rehearsal follow-up --- the clearest next mechanism, and a natural
+continuation of the multi-cycle programme --- should be scoped now or after review.
 
 \vspace{0.8em}
 {\color{rule}\hrule height 0.6pt}
