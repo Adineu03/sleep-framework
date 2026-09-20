@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SLEEP — A Scroll Through the Research</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root {
+    --ground:#F4F6FA; --ink:#1A1F2E; --ink-soft:#3D4658; --muted:#5C6577;
+    --line:#D5DBE7; --accent:#3D52C9; --green:#2C7D57; --amber:#A96D12;
+    --dark:#141927; --dark-card:#1B2133; --dark-line:#2C3349;
+    --dark-ink:#E6EAF4; --dark-soft:#C3CAD9; --dark-accent:#8FA0FF;
+    --mono:Consolas, 'Cascadia Mono', monospace;
+    --sans:'Segoe UI', system-ui, sans-serif;
+    --serif:Georgia, 'Times New Roman', serif;
+  }
+  html { scroll-behavior:auto; }
+  body { background:var(--dark); color:var(--ink); font-family:var(--sans); }
+
+  /* ---- fixed WebGL backdrop (scene 3) ---- */
+  #gl-wrap { position:fixed; inset:0; background:var(--dark); opacity:0; z-index:0; }
+  #gl-wrap canvas { display:block; width:100%; height:100%; }
+  #svg-overlay { position:fixed; inset:0; z-index:3; pointer-events:none; opacity:0; }
+
+  /* ---- scenes ---- */
+  .scene { position:relative; z-index:1; }
+  .stage { position:sticky; top:0; height:100vh; overflow:hidden; }
+  .stage-inner { position:absolute; inset:0; display:flex; flex-direction:column;
+    padding:6vh 7vw; }
+  .light { background:var(--ground); }
+
+  .eyebrow { font-family:var(--mono); font-size:clamp(12px,1.1vw,17px);
+    letter-spacing:0.18em; text-transform:uppercase; color:var(--accent); }
+  h1.big { font-family:var(--serif); font-weight:normal; letter-spacing:-0.01em;
+    line-height:1.14; color:var(--ink); text-wrap:balance; }
+  h1.big b { font-weight:650; }
+
+  /* ---- scene 1: title ---- */
+  #s1 .stage-inner { justify-content:center; gap:2.6vh; }
+  #s1 h1 { font-size:clamp(2.2rem,5.4vw,4.6rem); max-width:26ch; }
+  #s1 .subtitle { font-size:clamp(1.1rem,2vw,1.7rem); color:var(--ink-soft); }
+  #s1 .credits { font-size:clamp(0.85rem,1.3vw,1.15rem); color:var(--muted); line-height:1.6; margin-top:3vh; }
+  .scroll-cue { position:absolute; left:50%; bottom:4.5vh; transform:translateX(-50%);
+    font-family:var(--mono); font-size:13px; letter-spacing:0.22em; color:var(--muted);
+    text-transform:uppercase; display:flex; flex-direction:column; align-items:center; gap:8px; }
+  .scroll-cue::after { content:""; width:1px; height:34px; background:var(--muted);
+    animation:cue 1.8s ease-in-out infinite; }
+  @keyframes cue { 0%,100%{transform:scaleY(0.35); opacity:.35;} 50%{transform:scaleY(1); opacity:.9;} }
+
+  /* ---- scene 2: the problem ---- */
+  #s2 .stage-inner { justify-content:center; gap:3.2vh; }
+  #s2 h1 { font-size:clamp(1.9rem,4.4vw,3.8rem); }
+  #s2 .lead { font-size:clamp(1rem,1.7vw,1.5rem); color:var(--ink-soft); max-width:62ch; line-height:1.55; }
+  .cards { display:grid; grid-template-columns:repeat(3,1fr); gap:1.6vw; margin-top:1.5vh; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:6px; padding:2.4vh 1.6vw; }
+  .card .k { font-family:var(--mono); font-size:clamp(10px,0.95vw,14px); letter-spacing:0.13em;
+    text-transform:uppercase; color:var(--muted); display:block; margin-bottom:1.2vh; }
+  .card p { font-size:clamp(0.85rem,1.25vw,1.15rem); color:var(--ink-soft); line-height:1.5; }
+  .card p b { color:var(--ink); }
+  .rq { font-family:var(--serif); font-size:clamp(1.05rem,1.9vw,1.7rem); line-height:1.5;
+    color:var(--ink); border-left:4px solid var(--accent); padding-left:1.4vw; max-width:64ch; margin-top:1.8vh; }
+  .rq b { font-weight:650; }
+
+  /* ---- scene 3: the brain ---- */
+  #s3 .stage { background:transparent; }
+  #s3 .stage-inner { pointer-events:none; }
+  #s3 .head { position:absolute; top:0; left:0; right:0; z-index:4;
+    padding:6vh 7vw 9vh;
+    background:linear-gradient(180deg, rgba(20,25,39,0.94) 30%, rgba(20,25,39,0.55) 70%, rgba(20,25,39,0) 100%); }
+  #s3 .eyebrow { color:var(--dark-accent); }
+  #s3 h1 { font-size:clamp(1.8rem,4vw,3.4rem); color:var(--dark-ink); margin-top:1.2vh; }
+  #s3 .lead { font-size:clamp(0.95rem,1.55vw,1.35rem); color:var(--dark-soft); max-width:58ch;
+    line-height:1.55; margin-top:1.4vh; }
+
+  .brain-label { position:absolute; z-index:4; width:min(34vw,460px);
+    background:rgba(27,33,51,0.92); border:1px solid var(--dark-line); border-radius:8px;
+    padding:2.2vh 1.5vw; opacity:0; }
+  .brain-label .k { font-family:var(--mono); font-size:clamp(10px,0.95vw,14px);
+    letter-spacing:0.14em; text-transform:uppercase; display:block; margin-bottom:1vh; }
+  .brain-label p { font-size:clamp(0.9rem,1.3vw,1.2rem); color:var(--dark-soft); line-height:1.55; }
+  .brain-label p b { color:var(--dark-ink); }
+  #lbl-tag  { left:7vw; top:34vh; }  #lbl-tag .k  { color:var(--dark-accent); }
+  #lbl-comp { right:7vw; top:30vh; } #lbl-comp .k { color:#E0A44A; }
+  #lbl-replay { left:7vw; top:46vh; } #lbl-replay .k { color:#4FB98A; }
+  #lbl-cons { right:7vw; top:40vh; } #lbl-cons .k { color:#4FB98A; }
+
+  #result-line { position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    z-index:5; opacity:0; padding:0 10vw; }
+  #result-line .inner { text-align:center; max-width:min(80vw, 1050px); }
+  #result-line p.line { font-family:var(--serif); font-size:clamp(1.6rem,3.6vw,3.1rem);
+    color:var(--dark-ink); line-height:1.35; text-wrap:balance; }
+  #result-line p.line b { color:#4FB98A; font-weight:650; }
+  #result-line p.tail { font-family:var(--mono); font-size:clamp(12px,1.2vw,17px);
+    letter-spacing:0.14em; text-transform:uppercase; color:var(--dark-accent); margin-top:3vh; }
+  #dimmer { position:fixed; inset:0; background:var(--dark); opacity:0; z-index:2; pointer-events:none; }
+
+  .footer-strip { position:fixed; left:0; right:0; bottom:0; z-index:6;
+    display:flex; justify-content:space-between; padding:12px 24px;
+    font-family:var(--mono); font-size:12px; letter-spacing:0.06em; color:var(--muted);
+    mix-blend-mode:normal; pointer-events:none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-cue::after { animation:none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="gl-wrap"></div>
+<div id="dimmer"></div>
+<svg id="svg-overlay" width="100%" height="100%">
+  <line id="conn-line" x1="0" y1="0" x2="0" y2="0" stroke="#8FA0FF" stroke-width="1.5" stroke-dasharray="5 5" opacity="0"/>
+  <circle id="conn-dot" r="5" fill="#8FA0FF" opacity="0"/>
+</svg>
+
+<main>
+  <!-- ================= SCENE 1 · TITLE ================= -->
+  <section class="scene" id="s1" data-len="180">
+    <div class="stage light">
+      <div class="stage-inner" id="s1-inner">
+        <p class="eyebrow">A research journey &middot; April &ndash; August 2026</p>
+        <h1 class="big">Recognition Without Recall:<br>
+          <b>Diagnosing and Repairing</b> Biologically-Inspired Memory Consolidation in Transformers</h1>
+        <p class="subtitle">Teaching large language models to remember what they read &mdash; permanently.</p>
+        <p class="credits">Aditya Tripathi &middot; SP Jain School of Global Management<br>
+          Research guidance: Prof. Debashis Guha &middot; Paper co-author: Dr. Rachit Garg</p>
+      </div>
+      <div class="scroll-cue" id="cue">scroll</div>
+    </div>
+  </section>
+
+  <!-- ================= SCENE 2 · THE PROBLEM ================= -->
+  <section class="scene" id="s2" data-len="430">
+    <div class="stage light">
+      <div class="stage-inner">
+        <div id="s2-head">
+          <p class="eyebrow">01 &middot; The problem</p>
+          <h1 class="big" style="margin-top:1.4vh;">LLMs have <b>architectural amnesia</b></h1>
+          <p class="lead" style="margin-top:2vh;">A deployed language model's weights are frozen. Everything it
+            "learns" in a conversation lives only in the context window &mdash; and dies with it.</p>
+        </div>
+        <div class="cards">
+          <div class="card" id="c1"><span class="k">What the model has</span>
+            <p><b>A context window</b> &mdash; perfect short-term memory that is wiped after every conversation.</p></div>
+          <div class="card" id="c2"><span class="k">What it lacks</span>
+            <p><b>Consolidation</b> &mdash; any path from "I just read this" to "I now know this," the way experiences become knowledge overnight for us.</p></div>
+          <div class="card" id="c3"><span class="k">The usual workaround</span>
+            <p><b>RAG</b> bolts a database onto the prompt. Useful &mdash; but it is a lookup, not memory. The model never actually learns anything.</p></div>
+        </div>
+        <p class="rq" id="s2-rq">The research question: <b>can a frozen, pretrained model learn new facts permanently,
+          from a single exposure, without destroying what it already knows?</b></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SCENE 3 · THE BRAIN ================= -->
+  <section class="scene" id="s3" data-len="900">
+    <div class="stage">
+      <div class="stage-inner">
+        <div class="head" id="s3-head">
+          <p class="eyebrow">02 &middot; The inspiration</p>
+          <h1 class="big">Biology already solved this &mdash; <b>with sleep</b></h1>
+          <p class="lead" id="s3-lead">Your brain faces the same problem every day. Follow the pipeline:</p>
+        </div>
+
+        <div class="brain-label" id="lbl-tag">
+          <span class="k">1 &middot; Tagging</span>
+          <p>Surprising experiences get flagged at the synapse by <b>prediction-error tags</b>
+             (synaptic tagging &amp; capture). A bookmark, not yet a memory.</p>
+        </div>
+        <div class="brain-label" id="lbl-comp">
+          <span class="k">2 &middot; Competition</span>
+          <p>Tags compete for a <b>limited pool of plasticity proteins</b> (PRPs).
+             Only what matters wins the resources to become permanent.</p>
+        </div>
+        <div class="brain-label" id="lbl-replay">
+          <span class="k">3 &middot; Replay in sleep</span>
+          <p>Deep inside, the <b>hippocampus replays</b> the winning experiences &mdash;
+             again and again through the night &mdash; training the cortex.</p>
+        </div>
+        <div class="brain-label" id="lbl-cons">
+          <span class="k">4 &middot; Consolidation</span>
+          <p>Episodic traces become <b>durable knowledge across the neocortex</b> &mdash;
+             written in, without overwriting the old.</p>
+        </div>
+
+        <div id="result-line">
+          <div class="inner">
+            <p class="line">Continuous, selective, single-exposure learning that <b>does not forget itself</b>.</p>
+            <p class="tail">Exactly the specification an LLM lacks</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="footer-strip"><span>SLEEP &middot; SP Jain School of Global Management</span><span>Brain: MRI model by Nevit Dilmen (NIH 3DPX-003765) &middot; Aditya Tripathi</span></div>
+
+<script src="vendor/three.min.js"></script>
+<script src="vendor/GLTFLoader.js"></script>
+<script src="vendor/brain_model.js"></script>
+<script>
+/* debug probe (harmless in production) */
+window.__dbg = { ticks:0, errors:[] };
+window.onerror = (m,s,l,c)=>{ window.__dbg.errors.push(m+' @'+l+':'+c);
+  document.title = 'ERR ' + window.__dbg.errors.join(' | '); };
+/* ============================================================
+   Scroll engine
+   ============================================================ */
+const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
+const smooth = t=>{ t=clamp(t,0,1); return t*t*(3-2*t); };
+const seg = (p,a,b)=>smooth((p-a)/(b-a));
+const lerp = (a,b,t)=>a+(b-a)*t;
+
+// size scene wrappers from data-len (vh)
+document.querySelectorAll('.scene').forEach(s=>{
+  s.style.height = s.dataset.len + 'vh';
+});
+
+const S = {};   // scene metrics, recomputed on resize
+function measure(){
+  document.querySelectorAll('.scene').forEach(sec=>{
+    S[sec.id] = { top: sec.offsetTop, len: sec.offsetHeight - innerHeight };
+  });
+}
+function prog(id){
+  const m = S[id]; if(!m) return 0;
+  return clamp((scrollY - m.top) / Math.max(m.len,1), 0, 1);
+}
+
+/* ============================================================
+   Three.js — the brain
+   ============================================================ */
+let renderer, scene, camera, brainGroup, brainMats = [];
+let markers = {};            // named sprite groups
+let compDots = [], consDots = [];
+let glowTexCache = {};
+let modelReady = false;
+
+function glowTexture(hex){
+  if(glowTexCache[hex]) return glowTexCache[hex];
+  const c = document.createElement('canvas'); c.width = c.height = 128;
+  const g = c.getContext('2d');
+  const grad = g.createRadialGradient(64,64,0,64,64,64);
+  grad.addColorStop(0, hex + 'ff'); grad.addColorStop(0.28, hex + '77'); grad.addColorStop(1, hex + '00');
+  g.fillStyle = grad; g.fillRect(0,0,128,128);
+  const t = new THREE.CanvasTexture(c);
+  glowTexCache[hex] = t; return t;
+}
+function makeSprite(hex, size){
+  const m = new THREE.SpriteMaterial({ map: glowTexture(hex), transparent:true,
+    blending:THREE.AdditiveBlending, depthWrite:false });
+  const s = new THREE.Sprite(m); s.scale.setScalar(size); return s;
+}
+
+function initGL(){
+  renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true,
+    preserveDrawingBuffer:true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setSize(innerWidth, innerHeight);
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 0.98;
+  document.getElementById('gl-wrap').appendChild(renderer.domElement);
+
+  scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(38, innerWidth/innerHeight, 0.05, 50);
+
+  // studio-style lighting: warm key, cool indigo rim, soft fill
+  const key = new THREE.DirectionalLight(0xffe8dd, 1.55); key.position.set(2.5, 2.6, 2.2);
+  const rim = new THREE.DirectionalLight(0x8093ff, 1.5);  rim.position.set(-2.8, 1.2, -2.4);
+  const under = new THREE.PointLight(0xffc9b8, 0.55, 12); under.position.set(0.4, -2.0, 1.6);
+  const hemi = new THREE.HemisphereLight(0x39406b, 0x0c0f1a, 0.85);
+  scene.add(key, rim, under, hemi);
+
+  // decode embedded GLB
+  const bin = atob(window.BRAIN_GLB_B64);
+  const buf = new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) buf[i] = bin.charCodeAt(i);
+
+  new THREE.GLTFLoader().parse(buf.buffer, '', (gltf)=>{
+    brainGroup = new THREE.Group();
+    const inner = gltf.scene;
+
+    // hyper-real material: fleshy tint, wet clearcoat, soft sheen
+    inner.traverse(o=>{
+      if(o.isMesh){
+        o.geometry.computeVertexNormals();
+        const mat = new THREE.MeshPhysicalMaterial({
+          color: 0xB5767E, roughness: 0.44, metalness: 0.02,
+          clearcoat: 0.32, clearcoatRoughness: 0.3,
+          sheen: 0.35, sheenColor: new THREE.Color(0xD9A0A6),
+          transparent: true, opacity: 1.0,
+        });
+        o.material = mat; brainMats.push(mat);
+      }
+    });
+
+    // center + normalize scale
+    const box = new THREE.Box3().setFromObject(inner);
+    const c = box.getCenter(new THREE.Vector3());
+    const size = box.getSize(new THREE.Vector3());
+    const s = 2.0 / Math.max(size.x, size.y, size.z);
+    inner.position.sub(c);
+    brainGroup.add(inner);
+    brainGroup.scale.setScalar(s);
+    scene.add(brainGroup);
+
+    placeMarkers(inner, s);
+    modelReady = true;
+  });
+}
+
+// raycast from outside toward center to find a surface point (true world coords)
+function surfacePoint(inner, scale, dir){
+  const d = dir.clone().normalize();
+  const rc = new THREE.Raycaster(d.clone().multiplyScalar(10), d.clone().negate());
+  const hits = rc.intersectObject(inner, true);
+  if(hits.length) return hits[0].point.clone();
+  return d.multiplyScalar(0.8); // fallback
+}
+
+function placeMarkers(inner, scale){
+  scene.updateMatrixWorld(true);   // raycaster needs fresh world matrices
+  // 1 · tagging: single indigo spark on upper-left lateral cortex
+  const tagPos = surfacePoint(inner, scale, new THREE.Vector3(0.9, 0.45, 0.5));
+  const tag = makeSprite('#8FA0FF', 0.12); tag.position.copy(tagPos);
+  scene.add(tag); markers.tag = tag;
+
+  // 2 · competition: five amber candidates scattered on right cortex; winner glows green
+  const dirs = [ [ -0.8, 0.55, 0.35], [-0.95, 0.2, -0.2], [-0.6, 0.75, -0.4],
+                 [ -0.9, 0.05, 0.55], [-0.55, 0.5, 0.75] ];
+  markers.comp = new THREE.Group();
+  dirs.forEach((d,i)=>{
+    const p = surfacePoint(inner, scale, new THREE.Vector3(...d));
+    const sp = makeSprite(i===2 ? '#4FB98A' : '#E0A44A', i===2 ? 0.12 : 0.085);
+    sp.position.copy(p); sp.userData.winner = (i===2);
+    markers.comp.add(sp); compDots.push(sp);
+  });
+  scene.add(markers.comp);
+
+  // 3 · replay: green pulse deep inside (hippocampus, medial temporal — inner, low, slightly lateral)
+  const hip = new THREE.Vector3(0.17, -0.02, 0.06);
+  const replay = makeSprite('#4FB98A', 0.4); replay.position.copy(hip);
+  scene.add(replay); markers.replay = replay;
+  const replay2 = makeSprite('#4FB98A', 0.26); replay2.position.set(-0.15, -0.02, 0.06);
+  scene.add(replay2); markers.replay2 = replay2;
+
+  // 4 · consolidation: ring of green sparks across the top cortex
+  markers.cons = new THREE.Group();
+  for(let i=0;i<7;i++){
+    const a = (i/7) * Math.PI*2;
+    const p = surfacePoint(inner, scale,
+      new THREE.Vector3(Math.cos(a)*0.85, 0.85, Math.sin(a)*0.85));
+    const sp = makeSprite('#4FB98A', 0.11); sp.position.copy(p);
+    sp.userData.phase = i; markers.cons.add(sp); consDots.push(sp);
+  }
+  scene.add(markers.cons);
+}
+
+/* camera poses per stage: [radius, azimuth θ, polar φ] */
+const POSES = [
+  { r:4.7, t:-0.25, p:1.32 },   // intro — front three-quarter
+  { r:3.5, t: 0.85, p:1.18 },   // tagging — swing left-up
+  { r:3.2, t:-1.05, p:1.10 },   // competition — swing to right hemisphere
+  { r:2.45, t:-2.10, p:1.48 },  // replay — dive low toward medial temporal
+  { r:4.3, t:-3.10, p:0.88 },   // consolidation — pull back high
+  { r:5.1, t:-3.85, p:1.28 },   // result — drift away
+];
+const LOOK_Y = 0.12;
+function setCam(sPos){
+  const i = clamp(Math.floor(sPos), 0, POSES.length-2);
+  const f = smooth(sPos - i);
+  const A = POSES[i], B = POSES[i+1];
+  const r = lerp(A.r,B.r,f), t = lerp(A.t,B.t,f), p = lerp(A.p,B.p,f);
+  camera.position.set(r*Math.sin(p)*Math.cos(t), r*Math.cos(p)+LOOK_Y, r*Math.sin(p)*Math.sin(t));
+  camera.lookAt(0,LOOK_Y,0);
+}
+
+/* stage windows over scene-3 progress */
+const ST = {
+  enter:  [0.00, 0.075],
+  tag:    [0.10, 0.26],
+  comp:   [0.29, 0.45],
+  replay: [0.48, 0.66],
+  cons:   [0.69, 0.84],
+  result: [0.87, 0.985],
+};
+const win = (p, [a,b], fade=0.035)=> seg(p,a,a+fade) * (1 - seg(p,b-fade,b));
+
+/* stage position 0..5 for camera interpolation */
+function stagePos(p){
+  const keys = [0.0375, 0.18, 0.37, 0.57, 0.765, 0.93]; // stage midpoints
+  if(p<=keys[0]) return 0;
+  for(let i=0;i<keys.length-1;i++){
+    if(p<=keys[i+1]) return i + smooth((p-keys[i])/(keys[i+1]-keys[i]));
+  }
+  return 5;
+}
+
+/* project a 3D point to screen px */
+const _v = new THREE.Vector3();
+function toScreen(obj){
+  obj.getWorldPosition(_v); _v.project(camera);
+  return [ (_v.x*0.5+0.5)*innerWidth, (-_v.y*0.5+0.5)*innerHeight ];
+}
+
+/* ============================================================
+   Per-frame update
+   ============================================================ */
+const $ = id=>document.getElementById(id);
+const els = {
+  s1i:$('s1-inner'), cue:$('cue'), s2h:$('s2-head'), rq:$('s2-rq'),
+  cards:[$('c1'),$('c2'),$('c3')],
+  gl:$('gl-wrap'), svg:$('svg-overlay'), dim:$('dimmer'),
+  head3:$('s3-head'), lead3:$('s3-lead'),
+  lbl:{ tag:$('lbl-tag'), comp:$('lbl-comp'), replay:$('lbl-replay'), cons:$('lbl-cons') },
+  res:$('result-line'), line:$('conn-line'), dot:$('conn-dot'),
+};
+
+function setF(el, y, o){ el.style.transform = `translateY(${y}px)`; el.style.opacity = o; }
+
+let t0 = performance.now();
+function update(){
+  window.__dbg.ticks++;
+  if(window.__DEBUG_TITLE && window.__dbg.ticks % 30 === 1) document.title =
+    'T' + window.__dbg.ticks + ' R' + (modelReady?1:0) + ' Y' + Math.round(scrollY) +
+    (window.__dbg.errors.length ? ' ERR ' + window.__dbg.errors[0] : '');
+  const time = (performance.now()-t0)/1000;
+  let p1 = prog('s1'), p2 = prog('s2'), p3 = prog('s3');
+  if(FS){ [p1,p2,p3] = {'1':[FP,0,0],'2':[1,FP,0],'3':[1,1,FP]}[FS]; }
+
+  /* scene 1 — title vanishes upward */
+  const e1 = seg(p1, 0.15, 0.9);
+  els.s1i.style.transform = `translateY(${-e1*46}vh) scale(${1-0.06*e1})`;
+  els.s1i.style.opacity = 1 - seg(p1, 0.3, 0.85);
+  els.cue.style.opacity = 1 - seg(p1, 0.05, 0.3);
+
+  /* scene 2 — title+lead, three cards, research question, exit */
+  setF(els.s2h, (1-seg(p2,0.02,0.13))*60, seg(p2,0.02,0.13));
+  const cw = [[0.17,0.29],[0.31,0.43],[0.45,0.57]];
+  els.cards.forEach((c,i)=>{
+    const w = seg(p2, cw[i][0], cw[i][1]);
+    c.style.transform = `translateY(${(1-w)*70}px)`;
+    c.style.opacity = w;
+  });
+  setF(els.rq, (1-seg(p2,0.63,0.75))*50, seg(p2,0.63,0.75));
+  const stage2 = els.s2h.parentElement;
+  const x2 = seg(p2, 0.9, 1);
+  stage2.style.transform = `translateY(${-x2*7}vh)`;
+  stage2.style.opacity = 1 - x2*0.9;
+
+  /* scene 3 — brain */
+  const on3 = p3 > 0 && p3 < 1 && p2 > 0.85;
+  const glIn = seg(p2, 0.92, 1) * (1 - seg(p3, 0.995, 1));
+  els.gl.style.opacity = glIn;
+  els.svg.style.opacity = glIn;
+
+  setF(els.head3, (1-seg(p3,0.005,0.06))*40, seg(p3,0.005,0.06));
+  els.lead3.style.opacity = seg(p3,0.02,0.07) * (1 - seg(p3,0.82,0.9));
+
+  if(modelReady){
+    setCam(stagePos(p3));
+    brainGroup.rotation.y = Math.sin(time*0.25)*0.04;       // idle breathing
+    brainGroup.position.y = Math.sin(time*0.5)*0.015;
+
+    const wTag = win(p3, ST.tag), wComp = win(p3, ST.comp),
+          wRep = win(p3, ST.replay), wCons = win(p3, ST.cons),
+          wRes = seg(p3, ST.result[0], ST.result[0]+0.04);
+
+    // markers
+    markers.tag.material.opacity = wTag;
+    markers.tag.scale.setScalar(0.12 + 0.035*Math.sin(time*4)*wTag);
+    compDots.forEach((sp,i)=>{
+      const base = wComp * (sp.userData.winner ? 1 : (1 - 0.55*seg(p3, ST.comp[0]+0.09, ST.comp[1]-0.03)));
+      sp.material.opacity = base;
+      const puls = sp.userData.winner ? 0.12+0.04*Math.sin(time*5) : 0.085+0.015*Math.sin(time*3+i);
+      sp.scale.setScalar(puls);
+    });
+    const hipPulse = 0.34 + 0.18*(0.5+0.5*Math.sin(time*2.6));
+    markers.replay.material.opacity = wRep; markers.replay.scale.setScalar(hipPulse);
+    markers.replay2.material.opacity = wRep*0.7; markers.replay2.scale.setScalar(hipPulse*0.65);
+    consDots.forEach((sp)=>{
+      const tw = 0.5+0.5*Math.sin(time*2.2 + sp.userData.phase*0.9);
+      sp.material.opacity = wCons * (0.35+0.65*tw);
+      sp.scale.setScalar(0.09 + 0.06*tw);
+    });
+
+    // see inside during replay
+    const ghost = 1 - 0.62*wRep;
+    brainMats.forEach(m=>{ m.opacity = ghost * (1 - 0.55*wRes); });
+
+    // labels + connector line
+    const stages = [
+      ['tag', wTag, markers.tag, 'right'],
+      ['comp', wComp, compDots[2], 'left'],
+      ['replay', wRep, markers.replay, 'right'],
+      ['cons', wCons, consDots[0], 'left'],
+    ];
+    let drawn = false;
+    stages.forEach(([k,w,obj,side])=>{
+      const el = els.lbl[k];
+      el.style.opacity = w;
+      el.style.transform = `translateY(${(1-w)*36}px)`;
+      if(w > 0.5 && !drawn){
+        drawn = true;
+        const [sx,sy] = toScreen(obj);
+        const r = el.getBoundingClientRect();
+        const lx = side==='right' ? r.right : r.left;
+        const ly = r.top + r.height/2;
+        els.line.setAttribute('x1', lx); els.line.setAttribute('y1', ly);
+        els.line.setAttribute('x2', sx); els.line.setAttribute('y2', sy);
+        els.dot.setAttribute('cx', sx); els.dot.setAttribute('cy', sy);
+        els.line.setAttribute('opacity', (w-0.5)*2*0.85);
+        els.dot.setAttribute('opacity', (w-0.5)*2*0.9);
+      }
+    });
+    if(!drawn){ els.line.setAttribute('opacity',0); els.dot.setAttribute('opacity',0); }
+
+    // result
+    const rw = win(p3, ST.result, 0.05);
+    els.res.style.opacity = rw;
+    els.res.style.transform = `scale(${0.96+0.04*seg(p3,ST.result[0],ST.result[0]+0.06)})`;
+    els.dim.style.opacity = 0.58 * rw * glIn;
+
+    renderer.render(scene, camera);
+  }
+}
+function tick(){ update(); requestAnimationFrame(tick); }
+
+/* debug: isolate one scene at forced progress (?fs=3&fp=0.2) */
+let FS = null, FP = 0;
+
+/* ============================================================
+   boot
+   ============================================================ */
+function onResize(){
+  measure();
+  if(renderer){
+    renderer.setSize(innerWidth, innerHeight);
+    camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix();
+  }
+}
+addEventListener('resize', onResize);
+measure();
+initGL();
+
+/* debug: ?p=0.62 scrolls to a fraction of the document; add &shot for
+   headless screenshots (timer-driven loop — rAF stalls under virtual time) */
+const q = new URLSearchParams(location.search);
+if(q.has('p')){
+  const f = parseFloat(q.get('p'));
+  const go = ()=>scrollTo(0, f*(document.body.scrollHeight - innerHeight));
+  go(); addEventListener('load', ()=>{ go(); setTimeout(go, 200); });
+}
+if(q.has('fs')){
+  FS = q.get('fs'); FP = parseFloat(q.get('fp')||'0');
+  ['s1','s2','s3'].forEach(id=>{ if(id !== 's'+FS) document.getElementById(id).style.display='none'; });
+  measure();
+}
+if(q.has('shot')){
+  for(let i=1;i<=8;i++) setTimeout(update, i*150);
+  setTimeout(()=>{   // headless can't composite WebGL: bake final frame to an <img>
+    if(!renderer) return;
+    const url = renderer.domElement.toDataURL('image/png');
+    const w = document.getElementById('gl-wrap');
+    w.style.background = '#141927 url(' + url + ') center / 100% 100% no-repeat';
+    renderer.domElement.style.display = 'none';
+  }, 1400);
+}
+else { requestAnimationFrame(tick); }
+</script>
+</body>
+</html>
