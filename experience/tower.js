@@ -148,6 +148,12 @@ window.TOWER = (function(){
     [pGreen,greenMat]=particles(110, 0x7FE8C0);
     root.add(pBlue,pGreen);
 
+    // journey packet (scene 5): the fact travelling through the system
+    pieces.packetB=glowSprite('#AFC0FF',0.30);
+    pieces.packetG=glowSprite('#7FE8C0',0.30);
+    pieces.packetB.material.opacity=0; pieces.packetG.material.opacity=0;
+    root.add(pieces.packetB, pieces.packetG);
+
     // record vault base span against closed top-third positions
     const tys=TOP.map(li=>layerMeshes[li+1].attn.userData.cy);
     vaultBaseSpan=Math.max(...tys)-Math.min(...tys)+0.45;
@@ -278,8 +284,84 @@ window.TOWER = (function(){
 
   function target(key){
     return {tag:pieces.ring, kv:pieces.vault, prp:pieces.valve,
-            engine:pieces.pod, wafer:pieces.wafers&&pieces.wafers[3]}[key]||null;
+            engine:pieces.pod, wafer:pieces.wafers&&pieces.wafers[3],
+            base:layerMeshes[0]&&layerMeshes[0].solo}[key]||null;
   }
 
-  return { build, setState, setCam, target };
+  /* ---------- scene 5: one fact's journey ----------
+     jPos runs 0..7 across waypoints; ws carries per-stage weights. */
+  function journeyWaypoints(){
+    const headY=layerMeshes[layerMeshes.length-1].solo.position.y;
+    const ringY=headY+0.42;
+    const tys=TOP.map(li=>layerMeshes[li+1].attn.position.y);
+    const topMid=(Math.max(...tys)+Math.min(...tys))/2;
+    return [
+      new THREE.Vector3(0,-2.9,0),          // 0 below the tower
+      new THREE.Vector3(0, 0.0,0),          // 1 inside, mid climb
+      new THREE.Vector3(0, ringY,0),        // 2 at the ring (read)
+      new THREE.Vector3(0, ringY,0),        // 3 tag fires (hold)
+      new THREE.Vector3(0.95, topMid,0),    // 4 into the vault
+      new THREE.Vector3(0.95,-1.05,0),      // 5 down to the valve
+      new THREE.Vector3(-1.05,0.05,0),      // 6 across to the pod
+      new THREE.Vector3(0, topMid,0),       // 7 into the wafers / out
+    ];
+  }
+  function setJourney(o){
+    const bOp=pieces.packetB.material, gOp=pieces.packetG.material;
+    if(!o.active){ bOp.opacity=0; gOp.opacity=0; return; }
+    const W=journeyWaypoints();
+    const i=clamp(Math.floor(o.jPos),0,W.length-2);
+    const f=smooth(o.jPos-i);
+    const pos=new THREE.Vector3().lerpVectors(W[i],W[i+1],f);
+    if(i===3||i===4||i===5||i===6) pos.y+=Math.sin(f*Math.PI)*0.28;  // arcs
+    const pulse=1+0.18*Math.sin(o.time*5);
+    [pieces.packetB,pieces.packetG].forEach(s=>{
+      s.position.copy(pos); s.scale.setScalar(0.30*pulse);
+    });
+    const greenMix=smooth((o.jPos-5.4)/0.8);   // turns green through the pod
+    const vis=smooth(o.jPos/0.4)*(1-smooth((o.jPos-6.55)/0.45));
+    bOp.opacity=vis*(1-greenMix); gOp.opacity=vis*greenMix;
+
+    // organ side-effects
+    const ws=o.ws;
+    pieces.ring.userData.glow.material.opacity=
+      Math.max(pieces.ring.userData.glow.material.opacity,
+               0.5*(ws.read||0)+0.85*(ws.tag||0));
+    pieces.pod.userData.glow.material.opacity=
+      Math.max(pieces.pod.userData.glow.material.opacity, 0.9*(ws.sleep||0));
+    // wafers glow as consolidation happens, then stay warm
+    const wGlow=0.55*(ws.sleep||0)+0.9*(ws.out||0);
+    pieces.wafers.forEach((wf,j)=>{
+      const tw=0.5+0.5*Math.sin(o.time*3+j*1.3);
+      wf.material.opacity=Math.max(wf.material.opacity, (0.5+0.5*tw)*wGlow*0.9);
+    });
+    // the answer flows: green tokens rise at the end
+    greenMat.opacity=Math.max(greenMat.opacity, 0.9*(ws.out||0));
+    blueMat.opacity=Math.min(blueMat.opacity, 0.75*(1-0.8*(ws.out||0)));
+  }
+
+  const JCAMS=[
+    [0.000, 7.4, -0.55, 1.18,  0.1],
+    [0.075, 6.2, -0.45, 1.35, -1.2],   // input, low
+    [0.210, 5.6, -0.25, 1.02,  2.0],   // read, rise to the ring
+    [0.345, 4.9, -0.10, 0.98,  2.3],   // tag
+    [0.475, 5.0,  0.55, 1.10,  1.35],  // vault
+    [0.605, 5.0,  0.55, 1.42, -1.35],  // valve
+    [0.740, 5.2,  2.55, 1.22,  0.1],   // pod
+    [0.890, 5.4,  0.25, 1.02,  1.5],   // wafers / out
+    [0.985, 7.0, -0.45, 1.15,  0.2],   // settle
+  ];
+  function setCamJourney(camera,p5){
+    let i=0;
+    while(i<JCAMS.length-2 && p5>JCAMS[i+1][0]) i++;
+    const A=JCAMS[i], B=JCAMS[i+1];
+    const f=smooth((p5-A[0])/(B[0]-A[0]));
+    const r=lerp(A[1],B[1],f), az=lerp(A[2],B[2],f),
+          po=lerp(A[3],B[3],f), ty=lerp(A[4],B[4],f)*SCALE;
+    camera.position.set(r*Math.sin(po)*Math.cos(az), r*Math.cos(po)+ty,
+                        r*Math.sin(po)*Math.sin(az));
+    camera.lookAt(0,ty,0);
+  }
+
+  return { build, setState, setCam, target, setJourney, setCamJourney };
 })();
