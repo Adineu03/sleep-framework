@@ -88,9 +88,10 @@
   #result-line { position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
     z-index:5; opacity:0; padding:0 10vw; }
   #result-line .inner { text-align:center; max-width:min(80vw, 1050px); }
-  #result-line p.line { font-family:var(--serif); font-size:clamp(1.6rem,3.6vw,3.1rem);
-    color:var(--dark-ink); line-height:1.35; text-wrap:balance; }
-  #result-line p.line b { color:#4FB98A; font-weight:650; }
+  #result-line p.line { font-family:var(--serif); font-size:clamp(1.7rem,3.8vw,3.3rem);
+    color:#FFFFFF; font-weight:700; line-height:1.35; text-wrap:balance;
+    text-shadow:0 2px 30px rgba(0,0,0,0.85); }
+  #result-line p.line b { color:#5FD9A4; }
   #result-line p.tail { font-family:var(--mono); font-size:clamp(12px,1.2vw,17px);
     letter-spacing:0.14em; text-transform:uppercase; color:var(--dark-accent); margin-top:3vh; }
   #dimmer { position:fixed; inset:0; background:var(--dark); opacity:0; z-index:2; pointer-events:none; }
@@ -523,7 +524,7 @@ function update(){
     const rw = win(p3, ST.result, 0.05);
     els.res.style.opacity = rw;
     els.res.style.transform = `scale(${0.96+0.04*seg(p3,ST.result[0],ST.result[0]+0.06)})`;
-    els.dim.style.opacity = 0.58 * rw * glIn;
+    els.dim.style.opacity = 0.72 * rw * glIn;
 
     renderer.render(scene, camera);
   }
