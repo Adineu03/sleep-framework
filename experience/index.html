@@ -65,9 +65,10 @@
   /* ---- scene 3: the brain ---- */
   #s3 .stage { background:transparent; }
   #s3 .stage-inner { pointer-events:none; }
-  #s3 .head { position:absolute; top:0; left:0; right:0; z-index:4;
+  #s3 .head, #s4 .head { position:absolute; top:0; left:0; right:0; z-index:4;
     padding:6vh 7vw 9vh;
     background:linear-gradient(180deg, rgba(20,25,39,0.94) 30%, rgba(20,25,39,0.55) 70%, rgba(20,25,39,0) 100%); }
+  #s4 .head { padding-bottom:5vh; }
   #s3 .eyebrow { color:var(--dark-accent); }
   #s3 h1 { font-size:clamp(1.8rem,4vw,3.4rem); color:var(--dark-ink); margin-top:1.2vh; }
   #s3 .lead { font-size:clamp(0.95rem,1.55vw,1.35rem); color:var(--dark-soft); max-width:58ch;
@@ -95,6 +96,35 @@
   #result-line p.tail { font-family:var(--mono); font-size:clamp(12px,1.2vw,17px);
     letter-spacing:0.14em; text-transform:uppercase; color:var(--dark-accent); margin-top:3vh; }
   #dimmer { position:fixed; inset:0; background:var(--dark); opacity:0; z-index:2; pointer-events:none; }
+
+  /* ---- scene 4: the proposal (transformer tower) ---- */
+  #s4-title { position:absolute; inset:0; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; z-index:4; opacity:0;
+    text-align:center; padding:0 8vw; pointer-events:none; }
+  #s4-title h1 { font-family:var(--serif); font-weight:650; color:var(--dark-ink);
+    font-size:clamp(4.5rem,13vw,11rem); letter-spacing:0.06em; }
+  #s4-title p { font-family:var(--mono); font-size:clamp(13px,1.5vw,21px);
+    letter-spacing:0.22em; text-transform:uppercase; color:var(--dark-accent);
+    margin-top:2.4vh; }
+  .brain-label pre { font-family:var(--mono); font-size:clamp(11px,1vw,15.5px);
+    color:#AFC0E8; background:rgba(15,19,32,0.75); border:1px solid var(--dark-line);
+    border-radius:6px; padding:1.4vh 1.1vw; margin-top:1.4vh; line-height:1.65;
+    white-space:pre; overflow-x:auto; }
+  #t-intro { left:7vw; bottom:9vh; top:auto; }
+  #t-open  { right:7vw; bottom:9vh; top:auto; }
+  #t-tag, #t-kv, #t-prp, #t-eng, #t-wafer { width:min(38vw,530px); }
+  #t-tag   { left:7vw; top:28vh; }   #t-tag .k   { color:var(--dark-accent); }
+  #t-kv    { right:7vw; top:24vh; }  #t-kv .k    { color:var(--dark-accent); }
+  #t-prp   { right:7vw; top:40vh; }  #t-prp .k   { color:#E0A44A; }
+  #t-eng   { left:7vw; top:30vh; }   #t-eng .k   { color:#4FB98A; }
+  #t-wafer { right:7vw; top:26vh; }  #t-wafer .k { color:#4FB98A; }
+  #t-close { left:0; right:0; margin:0 auto; bottom:8vh; top:auto;
+    width:min(62vw,940px); }
+  #t-close .k { color:#4FB98A; }
+  .chips { display:flex; flex-wrap:wrap; gap:0.9vh 0.8vw; margin-top:1.5vh; }
+  .chips span { font-size:clamp(12px,1.05vw,16px); color:#BFF0DA;
+    background:rgba(44,125,87,0.16); border:1px solid rgba(79,185,138,0.45);
+    border-radius:999px; padding:0.7vh 1.1vw; }
 
   .footer-strip { position:fixed; left:0; right:0; bottom:0; z-index:6;
     display:flex; justify-content:space-between; padding:12px 24px;
@@ -195,6 +225,91 @@
       </div>
     </div>
   </section>
+
+  <!-- ================= SCENE 4 · THE PROPOSAL (TOWER) ================= -->
+  <section class="scene" id="s4" data-len="1250">
+    <div class="stage">
+      <div class="stage-inner">
+        <div id="s4-title">
+          <h1>SLEEP</h1>
+          <p>Synaptic Learning through Error-driven Encoding &amp; Plasticity</p>
+        </div>
+        <div class="head" id="s4-head">
+          <p class="eyebrow">03 &middot; The proposal &mdash; sleep, installed into a transformer</p>
+        </div>
+
+        <div class="brain-label" id="t-intro">
+          <span class="k" style="color:#8FA0FF;">The patient &middot; a frozen LLM</span>
+          <p>A pretrained transformer &mdash; <b>12 slabs standing in for 28 layers</b>.
+             Tokens flow up, a prediction comes out the top, and the weights never change.</p>
+        </div>
+        <div class="brain-label" id="t-open">
+          <span class="k" style="color:#8FA0FF;">The dismantle</span>
+          <p>Every layer is two organs: a thin <b>attention</b> plate &mdash; the librarian,
+             it looks things up &mdash; and a thick <b>MLP</b> plate &mdash; the filing
+             cabinets. <b>Keep that difference in mind.</b></p>
+        </div>
+
+        <div class="brain-label" id="t-tag">
+          <span class="k">1 &middot; Tagging layer</span>
+          <p>A scanner on the token stream. It watches the model's <b>own surprise</b> on
+             every token it reads &mdash; no second model, just its own loss.</p>
+          <pre>in : every token t
+     e_t = &minus;log p(x_t|x_&lt;t)   # surprise
+     z_t = (e_t &minus; &mu;) / &sigma;
+out: spans where z_t &gt; 1.5</pre>
+        </div>
+        <div class="brain-label" id="t-kv">
+          <span class="k">2 &middot; KV memory bank</span>
+          <p>A one-shot episodic store docked onto the <b>top-third attention</b> plates.
+             No retraining &mdash; memories are injected straight into attention.</p>
+          <pre>in : K,V of the tagged episode
+     stored once, no gradients
+read: Attn(Q, [K_mem;K], [V_mem;V])
+      top-k gate picks who speaks</pre>
+        </div>
+        <div class="brain-label" id="t-prp">
+          <span class="k">3 &middot; PRP allocator</span>
+          <p>The budget office. Permanence is expensive, so tags <b>compete</b> &mdash;
+             and most lose.</p>
+          <pre>in : all tags
+     score = .35&middot;surprise + .30&middot;access
+           + .15&middot;xref     + .20&middot;recency
+out: top-K winners, hard budget B</pre>
+        </div>
+        <div class="brain-label" id="t-eng">
+          <span class="k">4 &middot; Sleep engine</span>
+          <p>The night shift. Runs offline, when nothing is being asked.</p>
+          <pre>for m in winners:
+    replay m             # rehearse
+    step W_cons          # learn
+    clip &Vert;&Delta;W&Vert; &le; &delta;_max    # rails
+    verify, else rollback
+wipe the memory bank     # morning</pre>
+        </div>
+        <div class="brain-label" id="t-wafer">
+          <span class="k">5 &middot; Consolidation adapters (W_cons)</span>
+          <p>Thin trainable wafers &mdash; <b>the only part that ever learns</b>.
+             The base model stays frozen forever.</p>
+          <pre>W&prime; = W + (&alpha;/r)&middot;B&middot;A     # LoRA
+placed: attention, top &frac13;
+&mdash; where biology pointed.
+Watch this address.</pre>
+        </div>
+        <div class="brain-label" id="t-close">
+          <span class="k">The loop, closed</span>
+          <p>Same frozen transformer &mdash; now with a hippocampus, a budget office,
+             and a night shift. <b>That is SLEEP.</b></p>
+          <div class="chips">
+            <span>reads once &amp; flags surprise</span>
+            <span>keeps only what wins the budget</span>
+            <span>consolidates while it sleeps</span>
+            <span>base weights untouched</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <div class="footer-strip"><span>SLEEP &middot; SP Jain School of Global Management</span><span>Brain: MRI model by Nevit Dilmen (NIH 3DPX-003765) &middot; Aditya Tripathi</span></div>
@@ -202,6 +317,7 @@
 <script src="vendor/three.min.js"></script>
 <script src="vendor/GLTFLoader.js"></script>
 <script src="vendor/brain_model.js"></script>
+<script src="tower.js"></script>
 <script>
 /* debug probe (harmless in production) */
 window.__dbg = { ticks:0, errors:[] };
@@ -234,7 +350,7 @@ function prog(id){
 /* ============================================================
    Three.js — the brain
    ============================================================ */
-let renderer, scene, camera, brainGroup, brainMats = [];
+let renderer, scene, camera, brainGroup, brainRoot, brainMats = [];
 let markers = {};            // named sprite groups
 let compDots = [], consDots = [];
 let glowTexCache = {};
@@ -276,6 +392,10 @@ function initGL(){
   const hemi = new THREE.HemisphereLight(0x39406b, 0x0c0f1a, 0.85);
   scene.add(key, rim, under, hemi);
 
+  brainRoot = new THREE.Group();
+  scene.add(brainRoot);
+  TOWER.build(scene);
+
   // decode embedded GLB
   const bin = atob(window.BRAIN_GLB_B64);
   const buf = new Uint8Array(bin.length);
@@ -307,7 +427,7 @@ function initGL(){
     inner.position.sub(c);
     brainGroup.add(inner);
     brainGroup.scale.setScalar(s);
-    scene.add(brainGroup);
+    brainRoot.add(brainGroup);
 
     placeMarkers(inner, s);
     modelReady = true;
@@ -328,7 +448,7 @@ function placeMarkers(inner, scale){
   // 1 · tagging: single indigo spark on upper-left lateral cortex
   const tagPos = surfacePoint(inner, scale, new THREE.Vector3(0.9, 0.45, 0.5));
   const tag = makeSprite('#8FA0FF', 0.12); tag.position.copy(tagPos);
-  scene.add(tag); markers.tag = tag;
+  brainRoot.add(tag); markers.tag = tag;
 
   // 2 · competition: five amber candidates scattered on right cortex; winner glows green
   const dirs = [ [ -0.8, 0.55, 0.35], [-0.95, 0.2, -0.2], [-0.6, 0.75, -0.4],
@@ -340,14 +460,14 @@ function placeMarkers(inner, scale){
     sp.position.copy(p); sp.userData.winner = (i===2);
     markers.comp.add(sp); compDots.push(sp);
   });
-  scene.add(markers.comp);
+  brainRoot.add(markers.comp);
 
   // 3 · replay: green pulse deep inside (hippocampus, medial temporal — inner, low, slightly lateral)
   const hip = new THREE.Vector3(0.17, -0.02, 0.06);
   const replay = makeSprite('#4FB98A', 0.4); replay.position.copy(hip);
-  scene.add(replay); markers.replay = replay;
+  brainRoot.add(replay); markers.replay = replay;
   const replay2 = makeSprite('#4FB98A', 0.26); replay2.position.set(-0.15, -0.02, 0.06);
-  scene.add(replay2); markers.replay2 = replay2;
+  brainRoot.add(replay2); markers.replay2 = replay2;
 
   // 4 · consolidation: ring of green sparks across the top cortex
   markers.cons = new THREE.Group();
@@ -358,7 +478,7 @@ function placeMarkers(inner, scale){
     const sp = makeSprite('#4FB98A', 0.11); sp.position.copy(p);
     sp.userData.phase = i; markers.cons.add(sp); consDots.push(sp);
   }
-  scene.add(markers.cons);
+  brainRoot.add(markers.cons);
 }
 
 /* camera poses per stage: [radius, azimuth θ, polar φ] */
@@ -419,7 +539,37 @@ const els = {
   head3:$('s3-head'), lead3:$('s3-lead'),
   lbl:{ tag:$('lbl-tag'), comp:$('lbl-comp'), replay:$('lbl-replay'), cons:$('lbl-cons') },
   res:$('result-line'), line:$('conn-line'), dot:$('conn-dot'),
+  head4:$('s4-head'), t4title:$('s4-title'),
+  t:{ intro:$('t-intro'), open:$('t-open'), tag:$('t-tag'), kv:$('t-kv'),
+      prp:$('t-prp'), eng:$('t-eng'), wafer:$('t-wafer'), close:$('t-close') },
 };
+
+/* scene-4 stage windows over its progress */
+const ST4 = { title:[0.005,0.065], intro:[0.085,0.16], open:[0.18,0.245],
+  tag:[0.26,0.375], kv:[0.395,0.505], prp:[0.525,0.635], engine:[0.655,0.765],
+  wafer:[0.785,0.875], close:[0.90,0.98] };
+
+/* one pass for all label cards + the single connector line */
+function labelPass(defs){
+  let drawn = false;
+  defs.forEach(([el,w,obj,side])=>{
+    el.style.opacity = w;
+    el.style.transform = `translateY(${(1-w)*36}px)`;
+    if(obj && w > 0.5 && !drawn){
+      drawn = true;
+      const [sx,sy] = toScreen(obj);
+      const r = el.getBoundingClientRect();
+      const lx = side==='right' ? r.right : r.left;
+      const ly = r.top + r.height/2;
+      els.line.setAttribute('x1', lx); els.line.setAttribute('y1', ly);
+      els.line.setAttribute('x2', sx); els.line.setAttribute('y2', sy);
+      els.dot.setAttribute('cx', sx); els.dot.setAttribute('cy', sy);
+      els.line.setAttribute('opacity', (w-0.5)*2*0.85);
+      els.dot.setAttribute('opacity', (w-0.5)*2*0.9);
+    }
+  });
+  if(!drawn){ els.line.setAttribute('opacity',0); els.dot.setAttribute('opacity',0); }
+}
 
 function setF(el, y, o){ el.style.transform = `translateY(${y}px)`; el.style.opacity = o; }
 
@@ -430,8 +580,9 @@ function update(){
     'T' + window.__dbg.ticks + ' R' + (modelReady?1:0) + ' Y' + Math.round(scrollY) +
     (window.__dbg.errors.length ? ' ERR ' + window.__dbg.errors[0] : '');
   const time = (performance.now()-t0)/1000;
-  let p1 = prog('s1'), p2 = prog('s2'), p3 = prog('s3');
-  if(FS){ [p1,p2,p3] = {'1':[FP,0,0],'2':[1,FP,0],'3':[1,1,FP]}[FS]; }
+  let p1 = prog('s1'), p2 = prog('s2'), p3 = prog('s3'), p4 = prog('s4');
+  if(FS){ [p1,p2,p3,p4] = {'1':[FP,0,0,0],'2':[1,FP,0,0],
+                           '3':[1,1,FP,0],'4':[1,1,1,FP]}[FS]; }
 
   /* scene 1 — title vanishes upward */
   const e1 = seg(p1, 0.15, 0.9);
@@ -454,15 +605,52 @@ function update(){
   stage2.style.opacity = 1 - x2*0.9;
 
   /* scene 3 — brain */
-  const on3 = p3 > 0 && p3 < 1 && p2 > 0.85;
-  const glIn = seg(p2, 0.92, 1) * (1 - seg(p3, 0.995, 1));
+  const glIn = seg(p2, 0.92, 1) * (1 - seg(p4, 0.985, 1));
   els.gl.style.opacity = glIn;
   els.svg.style.opacity = glIn;
 
   setF(els.head3, (1-seg(p3,0.005,0.06))*40, seg(p3,0.005,0.06));
   els.lead3.style.opacity = seg(p3,0.02,0.07) * (1 - seg(p3,0.82,0.9));
 
-  if(modelReady){
+  const towerOn = p4 > 0.0005;
+  const defs = [];
+
+  if(towerOn && renderer){
+    /* ---- scene 4: the tower ---- */
+    if(brainRoot) brainRoot.visible = false;
+    const explode = seg(p4,0.175,0.24) * (1 - seg(p4,0.885,0.95));
+    const appear = { tag:seg(p4,0.25,0.31), kv:seg(p4,0.385,0.445),
+                     prp:seg(p4,0.515,0.575), engine:seg(p4,0.645,0.705),
+                     wafer:seg(p4,0.775,0.85) };
+    const alive = seg(p4,0.925,0.965);
+    const pulse = { tag:win(p4,ST4.tag), kv:win(p4,ST4.kv),
+                    prp:win(p4,ST4.prp), engine:win(p4,ST4.engine) };
+    TOWER.setState({visible:true, explode, appear, alive, pulse, time});
+    TOWER.setCam(camera, p4);
+
+    const twt = win(p4, ST4.title, 0.02);
+    els.t4title.style.opacity = twt;
+    els.t4title.style.transform = `scale(${0.94 + 0.08*seg(p4,ST4.title[0],ST4.title[1])})`;
+    setF(els.head4, (1-seg(p4,0.08,0.12))*30,
+         seg(p4,0.08,0.12) * (1 - seg(p4,0.965,0.995)));
+
+    defs.push(
+      [els.t.intro, win(p4,ST4.intro), null],
+      [els.t.open,  win(p4,ST4.open),  null],
+      [els.t.tag,   win(p4,ST4.tag),   TOWER.target('tag'),   'right'],
+      [els.t.kv,    win(p4,ST4.kv),    TOWER.target('kv'),    'left'],
+      [els.t.prp,   win(p4,ST4.prp),   TOWER.target('prp'),   'left'],
+      [els.t.eng,   win(p4,ST4.engine),TOWER.target('engine'),'right'],
+      [els.t.wafer, win(p4,ST4.wafer), TOWER.target('wafer'), 'left'],
+      [els.t.close, win(p4,ST4.close,0.05), null],
+    );
+    els.dim.style.opacity = 0;
+    renderer.render(scene, camera);
+  }
+  else if(modelReady){
+    /* ---- scene 3: the brain ---- */
+    TOWER.setState({visible:false});
+    brainRoot.visible = true;
     setCam(stagePos(p3));
     brainGroup.rotation.y = Math.sin(time*0.25)*0.04;       // idle breathing
     brainGroup.position.y = Math.sin(time*0.5)*0.015;
@@ -493,32 +681,12 @@ function update(){
     const ghost = 1 - 0.62*wRep;
     brainMats.forEach(m=>{ m.opacity = ghost * (1 - 0.55*wRes); });
 
-    // labels + connector line
-    const stages = [
-      ['tag', wTag, markers.tag, 'right'],
-      ['comp', wComp, compDots[2], 'left'],
-      ['replay', wRep, markers.replay, 'right'],
-      ['cons', wCons, consDots[0], 'left'],
-    ];
-    let drawn = false;
-    stages.forEach(([k,w,obj,side])=>{
-      const el = els.lbl[k];
-      el.style.opacity = w;
-      el.style.transform = `translateY(${(1-w)*36}px)`;
-      if(w > 0.5 && !drawn){
-        drawn = true;
-        const [sx,sy] = toScreen(obj);
-        const r = el.getBoundingClientRect();
-        const lx = side==='right' ? r.right : r.left;
-        const ly = r.top + r.height/2;
-        els.line.setAttribute('x1', lx); els.line.setAttribute('y1', ly);
-        els.line.setAttribute('x2', sx); els.line.setAttribute('y2', sy);
-        els.dot.setAttribute('cx', sx); els.dot.setAttribute('cy', sy);
-        els.line.setAttribute('opacity', (w-0.5)*2*0.85);
-        els.dot.setAttribute('opacity', (w-0.5)*2*0.9);
-      }
-    });
-    if(!drawn){ els.line.setAttribute('opacity',0); els.dot.setAttribute('opacity',0); }
+    defs.push(
+      [els.lbl.tag,    wTag,  markers.tag,    'right'],
+      [els.lbl.comp,   wComp, compDots[2],    'left'],
+      [els.lbl.replay, wRep,  markers.replay, 'right'],
+      [els.lbl.cons,   wCons, consDots[0],    'left'],
+    );
 
     // result
     const rw = win(p3, ST.result, 0.05);
@@ -528,6 +696,7 @@ function update(){
 
     renderer.render(scene, camera);
   }
+  labelPass(defs);
 }
 function tick(){ update(); requestAnimationFrame(tick); }
 
@@ -558,7 +727,7 @@ if(q.has('p')){
 }
 if(q.has('fs')){
   FS = q.get('fs'); FP = parseFloat(q.get('fp')||'0');
-  ['s1','s2','s3'].forEach(id=>{ if(id !== 's'+FS) document.getElementById(id).style.display='none'; });
+  ['s1','s2','s3','s4'].forEach(id=>{ if(id !== 's'+FS) document.getElementById(id).style.display='none'; });
   measure();
 }
 if(q.has('shot')){
