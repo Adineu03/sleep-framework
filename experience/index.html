@@ -151,6 +151,63 @@
     background:#EDF0F7; border:1px solid var(--line); border-radius:6px;
     padding:1.2vh 1vw; margin-top:1vh; white-space:pre; overflow-x:auto; }
 
+  /* ---- scenes 7 & 9: chart-only results ---- */
+  .xrow { display:grid; grid-template-columns:17vw 1fr 11vw; align-items:center;
+    gap:2vw; margin:2.6vh 0; opacity:0; }
+  .xlab { font-size:clamp(0.95rem,1.5vw,1.35rem); color:var(--ink-soft); text-align:right; line-height:1.3; }
+  .xtrack { height:5.4vh; background:#E4E9F2; border:1px solid var(--line); border-radius:8px;
+    position:relative; overflow:hidden; }
+  .xfill { position:absolute; inset:0 auto 0 0; border-radius:7px; width:0; min-width:0; }
+  .xnum { font-family:var(--mono); font-weight:700; font-size:clamp(1.5rem,3vw,2.6rem);
+    color:var(--ink); opacity:0; }
+  .pop-card { position:absolute; left:7vw; bottom:8vh; width:min(48vw,680px);
+    background:#fff; border:1px solid var(--line); border-radius:8px;
+    padding:2.2vh 1.6vw; opacity:0; z-index:4; }
+  .pop-card .k { font-family:var(--mono); font-size:clamp(11px,1vw,15px); letter-spacing:0.13em;
+    text-transform:uppercase; color:var(--accent); display:block; margin-bottom:0.9vh; }
+  .pop-card p { font-size:clamp(0.92rem,1.35vw,1.2rem); color:var(--ink-soft); line-height:1.5; }
+  .pop-card p b { color:var(--ink); }
+  .zero-overlay { position:absolute; inset:0; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:2vh; opacity:0; z-index:5; pointer-events:none; }
+  .zero-overlay .z { font-family:var(--mono); font-weight:700;
+    font-size:clamp(6rem,17vw,15rem); color:var(--amber); line-height:1; }
+  .zero-overlay .zc { font-family:var(--mono); font-size:clamp(13px,1.4vw,19px);
+    letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); }
+
+  .mrow { display:grid; grid-template-columns:14vw 1fr 11vw; align-items:center;
+    gap:2vw; margin:2vh 0; opacity:0; }
+  .mlab { font-size:clamp(0.95rem,1.45vw,1.3rem); color:var(--ink-soft); text-align:right; }
+  .mtracks { display:flex; flex-direction:column; gap:0.7vh; }
+  .xtrack.thin { height:2.6vh; }
+  .mnums { display:flex; flex-direction:column; gap:0.5vh; font-family:var(--mono);
+    font-weight:700; font-size:clamp(0.95rem,1.5vw,1.35rem); }
+  .mnums .fl { color:var(--amber); }
+  .mnums span { opacity:0; display:inline-block; }
+  .leg { display:flex; gap:2.2vw; margin:1vh 0 1.5vh; font-size:clamp(0.85rem,1.2vw,1.05rem);
+    color:var(--muted); opacity:0; }
+  .leg i { display:inline-block; width:14px; height:14px; border-radius:3px; margin-right:8px;
+    vertical-align:-2px; }
+
+  /* ---- scene 8: the feedbacks ---- */
+  .fbrow { display:flex; gap:2vw; align-items:center; background:#fff;
+    border:1px solid var(--line); border-radius:8px; padding:1.9vh 1.8vw; opacity:0; }
+  .fbrow .fbnum { font-family:var(--mono); font-weight:700; white-space:nowrap;
+    font-size:clamp(1.4rem,2.9vw,2.5rem); color:var(--accent); flex:0 0 13vw; text-align:center; }
+  .fbrow h3 { font-family:var(--serif); font-weight:650; font-size:clamp(1.05rem,1.6vw,1.4rem);
+    color:var(--ink); margin-bottom:0.4vh; }
+  .fbrow p { font-size:clamp(0.85rem,1.25vw,1.1rem); color:var(--ink-soft); line-height:1.45; }
+  .fbrow p b { color:var(--ink); }
+
+  /* ---- scene 10: the low point ---- */
+  #s10 .stage-inner { justify-content:center; }
+  .lowline { font-family:var(--serif); font-size:clamp(1.25rem,2.4vw,2.1rem); color:#C3CAD9;
+    line-height:1.5; margin:1.9vh 0; max-width:66ch; opacity:0; }
+  .lowline b.popnum { color:#E0A44A; display:inline-block; font-family:var(--mono);
+    margin:0 0.45ch; }
+  .lowline.final { font-size:clamp(1.5rem,3vw,2.7rem); color:#E6EAF4; margin-top:4vh; }
+  .lowline.hook { font-family:var(--mono); font-size:clamp(1rem,1.6vw,1.4rem); color:#4FB98A;
+    letter-spacing:0.06em; margin-top:4vh; }
+
   .footer-strip { position:fixed; left:0; right:0; bottom:0; z-index:6;
     display:flex; justify-content:space-between; padding:12px 24px;
     font-family:var(--mono); font-size:12px; letter-spacing:0.06em; color:var(--muted);
@@ -443,6 +500,168 @@ A: "&hellip;$4,062 million, up 9.4%, driven by
       </div>
     </div>
   </section>
+
+  <!-- ================= SCENE 7 : FIRST RESULTS ================= -->
+  <section class="scene" id="s7" data-len="660">
+    <div class="stage light">
+      <div class="stage-inner" style="justify-content:center;">
+        <p class="eyebrow" id="s7-eb">06 &middot; First results &mdash; the April exam</p>
+        <div id="s7-chart" style="margin-top:3vh;">
+          <div class="xrow" id="s7r0">
+            <span class="xlab">Recognition &mdash; tagged facts</span>
+            <div class="xtrack"><div class="xfill" id="s7f0" style="background:var(--accent);"></div></div>
+            <span class="xnum" id="s7n0">0.28</span>
+          </div>
+          <div class="xrow" id="s7r1">
+            <span class="xlab">Recognition &mdash; untagged</span>
+            <div class="xtrack"><div class="xfill" id="s7f1" style="background:#8093C9;"></div></div>
+            <span class="xnum" id="s7n1">0.12</span>
+          </div>
+          <div class="xrow" id="s7r2">
+            <span class="xlab">Free-form recall</span>
+            <div class="xtrack"><div class="xfill" id="s7f2" style="background:var(--amber);"></div></div>
+            <span class="xnum" id="s7n2" style="color:var(--amber);">0.00</span>
+          </div>
+        </div>
+        <div class="pop-card" id="s7c0">
+          <span class="k">0.28 &middot; what it is</span>
+          <p><b>Recognition on stored facts.</b> Show a fact once, then quiz: four options, one right.
+             Stored facts were picked correctly 28% of the time. How we got it: 200 facts &rarr; one
+             wake pass stores them &rarr; the quiz &rarr; fraction correct.</p>
+        </div>
+        <div class="pop-card" id="s7c1">
+          <span class="k">0.12 &middot; the control</span>
+          <p><b>The same quiz on facts the tagger skipped:</b> 12%. The difference &mdash;
+             <b>+0.16</b> &mdash; is the memory speaking. Recognition genuinely works: the stored
+             trace tilts the choice.</p>
+        </div>
+        <div class="pop-card" id="s7c2">
+          <span class="k">0.00 &middot; the real test</span>
+          <p><b>Free-form recall.</b> Same stored facts &mdash; but now the model must <b>say</b> the
+             answer: 50 tokens, scored for the fact's key details. It produced <b>zero</b>. Not
+             low. Zero. The memory that tilts a choice cannot drive a sentence.</p>
+        </div>
+        <div class="zero-overlay" id="s7-zero">
+          <span class="z">0.00</span>
+          <span class="zc">recognition without recall</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SCENE 8 : THE FEEDBACKS ================= -->
+  <section class="scene" id="s8" data-len="700">
+    <div class="stage light">
+      <div class="stage-inner" style="justify-content:center; gap:1.6vh;">
+        <div id="s8-head">
+          <p class="eyebrow">07 &middot; The feedbacks</p>
+          <h1 class="big" style="margin-top:1.2vh; font-size:clamp(1.8rem,4vw,3.4rem);">Two reviews, one message: <b>now prove it.</b></h1>
+        </div>
+        <div class="fbrow" id="s8r0">
+          <span class="fbnum">1 &rarr; 5</span>
+          <div><h3>Seeds</h3><p>Every experiment re-run with <b>five different randomness settings</b>.
+            A number must survive all five to be believed &mdash; otherwise it is an anecdote.</p></div>
+        </div>
+        <div class="fbrow" id="s8r1">
+          <span class="fbnum">1 &rarr; 4</span>
+          <div><h3>Models</h3><p><b>Four models, three families</b> &mdash; Qwen, Llama, Mistral. Same mechanism,
+            different brains: is the finding universal, or one model's quirk?</p></div>
+        </div>
+        <div class="fbrow" id="s8r2">
+          <span class="fbnum">3 &rarr; 10</span>
+          <div><h3>Horizons</h3><p>From a 3-cycle sprint to a <b>10-cycle marathon</b> &mdash; continual
+            learning judged in the regime the safety machinery was built for.</p></div>
+        </div>
+        <div class="fbrow" id="s8r3">
+          <span class="fbnum">+3</span>
+          <div><h3>Baselines</h3><p><b>RAG, fact-in-context, and EWC-only.</b> A ceiling above us and a
+            rival below us &mdash; no more unopposed claims.</p></div>
+        </div>
+        <div class="fbrow" id="s8r4">
+          <span class="fbnum">&times;2</span>
+          <div><h3>Validation</h3><p><b>Two gates instead of one:</b> the surprise proxy AND an external
+            recall test. The system no longer grades its own homework.</p></div>
+        </div>
+        <div class="fbrow" id="s8r5">
+          <span class="fbnum">+3</span>
+          <div><h3>Our own additions</h3><p>A <b>pre-registered repair attempt</b> (the warm-up), a
+            <b>ground-truth verification gate</b> on real hardware (caught 2 bugs before they cost a rupee),
+            and the habit of running everything together &mdash; which found what no single ask could.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SCENE 9 : REPLICATION ================= -->
+  <section class="scene" id="s9" data-len="720">
+    <div class="stage light">
+      <div class="stage-inner" style="justify-content:center;">
+        <p class="eyebrow" id="s9-eb">08 &middot; Replication &mdash; the same exam, everywhere</p>
+        <div class="leg" id="s9-leg">
+          <span><i style="background:#8093C9;"></i>reads the fact from context</span>
+          <span><i style="background:var(--amber);"></i>recalls it from trained weights</span>
+        </div>
+        <div id="s9-chart">
+          <div class="mrow" id="s9r0"><span class="mlab">Mistral-7B</span>
+            <div class="mtracks">
+              <div class="xtrack thin"><div class="xfill" id="s9c0" style="background:#8093C9;"></div></div>
+              <div class="xtrack thin"><div class="xfill" id="s9f0" style="background:var(--amber);"></div></div>
+            </div>
+            <div class="mnums"><span id="s9cn0">0.93</span><span class="fl" id="s9fn0">0.007</span></div>
+          </div>
+          <div class="mrow" id="s9r1"><span class="mlab">Llama-8B</span>
+            <div class="mtracks">
+              <div class="xtrack thin"><div class="xfill" id="s9c1" style="background:#8093C9;"></div></div>
+              <div class="xtrack thin"><div class="xfill" id="s9f1" style="background:var(--amber);"></div></div>
+            </div>
+            <div class="mnums"><span id="s9cn1">0.99</span><span class="fl" id="s9fn1">0.006</span></div>
+          </div>
+          <div class="mrow" id="s9r2"><span class="mlab">Qwen-7B</span>
+            <div class="mtracks">
+              <div class="xtrack thin"><div class="xfill" id="s9c2" style="background:#8093C9;"></div></div>
+              <div class="xtrack thin"><div class="xfill" id="s9f2" style="background:var(--amber);"></div></div>
+            </div>
+            <div class="mnums"><span id="s9cn2">0.76</span><span class="fl" id="s9fn2">0.006</span></div>
+          </div>
+          <div class="mrow" id="s9r3"><span class="mlab">Qwen-1.5B</span>
+            <div class="mtracks">
+              <div class="xtrack thin"><div class="xfill" id="s9c3" style="background:#8093C9;"></div></div>
+              <div class="xtrack thin"><div class="xfill" id="s9f3" style="background:var(--amber);"></div></div>
+            </div>
+            <div class="mnums"><span id="s9cn3">0.70</span><span class="fl" id="s9fn3">0.007</span></div>
+          </div>
+        </div>
+        <div class="pop-card" id="s9card">
+          <span class="k">how to read this</span>
+          <p>Two numbers per model. <b>Grey:</b> put the fact in the prompt and ask &mdash; near-perfect.
+             <b>Amber:</b> store it, sleep, wipe the notes, ask again from weights alone. <b>Watch the amber.</b></p>
+        </div>
+        <div class="zero-overlay" id="s9-zero">
+          <span class="z" style="font-size:clamp(4.5rem,13vw,11rem);">&asymp; 0.006</span>
+          <span class="zc">the same floor &middot; every model &middot; five seeds each</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SCENE 10 : THE LOW POINT ================= -->
+  <section class="scene" id="s10" data-len="580">
+    <div class="stage">
+      <div class="stage-inner">
+        <div class="head" id="s10-head">
+          <p class="eyebrow">09 &middot; The low point</p>
+        </div>
+        <div style="flex:1; display:flex; flex-direction:column; justify-content:center;">
+          <p class="lowline" id="s10l0">Recognition without recall &mdash; on <b class="popnum">every model</b> we could test.</p>
+          <p class="lowline" id="s10l1">The system certified its own learning. <b class="popnum">93&ndash;100%</b> of those certificates were false.</p>
+          <p class="lowline" id="s10l2">The principled repair: <b class="popnum">16 runs</b>. Recall never moved.</p>
+          <p class="lowline" id="s10l3">A one-line textbook baseline beat our five-organ architecture &mdash; <b class="popnum">0.070 vs 0.012</b>.</p>
+          <p class="lowline final" id="s10l4">So the paper told the truth. Its title: <i>&ldquo;&hellip;Empirical <b style="color:#E0A44A;">Limits</b> of Biologically-Inspired Memory Consolidation.&rdquo;</i></p>
+          <p class="lowline hook" id="s10l5">&hellip;unless we were asking the wrong question.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <div class="footer-strip"><span>SLEEP &middot; SP Jain School of Global Management</span><span>Brain: MRI model by Nevit Dilmen (NIH 3DPX-003765) &middot; Aditya Tripathi</span></div>
@@ -680,6 +899,20 @@ const els = {
       comp:$('j-comp'), sleep:$('j-sleep'), out:$('j-out') },
   head6:$('s6-head'), m:{ mc:$('m-mc'), dra:$('m-dra'), bcp:$('m-bcp') },
   rq6:$('s6-rq'),
+  s7:{ eb:$('s7-eb'), chart:$('s7-chart'), zero:$('s7-zero'),
+       r:[$('s7r0'),$('s7r1'),$('s7r2')], f:[$('s7f0'),$('s7f1'),$('s7f2')],
+       n:[$('s7n0'),$('s7n1'),$('s7n2')], c:[$('s7c0'),$('s7c1'),$('s7c2')] },
+  s8:{ head:$('s8-head'),
+       r:[$('s8r0'),$('s8r1'),$('s8r2'),$('s8r3'),$('s8r4'),$('s8r5')] },
+  s9:{ eb:$('s9-eb'), leg:$('s9-leg'), chart:$('s9-chart'), card:$('s9card'),
+       zero:$('s9-zero'),
+       r:[$('s9r0'),$('s9r1'),$('s9r2'),$('s9r3')],
+       c:[$('s9c0'),$('s9c1'),$('s9c2'),$('s9c3')],
+       cn:[$('s9cn0'),$('s9cn1'),$('s9cn2'),$('s9cn3')],
+       f:[$('s9f0'),$('s9f1'),$('s9f2'),$('s9f3')],
+       fn:[$('s9fn0'),$('s9fn1'),$('s9fn2'),$('s9fn3')] },
+  s10:{ head:$('s10-head'),
+        l:[$('s10l0'),$('s10l1'),$('s10l2'),$('s10l3'),$('s10l4'),$('s10l5')] },
 };
 
 /* scene-5 stage windows + waypoint keys */
@@ -731,10 +964,15 @@ function update(){
     (window.__dbg.errors.length ? ' ERR ' + window.__dbg.errors[0] : '');
   const time = (performance.now()-t0)/1000;
   let p1 = prog('s1'), p2 = prog('s2'), p3 = prog('s3'), p4 = prog('s4'),
-      p5 = prog('s5'), p6 = prog('s6');
-  if(FS){ [p1,p2,p3,p4,p5,p6] = {'1':[FP,0,0,0,0,0],'2':[1,FP,0,0,0,0],
-                                 '3':[1,1,FP,0,0,0],'4':[1,1,1,FP,0,0],
-                                 '5':[1,1,1,1,FP,0],'6':[1,1,1,1,1,FP]}[FS]; }
+      p5 = prog('s5'), p6 = prog('s6'), p7 = prog('s7'), p8 = prog('s8'),
+      p9 = prog('s9'), p10 = prog('s10');
+  if(FS){
+    const n = parseInt(FS,10);
+    const arr = [0,0,0,0,0,0,0,0,0,0];
+    for(let i=0;i<n-1;i++) arr[i]=1;
+    arr[n-1]=FP;
+    [p1,p2,p3,p4,p5,p6,p7,p8,p9,p10] = arr;
+  }
 
   /* scene 1 — title vanishes upward */
   const e1 = seg(p1, 0.15, 0.9);
@@ -765,6 +1003,77 @@ function update(){
   els.lead3.style.opacity = seg(p3,0.02,0.07) * (1 - seg(p3,0.82,0.9));
 
   const defs = [];
+
+  /* scene 7 — first results: the chart tells it */
+  els.s7.eb.style.opacity = seg(p7,0.01,0.05);
+  const s7d = [[0.06,84],[0.38,36],[0.66,0]];
+  s7d.forEach((d,i)=>{
+    els.s7.r[i].style.opacity = seg(p7, d[0]-0.025, d[0]);
+    els.s7.f[i].style.width = (d[1]*seg(p7, d[0], d[0]+0.10)) + '%';
+    const nw = seg(p7, d[0]+0.09, d[0]+0.145);
+    els.s7.n[i].style.opacity = nw;
+    els.s7.n[i].style.transform = `scale(${0.45+0.55*nw})`;
+  });
+  const s7cw = [[0.19,0.35],[0.49,0.63],[0.75,0.90]];
+  s7cw.forEach((cw,i)=>{
+    const w = win(p7, cw, 0.03);
+    setF(els.s7.c[i], (1-w)*44, w);
+  });
+  const z7 = win(p7,[0.925,0.995],0.03);
+  els.s7.zero.style.opacity = z7;
+  els.s7.zero.style.transform = `scale(${0.55+0.5*z7})`;
+  els.s7.chart.style.opacity = 1 - 0.82*z7;
+
+  /* scene 8 — the feedbacks */
+  setF(els.s8.head, (1-seg(p8,0.02,0.09))*50, seg(p8,0.02,0.09));
+  els.s8.r.forEach((el,i)=>{
+    const a = 0.13 + i*0.115;
+    const w = seg(p8, a, a+0.09);
+    el.style.transform = `translateY(${(1-w)*60}px)`;
+    el.style.opacity = w;
+    const n = el.querySelector('.fbnum');
+    const nw = seg(p8, a+0.05, a+0.11);
+    n.style.transform = `scale(${0.55+0.5*nw})`;
+    n.style.opacity = 0.25+0.75*nw;
+  });
+
+  /* scene 9 — replication: the same chart, everywhere */
+  els.s9.eb.style.opacity = seg(p9,0.01,0.045);
+  els.s9.leg.style.opacity = seg(p9,0.03,0.07);
+  const s9ceil = [93,99,76,70], s9floor = [1.4,1.3,1.3,1.4];
+  els.s9.r.forEach((row,i)=>{
+    const a = 0.08 + i*0.16;
+    row.style.opacity = seg(p9, a-0.02, a);
+    els.s9.c[i].style.width  = (s9ceil[i]*seg(p9, a, a+0.065)) + '%';
+    const cnw = seg(p9, a+0.06, a+0.095);
+    els.s9.cn[i].style.opacity = cnw;
+    els.s9.cn[i].style.transform = `scale(${0.5+0.5*cnw})`;
+    els.s9.f[i].style.width  = (s9floor[i]*seg(p9, a+0.085, a+0.125)) + '%';
+    const fnw = seg(p9, a+0.11, a+0.15);
+    els.s9.fn[i].style.opacity = fnw;
+    els.s9.fn[i].style.transform = `scale(${0.5+0.6*fnw})`;
+  });
+  setF(els.s9.card, (1-win(p9,[0.10,0.30],0.03))*40, win(p9,[0.10,0.30],0.03));
+  const z9 = win(p9,[0.80,0.97],0.035);
+  els.s9.zero.style.opacity = z9;
+  els.s9.zero.style.transform = `scale(${0.55+0.5*z9})`;
+  els.s9.chart.style.opacity = 1 - 0.82*z9;
+  els.s9.leg.style.opacity = Math.min(parseFloat(els.s9.leg.style.opacity)||0, 1-z9);
+
+  /* scene 10 — the low point */
+  els.s10.head.style.opacity = seg(p10,0.01,0.05);
+  const s10a = [0.07,0.21,0.35,0.49,0.64,0.83];
+  els.s10.l.forEach((el,i)=>{
+    const a = s10a[i];
+    const w = seg(p10, a, a+0.09);
+    el.style.transform = `translateY(${(1-w)*44}px)`;
+    el.style.opacity = w;
+    const n = el.querySelector('.popnum');
+    if(n){
+      const nw = seg(p10, a+0.06, a+0.13);
+      n.style.transform = `scale(${0.78+0.26*nw})`;
+    }
+  });
 
   /* scene 6 — the exam (2D, light) */
   setF(els.head6, (1-seg(p6,0.02,0.10))*60, seg(p6,0.02,0.10));
@@ -917,7 +1226,8 @@ if(q.has('p')){
 }
 if(q.has('fs')){
   FS = q.get('fs'); FP = parseFloat(q.get('fp')||'0');
-  ['s1','s2','s3','s4','s5','s6'].forEach(id=>{ if(id !== 's'+FS) document.getElementById(id).style.display='none'; });
+  ['s1','s2','s3','s4','s5','s6','s7','s8','s9','s10'].forEach(id=>{
+    if(id !== 's'+FS) document.getElementById(id).style.display='none'; });
   measure();
 }
 if(q.has('shot')){
