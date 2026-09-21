@@ -208,6 +208,36 @@
   .lowline.hook { font-family:var(--mono); font-size:clamp(1rem,1.6vw,1.4rem); color:#4FB98A;
     letter-spacing:0.06em; margin-top:4vh; }
 
+  /* ---- scene 11: the repair ---- */
+  #s11 .brain-label { left:7vw; top:23vh; width:min(42vw,610px); }
+  #s11 .brain-label .k { color:var(--dark-accent); }
+  #r-mlp .k, #r-move .k, #r-done .k { color:#4FB98A; }
+  #r-clip1 .k, #r-clip2 .k { color:#E0A44A; }
+
+  /* ---- scenes 12-14 ---- */
+  .finale-cap { font-family:var(--serif); font-size:clamp(1rem,1.6vw,1.4rem);
+    color:var(--ink-soft); max-width:56ch; text-align:center; }
+  .lchart { position:absolute; left:7vw; right:7vw; top:16vh; bottom:12vh; opacity:0; }
+  .lchart svg { width:100%; height:100%; }
+  .lchart .ax { stroke:var(--ink); stroke-width:2.5; }
+  .lchart .gr { stroke:var(--line); stroke-width:1; }
+  .lchart .tk { font-family:var(--mono); font-size:17px; fill:var(--muted); }
+  .lchart .ct { font-family:var(--mono); font-size:19px; fill:var(--ink-soft);
+    letter-spacing:2px; text-transform:uppercase; }
+  #s13 .pop-card { bottom:6vh; left:auto; right:7vw; width:min(40vw,560px); }
+
+  .barow { display:grid; grid-template-columns:1fr 4vw 1fr; align-items:stretch;
+    gap:0; margin:1.5vh 0; }
+  .barow .blab { grid-column:1 / -1; font-family:var(--mono); font-size:clamp(10px,0.95vw,14px);
+    letter-spacing:0.13em; text-transform:uppercase; color:var(--muted); margin-bottom:0.6vh; }
+  .bcell { border-radius:8px; padding:1.6vh 1.4vw; font-size:clamp(0.88rem,1.3vw,1.15rem);
+    line-height:1.45; opacity:0; }
+  .bcell.before { background:#F7EDDA; border:1px solid #E0C48A; color:#7A5A18; }
+  .bcell.after  { background:#E2F1EA; border:1px solid #9ED4BA; color:#1E5C42; }
+  .bcell b { font-family:var(--mono); }
+  .barrow { display:flex; align-items:center; justify-content:center;
+    font-size:clamp(1.2rem,2vw,1.8rem); color:var(--muted); opacity:0; }
+
   .footer-strip { position:fixed; left:0; right:0; bottom:0; z-index:6;
     display:flex; justify-content:space-between; padding:12px 24px;
     font-family:var(--mono); font-size:12px; letter-spacing:0.06em; color:var(--muted);
@@ -662,6 +692,220 @@ A: "&hellip;$4,062 million, up 9.4%, driven by
       </div>
     </div>
   </section>
+
+  <!-- ================= SCENE 11 : THE TURN ================= -->
+  <section class="scene" id="s11" data-len="1150">
+    <div class="stage">
+      <div class="stage-inner">
+        <div class="head" id="s11-head">
+          <p class="eyebrow">10 &middot; The turn &mdash; the repair, live on the table</p>
+        </div>
+        <div class="brain-label" id="r-ret">
+          <span class="k">The pre-mortem</span>
+          <p>Assume the paper is wrong &mdash; <b>where is the bug?</b> Re-examine every choice,
+             starting with the one we never questioned: <b>where we write</b>.</p>
+        </div>
+        <div class="brain-label" id="r-wrong">
+          <span class="k">The wrong address</span>
+          <p>Our wafers sit on <b>top-third attention</b> &mdash; chosen because the biology analogy
+             said "neocortex lives up here." But attention <b>retrieves</b>; it doesn't store.
+             We were handing facts to the librarian.</p>
+        </div>
+        <div class="brain-label" id="r-mlp">
+          <span class="k">The right address &mdash; the MLP</span>
+          <p>An MLP plate is two big matrices back to back: pattern in &rarr; stored association out.
+             <b>A key&rarr;value cabinet.</b> Causal tracing (ROME, MEMIT) finds facts here &mdash;
+             in the <b>middle</b> layers.</p>
+          <pre>edit a mid-stack MLP  &rarr; the fact changes
+edit attention        &rarr; almost nothing
+the map was public all along</pre>
+        </div>
+        <div class="brain-label" id="r-move">
+          <span class="k">The move</span>
+          <p>Same wafers, new address. Two fixes ride along: teach each fact in <b>20+ wordings</b>,
+             distilled from the model's own <b>in-context answers</b>.</p>
+          <pre>placement : attention top-&#8531;  &rarr;  MLP mid-&#8531;
+replay    : 1 wording        &rarr;  20+
+teacher   : itself, with the fact in context</pre>
+        </div>
+        <div class="brain-label" id="r-clip1">
+          <span class="k">The third culprit &mdash; the safety clip</span>
+          <p><b>Why it exists:</b> after every training step, each weight change is capped, so
+             learning can never wreck the model. Insurance.</p>
+          <pre>after each step:
+  &Delta;W &larr; clip(&Delta;W, &plusmn;&delta;_max)
+set in April: &delta;_max = 0.01</pre>
+        </div>
+        <div class="brain-label" id="r-clip2">
+          <span class="k">Right-sized, not removed</span>
+          <p>At 0.01 the clip <b>erased the write after training made it</b> &mdash; recall 0.007,
+             again. Keep the insurance, loosen the grip.</p>
+          <pre>&delta;_max : 0.01  &rarr;  0.1
+recall: 0.007 &rarr;  0.21 &plusmn; 0.02
+damage: still under 1.0</pre>
+        </div>
+        <div class="brain-label" id="r-done">
+          <span class="k">SLEEP v2</span>
+          <p><b>Same organs. Right addresses. Right-sized rails.</b></p>
+          <div class="chips">
+            <span>write where facts live</span>
+            <span>teach the fact, not the sentence</span>
+            <span>safety that helps, not strangles</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SCENE 12 : THE PROOF ================= -->
+  <section class="scene" id="s12" data-len="820">
+    <div class="stage light">
+      <div class="stage-inner" style="justify-content:center;">
+        <p class="eyebrow" id="s12-eb">11 &middot; The proof &mdash; pre-registered validation, five seeds per model</p>
+        <div id="s12-chart" style="margin-top:3vh;">
+          <div class="xrow" id="s12r0">
+            <span class="xlab">Mistral-7B</span>
+            <div class="xtrack"><div class="xfill" id="s12f0" style="background:var(--green);"></div></div>
+            <span class="xnum" id="s12n0" style="color:var(--green);">0.750</span>
+          </div>
+          <div class="xrow" id="s12r1">
+            <span class="xlab">Llama-8B &#9873;</span>
+            <div class="xtrack"><div class="xfill" id="s12f1" style="background:var(--accent);"></div></div>
+            <span class="xnum" id="s12n1">0.512</span>
+          </div>
+          <div class="xrow" id="s12r2">
+            <span class="xlab">Qwen-7B</span>
+            <div class="xtrack"><div class="xfill" id="s12f2" style="background:var(--accent);"></div></div>
+            <span class="xnum" id="s12n2">0.189</span>
+          </div>
+          <div class="xrow" id="s12r3">
+            <span class="xlab">Qwen-1.5B</span>
+            <div class="xtrack"><div class="xfill" id="s12f3" style="background:var(--accent);"></div></div>
+            <span class="xnum" id="s12n3">0.105</span>
+          </div>
+        </div>
+        <div class="pop-card" id="s12c0">
+          <span class="k">0.750 &middot; recall, from weights</span>
+          <p>The same exam as before: store once &rarr; sleep &rarr; wipe the notes &rarr; ask.
+             <b>0.750 &plusmn; 0.033 across five seeds</b> &mdash; on a family the recipe never
+             saw during development. The old floor here was 0.007.</p>
+        </div>
+        <div class="pop-card" id="s12c1">
+          <span class="k">0.512 &middot; the honest flag</span>
+          <p><b>Llama recalls beautifully &mdash; but bleeds.</b> Its background damage stayed above
+             our bar at every clip setting we pre-registered. So it's flagged: <b>"not yet
+             tuned"</b> &mdash; reported, not hidden.</p>
+        </div>
+        <div class="pop-card" id="s12c2">
+          <span class="k">0.189 &middot; the prediction, hit</span>
+          <p>Qwen-7B: <b>0.189 &plusmn; 0.031 at damage 0.88</b> &mdash; every seed under 1.0. The
+             pre-registered prediction said 0.15&ndash;0.30. It landed inside.</p>
+        </div>
+        <div class="pop-card" id="s12c3">
+          <span class="k">0.105 &middot; the small one</span>
+          <p>The 1.5B model passes, thinly. <b>Extraction capacity seems to grow with size</b> &mdash;
+             a finding in its own right.</p>
+        </div>
+        <div class="zero-overlay" id="s12-zero">
+          <span class="z" style="color:var(--green); font-size:clamp(5rem,15vw,13rem);">0.750</span>
+          <span class="zc">mistral-7b &middot; 125&times; the old floor &middot; 35 runs, zero failures</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SCENE 13 : THE LONG RUN ================= -->
+  <section class="scene" id="s13" data-len="1050">
+    <div class="stage light">
+      <div class="stage-inner">
+        <p class="eyebrow" id="s13-eb" style="opacity:0;">12 &middot; The long run &mdash; ten cycles, line by line</p>
+        <div class="lchart" id="s13A">
+          <svg viewBox="0 0 980 400" preserveAspectRatio="xMidYMid meet">
+            <text x="60" y="24" class="ct">cumulative recall (DRA) over 10 cycles</text>
+            <line x1="60" x2="960" y1="360" y2="360" class="ax"/><line x1="60" x2="60" y1="40" y2="360" class="ax"/><line x1="60" x2="960" y1="55" y2="55" class="gr"/><line x1="60" x2="960" y1="157" y2="157" class="gr"/><line x1="60" x2="960" y1="259" y2="259" class="gr"/><text x="40" y="365" class="tk">0</text><text x="30" y="262" class="tk">0.1</text><text x="30" y="158" class="tk">0.2</text><text x="30" y="55" class="tk">0.3</text><text x="66" y="386" class="tk">1</text><text x="160" y="386" class="tk">2</text><text x="254" y="386" class="tk">3</text><text x="348" y="386" class="tk">4</text><text x="442" y="386" class="tk">5</text><text x="536" y="386" class="tk">6</text><text x="630" y="386" class="tk">7</text><text x="724" y="386" class="tk">8</text><text x="818" y="386" class="tk">9</text><text x="912" y="386" class="tk">10</text><polyline id="lnAv2s0" class="tl" points="70.0,119.2 164.0,161.6 258.0,227.7 352.0,209.1 446.0,153.3 540.0,176.1 634.0,202.9 728.0,187.4 822.0,200.9 916.0,181.2" fill="none" stroke="#2C7D57" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="0"/><polyline id="lnAv2s1" class="tl" points="70.0,84.1 164.0,179.2 258.0,268.0 352.0,209.1 446.0,129.6 540.0,185.4 634.0,197.8 728.0,159.5 822.0,160.6 916.0,179.2" fill="none" stroke="#2C7D57" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="7 9" opacity="0"/><polyline id="lnAews0" class="tl" points="70.0,239.1 164.0,334.2 258.0,290.8 352.0,312.5 446.0,290.8 540.0,314.5 634.0,308.3 728.0,295.9 822.0,308.3 916.0,298.0" fill="none" stroke="#3D52C9" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="0"/><polyline id="lnAews1" class="tl" points="70.0,290.8 164.0,334.2 258.0,342.4 352.0,304.2 446.0,339.3 540.0,314.5 634.0,310.4 728.0,330.0 822.0,315.6 916.0,306.3" fill="none" stroke="#3D52C9" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="7 9" opacity="0"/><polyline id="lnAnvs0" class="tl" points="70.0,239.1 164.0,300.1 258.0,279.4 352.0,290.8 446.0,318.7 540.0,297.0 634.0,313.5 728.0,306.3 822.0,321.8 916.0,305.2" fill="none" stroke="#A96D12" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="0"/><polyline id="lnAnvs1" class="tl" points="70.0,290.8 164.0,325.9 258.0,319.7 352.0,338.3 446.0,318.7 540.0,325.9 634.0,328.0 728.0,286.6 822.0,315.6 916.0,298.0" fill="none" stroke="#A96D12" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="7 9" opacity="0"/>
+          </svg>
+        </div>
+        <div class="lchart" id="s13B">
+          <svg viewBox="0 0 980 400" preserveAspectRatio="xMidYMid meet">
+            <text x="60" y="24" class="ct">damage meter (BCP) over the same 10 cycles</text>
+            <line x1="60" x2="960" y1="360" y2="360" class="ax"/><line x1="60" x2="60" y1="40" y2="360" class="ax"/><line x1="60" x2="960" y1="55" y2="55" class="gr"/><line x1="60" x2="960" y1="157" y2="157" class="gr"/><line x1="60" x2="960" y1="259" y2="259" class="gr"/><text x="30" y="330" class="tk">1.0</text><text x="30" y="238" class="tk">1.5</text><text x="30" y="147" class="tk">2.0</text><text x="30" y="56" class="tk">2.5</text><text x="66" y="386" class="tk">1</text><text x="160" y="386" class="tk">2</text><text x="254" y="386" class="tk">3</text><text x="348" y="386" class="tk">4</text><text x="442" y="386" class="tk">5</text><text x="536" y="386" class="tk">6</text><text x="630" y="386" class="tk">7</text><text x="724" y="386" class="tk">8</text><text x="818" y="386" class="tk">9</text><text x="912" y="386" class="tk">10</text><polyline id="lnBv2s0" class="tl" points="70.0,330.8 164.0,294.4 258.0,237.8 352.0,195.9 446.0,194.1 540.0,184.9 634.0,161.2 728.0,164.9 822.0,132.1 916.0,164.9" fill="none" stroke="#2C7D57" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="0"/><polyline id="lnBv2s1" class="tl" points="70.0,327.2 164.0,270.6 258.0,228.7 352.0,226.9 446.0,190.4 540.0,174.0 634.0,99.2 728.0,126.6 822.0,126.6 916.0,97.4" fill="none" stroke="#2C7D57" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="7 9" opacity="0"/><polyline id="lnBews0" class="tl" points="70.0,215.9 164.0,188.6 258.0,119.3 352.0,152.1 446.0,150.3 540.0,112.0 634.0,179.5 728.0,183.1 822.0,215.9 916.0,226.9" fill="none" stroke="#3D52C9" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="0"/><polyline id="lnBews1" class="tl" points="70.0,212.3 164.0,146.6 258.0,190.4 352.0,153.9 446.0,159.4 540.0,161.2 634.0,168.5 728.0,159.4 822.0,164.9 916.0,177.6" fill="none" stroke="#3D52C9" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="7 9" opacity="0"/><polyline id="lnBnvs0" class="tl" points="70.0,215.9 164.0,175.8 258.0,128.4 352.0,190.4 446.0,181.3 540.0,166.7 634.0,203.2 728.0,206.8 822.0,223.2 916.0,203.2" fill="none" stroke="#A96D12" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="0"/><polyline id="lnBnvs1" class="tl" points="70.0,212.3 164.0,144.8 258.0,184.9 352.0,175.8 446.0,195.9 540.0,190.4 634.0,254.2 728.0,190.4 822.0,163.1 916.0,177.6" fill="none" stroke="#A96D12" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="7 9" opacity="0"/>
+          </svg>
+        </div>
+        <div class="pop-card" id="s13c0">
+          <span class="k" style="color:var(--green);">the green line</span>
+          <p><b>SLEEP v2, one full run</b> &mdash; recall over every fact seen so far, ten cycles of
+             twenty new facts each. Solid = seed 0.</p>
+        </div>
+        <div class="pop-card" id="s13c1">
+          <span class="k" style="color:var(--green);">the dotted twin</span>
+          <p><b>Same config, different dice</b> &mdash; seed 1, drawn dotted. The twins agree almost
+             everywhere. Two seeds agreeing is what trust looks like.</p>
+        </div>
+        <div class="pop-card" id="s13c2">
+          <span class="k">the blue pair &middot; EWC</span>
+          <p><b>The standard continual-learning baseline.</b> Its penalty preserves the model
+             beautifully &mdash; and it learns almost nothing: it hovers near 0.05.
+             <b>Preventing forgetting &ne; creating knowledge.</b></p>
+        </div>
+        <div class="pop-card" id="s13c3">
+          <span class="k" style="color:var(--amber);">the amber pair &middot; naive</span>
+          <p><b>Plain fine-tuning</b>, both seeds &mdash; same level as EWC. SLEEP v2 holds
+             <b>&asymp;3&times; above both baselines for the entire horizon</b>, on both seeds.</p>
+        </div>
+        <div class="pop-card" id="s13c4">
+          <span class="k" style="color:var(--green);">now the cost</span>
+          <p><b>Same six runs, now the damage meter.</b> SLEEP v2 drifts gently, &asymp;1.0 &rarr; 2.2
+             &mdash; no cliffs, no explosions. The old "plateau lottery" is gone.</p>
+        </div>
+        <div class="pop-card" id="s13c5">
+          <span class="k">all in one band</span>
+          <p>The baselines pay a similar damage bill <b>on this model</b>. Elsewhere they don't:
+             at 1.5B, naive detonated to <b>&times;24</b>. SLEEP held <b>&times;2.4</b>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SCENE 14 : BEFORE / AFTER ================= -->
+  <section class="scene" id="s14" data-len="720">
+    <div class="stage light">
+      <div class="stage-inner" style="justify-content:center;">
+        <div id="s14-head">
+          <p class="eyebrow">13 &middot; Before &rarr; after</p>
+        </div>
+        <div class="barow" id="s14r0">
+          <span class="blab">Recall</span>
+          <div class="bcell before"><b>0.006</b> &mdash; the floor, every model</div>
+          <div class="barrow">&rarr;</div>
+          <div class="bcell after"><b>0.105 &ndash; 0.750</b> &mdash; all four models, five seeds each</div>
+        </div>
+        <div class="barow" id="s14r1">
+          <span class="blab">The safety machinery</span>
+          <div class="bcell before">erased its own learning (&delta; 0.01 &rarr; recall <b>0.007</b>)</div>
+          <div class="barrow">&rarr;</div>
+          <div class="bcell after">prevents catastrophe (naive <b>&times;24</b> damage; SLEEP <b>&times;2.4</b>)</div>
+        </div>
+        <div class="barow" id="s14r2">
+          <span class="blab">Run-to-run stability</span>
+          <div class="bcell before">the plateau lottery &mdash; <b>2.7 &rarr; 1,531</b> on identical configs</div>
+          <div class="barrow">&rarr;</div>
+          <div class="bcell after">seed spread <b>&asymp; 0.005</b> &mdash; smooth, repeatable</div>
+        </div>
+        <div class="barow" id="s14r3">
+          <span class="blab">Validation</span>
+          <div class="bcell before"><b>93&ndash;100%</b> false self-certificates</div>
+          <div class="barrow">&rarr;</div>
+          <div class="bcell after">every consolidation passes an <b>external recall gate</b></div>
+        </div>
+        <div class="barow" id="s14r4">
+          <span class="blab">The title</span>
+          <div class="bcell before"><i>&ldquo;&hellip;Empirical <b>Limits</b>&hellip;&rdquo;</i></div>
+          <div class="barrow">&rarr;</div>
+          <div class="bcell after"><i>&ldquo;<b>Diagnosing and Repairing</b>&hellip;&rdquo;</i></div>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <div class="footer-strip"><span>SLEEP &middot; SP Jain School of Global Management</span><span>Brain: MRI model by Nevit Dilmen (NIH 3DPX-003765) &middot; Aditya Tripathi</span></div>
@@ -913,7 +1157,32 @@ const els = {
        fn:[$('s9fn0'),$('s9fn1'),$('s9fn2'),$('s9fn3')] },
   s10:{ head:$('s10-head'),
         l:[$('s10l0'),$('s10l1'),$('s10l2'),$('s10l3'),$('s10l4'),$('s10l5')] },
+  s11:{ head:$('s11-head'), ret:$('r-ret'), wrong:$('r-wrong'), mlp:$('r-mlp'),
+        move:$('r-move'), clip1:$('r-clip1'), clip2:$('r-clip2'), done:$('r-done') },
+  s12:{ eb:$('s12-eb'), chart:$('s12-chart'), zero:$('s12-zero'),
+        r:[$('s12r0'),$('s12r1'),$('s12r2'),$('s12r3')],
+        f:[$('s12f0'),$('s12f1'),$('s12f2'),$('s12f3')],
+        n:[$('s12n0'),$('s12n1'),$('s12n2'),$('s12n3')],
+        c:[$('s12c0'),$('s12c1'),$('s12c2'),$('s12c3')] },
+  s13:{ eb:$('s13-eb'), A:$('s13A'), B:$('s13B'),
+        c:[$('s13c0'),$('s13c1'),$('s13c2'),$('s13c3'),$('s13c4'),$('s13c5')] },
+  s14:{ head:$('s14-head'),
+        r:[$('s14r0'),$('s14r1'),$('s14r2'),$('s14r3'),$('s14r4')] },
 };
+
+/* line-chart draw-on: measure path lengths once */
+const TL = {};
+function lineDraw(chart, key, w, dashed){
+  const el = document.getElementById('ln'+chart+key);
+  if(!el) return;
+  if(dashed){ el.setAttribute('opacity', w); return; }
+  if(TL['ln'+chart+key] === undefined){
+    TL['ln'+chart+key] = el.getTotalLength();
+    el.style.strokeDasharray = TL['ln'+chart+key];
+  }
+  el.style.strokeDashoffset = TL['ln'+chart+key] * (1 - w);
+  el.setAttribute('opacity', w > 0 ? 1 : 0);
+}
 
 /* scene-5 stage windows + waypoint keys */
 const ST5 = { in:[0.02,0.135], read:[0.155,0.27], tag:[0.29,0.40],
@@ -965,13 +1234,14 @@ function update(){
   const time = (performance.now()-t0)/1000;
   let p1 = prog('s1'), p2 = prog('s2'), p3 = prog('s3'), p4 = prog('s4'),
       p5 = prog('s5'), p6 = prog('s6'), p7 = prog('s7'), p8 = prog('s8'),
-      p9 = prog('s9'), p10 = prog('s10');
+      p9 = prog('s9'), p10 = prog('s10'), p11 = prog('s11'), p12 = prog('s12'),
+      p13 = prog('s13'), p14 = prog('s14');
   if(FS){
     const n = parseInt(FS,10);
-    const arr = [0,0,0,0,0,0,0,0,0,0];
+    const arr = [0,0,0,0,0,0,0,0,0,0,0,0,0,0];
     for(let i=0;i<n-1;i++) arr[i]=1;
     arr[n-1]=FP;
-    [p1,p2,p3,p4,p5,p6,p7,p8,p9,p10] = arr;
+    [p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14] = arr;
   }
 
   /* scene 1 — title vanishes upward */
@@ -995,7 +1265,8 @@ function update(){
   stage2.style.opacity = 1 - x2*0.9;
 
   /* scene 3 — brain */
-  const glIn = seg(p2, 0.92, 1) * (1 - seg(p5, 0.985, 1));
+  const glIn = clamp(seg(p2, 0.92, 1) * (1 - seg(p5, 0.985, 1))
+             + seg(p11, 0.002, 0.03) * (1 - seg(p11, 0.985, 1)), 0, 1);
   els.gl.style.opacity = glIn;
   els.svg.style.opacity = glIn;
 
@@ -1085,7 +1356,93 @@ function update(){
   });
   setF(els.rq6, (1-seg(p6,0.64,0.76))*50, seg(p6,0.64,0.76));
 
-  if(p5 > 0.0005 && renderer){
+  /* scenes 12-14 — the proof era (2D) */
+  els.s12.eb.style.opacity = seg(p12,0.01,0.05);
+  const s12d = [[0.06,90,'0.750'],[0.22,61,'0.512'],[0.38,23,'0.189'],[0.54,13,'0.105']];
+  s12d.forEach((d,i)=>{
+    els.s12.r[i].style.opacity = seg(p12, d[0]-0.025, d[0]);
+    els.s12.f[i].style.width = (d[1]*seg(p12, d[0], d[0]+0.07)) + '%';
+    const nw = seg(p12, d[0]+0.06, d[0]+0.10);
+    els.s12.n[i].style.opacity = nw;
+    els.s12.n[i].style.transform = `scale(${0.45+0.55*nw})`;
+    const cw = win(p12, [d[0]+0.055, d[0]+0.15], 0.025);
+    setF(els.s12.c[i], (1-cw)*44, cw);
+  });
+  const z12 = win(p12,[0.78,0.985],0.04);
+  els.s12.zero.style.opacity = z12;
+  els.s12.zero.style.transform = `scale(${0.55+0.5*z12})`;
+  els.s12.chart.style.opacity = 1 - 0.85*z12;
+
+  /* scene 13 — the long run, line by line */
+  els.s13.eb.style.opacity = seg(p13,0.01,0.045);
+  const swapAB = seg(p13,0.545,0.585);
+  els.s13.A.style.opacity = seg(p13,0.03,0.07) * (1-swapAB);
+  els.s13.B.style.opacity = swapAB;
+  lineDraw('A','v2s0', seg(p13,0.065,0.135), false);
+  lineDraw('A','v2s1', seg(p13,0.185,0.235), true);
+  lineDraw('A','ews0', seg(p13,0.295,0.36), false);
+  lineDraw('A','ews1', seg(p13,0.315,0.375), true);
+  lineDraw('A','nvs0', seg(p13,0.42,0.485), false);
+  lineDraw('A','nvs1', seg(p13,0.44,0.50), true);
+  lineDraw('B','v2s0', seg(p13,0.60,0.665), false);
+  lineDraw('B','v2s1', seg(p13,0.62,0.68), true);
+  lineDraw('B','ews0', seg(p13,0.745,0.81), false);
+  lineDraw('B','ews1', seg(p13,0.76,0.82), true);
+  lineDraw('B','nvs0', seg(p13,0.775,0.835), false);
+  lineDraw('B','nvs1', seg(p13,0.79,0.85), true);
+  const s13cw = [[0.075,0.17],[0.195,0.28],[0.30,0.405],[0.425,0.535],
+                 [0.605,0.73],[0.75,0.93]];
+  s13cw.forEach((cw,i)=>{
+    const w = win(p13, cw, 0.03);
+    setF(els.s13.c[i], (1-w)*44, w);
+  });
+
+  /* scene 14 — before / after */
+  els.s14.head.style.opacity = seg(p14,0.01,0.06);
+  els.s14.r.forEach((row,i)=>{
+    const a = 0.09 + i*0.15;
+    const cells = row.querySelectorAll('.bcell, .barrow');
+    const wB = seg(p14, a, a+0.07);
+    const wA = seg(p14, a+0.05, a+0.13);
+    row.style.opacity = Math.max(wB, 0.001);
+    cells.forEach(c=>{
+      const w = c.classList.contains('after') ? wA :
+                (c.classList.contains('barrow') ? Math.min(wB,wA)*0.9+wA*0.1 : wB);
+      c.style.opacity = w;
+      c.style.transform = `translateY(${(1-w)*36}px)`;
+    });
+  });
+
+  if(p11 > 0.0005 && p12 <= 0 && renderer){
+    /* ---- scene 11: the repair ---- */
+    if(brainRoot) brainRoot.visible = false;
+    const explode = seg(p11,0.10,0.16) * (1 - seg(p11,0.84,0.90));
+    const wMove = seg(p11,0.43,0.575);
+    const clampOn = seg(p11,0.595,0.635) * (1 - seg(p11,0.90,0.94));
+    const clampFix = seg(p11,0.72,0.76);
+    const hiA = win(p11,[0.17,0.30],0.04);
+    const hiM = win(p11,[0.295,0.60],0.05);
+    const alive = seg(p11,0.895,0.945);
+    TOWER.setState({visible:true, explode,
+      appear:{tag:1,kv:1,prp:1,engine:1,wafer:1}, alive,
+      pulse:{}, time, waferMove:wMove, clampOn, clampFix, hiAttn:hiA, hiMLP:hiM});
+    TOWER.setJourney({active:false});
+    TOWER.setCamRepair(camera, p11);
+    setF(els.s11.head, (1-seg(p11,0.005,0.05))*30,
+         seg(p11,0.005,0.05) * (1 - seg(p11,0.97,0.995)));
+    defs.push(
+      [els.s11.ret,   win(p11,[0.015,0.095],0.03), null],
+      [els.s11.wrong, win(p11,[0.17,0.285],0.035), TOWER.target('wafer'),'right'],
+      [els.s11.mlp,   win(p11,[0.30,0.415],0.035), TOWER.target('mid'),  'right'],
+      [els.s11.move,  win(p11,[0.435,0.585],0.035),TOWER.target('wafer'),'right'],
+      [els.s11.clip1, win(p11,[0.60,0.705],0.035), TOWER.target('clamp'),'right'],
+      [els.s11.clip2, win(p11,[0.72,0.825],0.035), TOWER.target('clamp'),'right'],
+      [els.s11.done,  win(p11,[0.87,0.975],0.035), null],
+    );
+    els.dim.style.opacity = 0;
+    if(glIn > 0.002) renderer.render(scene, camera);
+  }
+  else if(p5 > 0.0005 && p6 <= 0 && renderer){
     /* ---- scene 5: the journey through the assembled tower ---- */
     if(brainRoot) brainRoot.visible = false;
     const ws = { in:win(p5,ST5.in), read:win(p5,ST5.read), tag:win(p5,ST5.tag),
@@ -1226,7 +1583,7 @@ if(q.has('p')){
 }
 if(q.has('fs')){
   FS = q.get('fs'); FP = parseFloat(q.get('fp')||'0');
-  ['s1','s2','s3','s4','s5','s6','s7','s8','s9','s10'].forEach(id=>{
+  ['s1','s2','s3','s4','s5','s6','s7','s8','s9','s10','s11','s12','s13','s14'].forEach(id=>{
     if(id !== 's'+FS) document.getElementById(id).style.display='none'; });
   measure();
 }

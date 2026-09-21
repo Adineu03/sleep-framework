@@ -8,7 +8,7 @@ window.TOWER = (function(){
   const smooth=t=>{t=clamp(t,0,1);return t*t*(3-2*t);};
   const lerp=(a,b,t)=>a+(b-a)*t;
 
-  const N=12, TOP=[8,9,10,11], SCALE=0.78, EXPLODE_K=1.05;
+  const N=12, TOP=[8,9,10,11], MID=[4,5,6,7], SCALE=0.78, EXPLODE_K=1.05;
   const ATTN_H=0.055, MLP_H=0.11, GAP_IN=0.026, GAP_OUT=0.05;
   const FOOT_W=1.15, FOOT_D=0.78;
 
@@ -160,6 +160,12 @@ window.TOWER = (function(){
     const sy=(Math.max(...tys)+Math.min(...tys))/2;
     vault.userData.to.y=sy; vault.userData.from.y=sy;
     shell.scale.y=vaultBaseSpan/1.0;
+
+    // safety clamp: an amber wire cage around the wafer stack (scene 11)
+    const cage=new THREE.LineSegments(
+      new THREE.EdgesGeometry(new THREE.BoxGeometry(FOOT_W*1.14,1,FOOT_D*1.18)),
+      new THREE.LineBasicMaterial({color:0xE0A44A, transparent:true, opacity:0}));
+    root.add(cage); pieces.clamp=cage;
   }
 
   /* o = { visible, explode, appear:{tag,kv,prp,engine,wafer}, alive, pulse:{...}, time } */
@@ -227,15 +233,60 @@ window.TOWER = (function(){
     pieces.pod.userData.glow.material.opacity=
       o.appear.engine*(0.3+0.5*(0.5+0.5*Math.sin(t*1.8))*(0.3+0.7*(o.pulse.engine||0)));
 
-    // wafers ride their attention plates; slide in on the x axis
-    pieces.wafers.forEach(wf=>{
+    // wafers: slide in (scene 4) or migrate top-attention -> mid-MLP (scene 11)
+    const wm=o.waferMove||0;
+    pieces.wafers.forEach((wf,idx)=>{
       const {li,j}=wf.userData;
-      const plate=layerMeshes[li+1].attn;
-      wf.position.y=plate.position.y+ATTN_H/2+0.014;
-      const tj=clamp(o.appear.wafer*1.45-j*0.13,0,1), s=smooth(tj);
-      wf.position.x=lerp(1.95+j*0.1,0,s);
-      wf.material.opacity=s*0.9; wf.userData.edge.opacity=s;
+      const topPlate=layerMeshes[li+1].attn;
+      const midPlate=layerMeshes[MID[idx]+1].mlp;
+      const yTop=topPlate.position.y+ATTN_H/2+0.014;
+      const yMid=midPlate.position.y+MLP_H/2+0.014;
+      const mt=clamp(wm*1.3-idx*0.09,0,1);
+      if(mt<=0){
+        const tj=clamp(o.appear.wafer*1.45-j*0.13,0,1), s=smooth(tj);
+        wf.position.x=lerp(1.95+j*0.1,0,s);
+        wf.position.y=yTop;
+        wf.material.opacity=s*0.9; wf.userData.edge.opacity=s;
+      } else {
+        const p1=smooth(clamp(mt/0.32,0,1));
+        const p2=smooth(clamp((mt-0.32)/0.42,0,1));
+        const p3=smooth(clamp((mt-0.76)/0.24,0,1));
+        wf.position.x=1.55*(p1-p3);
+        wf.position.y=lerp(yTop,yMid,p2);
+        wf.material.opacity=0.9; wf.userData.edge.opacity=1;
+      }
     });
+
+    // plate highlights (scene 11 explanations)
+    const cAttnBase=0x5F74E8, cMlpBase=0x3d4a78, cAmber=0xE0A44A, cGreen=0x4FB98A;
+    const _a=new THREE.Color(cAttnBase), _am=new THREE.Color(cAmber),
+          _m=new THREE.Color(cMlpBase), _g=new THREE.Color(cGreen);
+    TOP.forEach(li=>{
+      const e=layerMeshes[li+1].attn.userData.edge;
+      e.color.lerpColors(_a,_am,o.hiAttn||0);
+      e.opacity=Math.max(e.opacity,(o.hiAttn||0)*(0.7+0.3*Math.sin(t*4)));
+    });
+    MID.forEach(li=>{
+      const e=layerMeshes[li+1].mlp.userData.edge;
+      e.color.lerpColors(_m,_g,o.hiMLP||0);
+      e.opacity=Math.max(e.opacity,(o.hiMLP||0)*(0.7+0.3*Math.sin(t*4)));
+    });
+
+    // the safety clamp cage follows the wafer stack
+    const con=o.clampOn||0;
+    if(con>0){
+      const ys=pieces.wafers.map(w=>w.position.y);
+      const cy2=(Math.max(...ys)+Math.min(...ys))/2;
+      const spanY=Math.max(...ys)-Math.min(...ys)+0.24;
+      pieces.clamp.position.set(0,cy2,0);
+      pieces.clamp.scale.y=spanY;
+      const fix=o.clampFix||0;
+      pieces.clamp.material.color.lerpColors(_am,_g,fix);
+      const grip=1-0.06*Math.sin(t*3)*(1-fix);
+      pieces.clamp.scale.x=grip+0.10*fix;
+      pieces.clamp.scale.z=grip+0.10*fix;
+      pieces.clamp.material.opacity=con*(0.7+0.3*Math.sin(t*2.5));
+    } else pieces.clamp.material.opacity=0;
 
     // token streams
     const adv=(pts)=>{
@@ -285,7 +336,34 @@ window.TOWER = (function(){
   function target(key){
     return {tag:pieces.ring, kv:pieces.vault, prp:pieces.valve,
             engine:pieces.pod, wafer:pieces.wafers&&pieces.wafers[3],
-            base:layerMeshes[0]&&layerMeshes[0].solo}[key]||null;
+            base:layerMeshes[0]&&layerMeshes[0].solo,
+            mid:layerMeshes[6]&&layerMeshes[6].mlp,
+            clamp:pieces.clamp}[key]||null;
+  }
+
+  /* camera for scene 11 — the repair */
+  const RCAMS=[
+    [0.000, 7.6, -0.45, 1.20, 0.10],
+    [0.055, 6.0, -0.35, 1.18, 0.10],   // the tower returns
+    [0.135, 7.4, -0.10, 1.12, 0.15],   // open it up
+    [0.225, 4.9,  0.35, 1.02, 1.55],   // the wrong address (top third)
+    [0.355, 4.7,  0.30, 1.30, -0.45],  // the right address (mid MLPs)
+    [0.505, 6.2,  0.45, 1.16, 0.55],   // the move (wide, follow)
+    [0.650, 4.4,  0.30, 1.28, -0.45],  // the clip, gripping the wafers
+    [0.770, 4.6,  0.25, 1.26, -0.45],  // right-sizing it
+    [0.880, 6.6, -0.35, 1.14, 0.10],   // reassembly
+    [0.980, 7.8, -0.55, 1.20, 0.10],
+  ];
+  function setCamRepair(camera,p){
+    let i=0;
+    while(i<RCAMS.length-2 && p>RCAMS[i+1][0]) i++;
+    const A=RCAMS[i], B=RCAMS[i+1];
+    const f=smooth((p-A[0])/(B[0]-A[0]));
+    const r=lerp(A[1],B[1],f), az=lerp(A[2],B[2],f),
+          po=lerp(A[3],B[3],f), ty=lerp(A[4],B[4],f)*SCALE;
+    camera.position.set(r*Math.sin(po)*Math.cos(az), r*Math.cos(po)+ty,
+                        r*Math.sin(po)*Math.sin(az));
+    camera.lookAt(0,ty,0);
   }
 
   /* ---------- scene 5: one fact's journey ----------
@@ -363,5 +441,5 @@ window.TOWER = (function(){
     camera.lookAt(0,ty,0);
   }
 
-  return { build, setState, setCam, target, setJourney, setCamJourney };
+  return { build, setState, setCam, target, setJourney, setCamJourney, setCamRepair };
 })();
