@@ -12,7 +12,7 @@ window.TOWER = (function(){
   const ATTN_H=0.055, MLP_H=0.11, GAP_IN=0.026, GAP_OUT=0.05;
   const FOOT_W=1.15, FOOT_D=0.78;
 
-  let root=null, centerY=0, lastT=null;
+  let root=null, centerY=0, lastT=null, sceneRef=null;
   const layerMeshes=[];            // {attn, mlp}
   const pieces={};                 // ring, vault, valve, pod, wafers[]
   let pBlue=null, pGreen=null, blueMat=null, greenMat=null;
@@ -53,6 +53,7 @@ window.TOWER = (function(){
   }
 
   function build(scene){
+    sceneRef=scene;
     root=new THREE.Group(); root.scale.setScalar(SCALE); root.visible=false;
     scene.add(root);
 
@@ -441,5 +442,179 @@ window.TOWER = (function(){
     camera.lookAt(0,ty,0);
   }
 
-  return { build, setState, setCam, target, setJourney, setCamJourney, setCamRepair };
+  /* ================= scene 15: the memory shelf ================= */
+  let shelfRoot=null, shelfCubes=[], shelfSweep=null;
+  const C_DIM=new THREE.Color(0x152218), C_BRT=new THREE.Color(0x4FB98A);
+  function buildShelf(){
+    shelfRoot=new THREE.Group(); shelfRoot.visible=false; sceneRef.add(shelfRoot);
+    for(let i=0;i<10;i++){
+      const m=edged(new THREE.BoxGeometry(0.36,0.36,0.36), 0x152218, 0x2C7D57,
+        {opacity:0.96});
+      m.position.set(i*0.5-2.25, 0, 0);
+      shelfRoot.add(m); shelfCubes.push(m);
+    }
+    shelfSweep=glowSprite('#7FE8C0',0.9); shelfSweep.material.opacity=0;
+    shelfRoot.add(shelfSweep);
+  }
+  /* o = {visible, appearT, fadeAmt, sweepX(null|x), time} */
+  function setShelf(o){
+    if(!shelfRoot) return;
+    shelfRoot.visible=o.visible; if(!o.visible) return;
+    shelfCubes.forEach((m,i)=>{
+      const appeared=smooth(clamp(o.appearT*11-i,0,1));
+      const age=clamp((o.appearT*11-i-1)/9,0,1);
+      let bright=appeared*(1-0.78*o.fadeAmt*age);
+      if(o.sweepX!==null){
+        const relight=smooth((o.sweepX-m.position.x+0.35)/0.7);
+        bright=Math.max(bright, appeared*(0.25+0.72*relight));
+        const d=Math.abs(m.position.x-o.sweepX);
+        bright=Math.min(1, bright+Math.exp(-d*d*3)*0.5);
+      }
+      m.material.color.lerpColors(C_DIM,C_BRT,bright);
+      m.userData.edge.opacity=0.25+0.75*bright;
+      const s=0.92+0.14*bright+0.02*Math.sin(o.time*2+i);
+      m.scale.setScalar(s);
+    });
+    if(o.sweepX!==null){
+      shelfSweep.position.set(o.sweepX, 0.42, 0.1);
+      shelfSweep.material.opacity=0.85;
+    } else shelfSweep.material.opacity=0;
+  }
+  function setCamShelf(camera,p){
+    const f=smooth(p);
+    const r=lerp(5.6,4.9,f), az=lerp(-0.55,0.40,f), po=lerp(1.22,1.12,f);
+    camera.position.set(r*Math.sin(po)*Math.cos(az), r*Math.cos(po),
+                        r*Math.sin(po)*Math.sin(az));
+    camera.lookAt(0,0,0);
+  }
+
+  /* ================= scene 16: two offices, one memory ================= */
+  let officeRoot=null; const off={};
+  function person(shirtHex, skinHex){
+    const g=new THREE.Group();
+    const body=new THREE.Mesh(new THREE.CapsuleGeometry(0.17,0.34,6,14),
+      new THREE.MeshPhysicalMaterial({color:shirtHex, roughness:0.6}));
+    body.position.y=0.62; g.add(body);
+    const head=new THREE.Mesh(new THREE.SphereGeometry(0.145,20,16),
+      new THREE.MeshPhysicalMaterial({color:skinHex, roughness:0.55}));
+    head.position.y=1.05; g.add(head);
+    g.userData.head=head;
+    return g;
+  }
+  function deskSet(sx, shirt, skin){
+    const g=new THREE.Group();
+    const desk=edged(new THREE.BoxGeometry(1.15,0.06,0.62), 0x1a2133, 0x46527F);
+    desk.position.set(0,0.58,0); g.add(desk);
+    const mon=new THREE.Group();
+    const frame=edged(new THREE.BoxGeometry(0.52,0.36,0.045), 0x10141f, 0x46527F);
+    mon.add(frame);
+    const scr=new THREE.Mesh(new THREE.PlaneGeometry(0.46,0.30),
+      new THREE.MeshBasicMaterial({color:0x22305a, transparent:true, opacity:0.95}));
+    scr.position.z=0.026; mon.add(scr);
+    mon.position.set(0,0.86,0.05);
+    mon.rotation.y=sx>0?0.5:-0.5;
+    g.add(mon);
+    const p=person(shirt, skin);
+    p.position.set(sx>0?0.35:-0.35, 0, 0.55);
+    g.add(p);
+    g.position.set(sx,0,0.2);
+    return {g, screen:scr, person:p, monitor:mon};
+  }
+  function buildOffice(){
+    officeRoot=new THREE.Group(); officeRoot.visible=false; sceneRef.add(officeRoot);
+    const ground=new THREE.Mesh(new THREE.CircleGeometry(7.5,56),
+      new THREE.MeshPhysicalMaterial({color:0x0d1119, roughness:1}));
+    ground.rotation.x=-Math.PI/2; ground.position.y=-0.01; officeRoot.add(ground);
+
+    // the shared SLEEP model on a pedestal, wafers glowing mid-stack
+    const mini=new THREE.Group();
+    const ped=edged(new THREE.BoxGeometry(0.8,0.5,0.8), 0x141b2c, 0x46527F);
+    ped.position.y=0.25; mini.add(ped);
+    let my=0.55;
+    for(let i=0;i<6;i++){
+      const sl=edged(new THREE.BoxGeometry(0.55,0.075,0.4),
+        i%2?0x222b47:0x2b3556, i%2?0x3d4a78:0x5F74E8, {opacity:0.95});
+      sl.position.y=my+0.038; mini.add(sl); my+=0.105;
+      if(i===2||i===3){
+        const wfm=new THREE.Mesh(new THREE.BoxGeometry(0.53,0.014,0.38),
+          new THREE.MeshBasicMaterial({color:0x4FB98A, transparent:true, opacity:0.9}));
+        wfm.position.y=my-0.018; mini.add(wfm);
+      }
+    }
+    const halo=glowSprite('#8FA0FF',0.5); halo.position.y=my+0.25; mini.add(halo);
+    off.halo=halo; off.miniTop=halo;
+    officeRoot.add(mini); off.mini=mini;
+
+    const A=deskSet(-2.3, 0x3D52C9, 0xE8C39E);
+    const B=deskSet( 2.3, 0x2C7D57, 0x8a5a33);
+    officeRoot.add(A.g,B.g); off.A=A; off.B=B;
+
+    off.doc=new THREE.Mesh(new THREE.BoxGeometry(0.14,0.18,0.02),
+      new THREE.MeshBasicMaterial({color:0xE6EAF4, transparent:true, opacity:0}));
+    officeRoot.add(off.doc);
+    off.ans=glowSprite('#7FE8C0',0.3); off.ans.material.opacity=0; officeRoot.add(off.ans);
+    off.moon=glowSprite('#AFC0FF',0.55); off.moon.position.set(0,2.1,0);
+    off.moon.material.opacity=0; officeRoot.add(off.moon);
+  }
+  /* o={visible,time,docT,night,speakA,ansTa,speakB,ansTb} */
+  function setOffice(o){
+    if(!officeRoot) return;
+    officeRoot.visible=o.visible; if(!o.visible) return;
+    const t=o.time;
+    [[off.A,0],[off.B,2.1]].forEach(([D,ph])=>{
+      D.person.position.y=0.015*Math.sin(t*1.5+ph);
+      D.person.userData.head.rotation.z=0.08*Math.sin(t*0.8+ph);
+    });
+    off.halo.material.opacity=0.3+0.25*Math.sin(t*2)+0.3*(o.night||0);
+    // document flies A's screen -> model
+    const dT=o.docT||0;
+    if(dT>0&&dT<1){
+      const a=new THREE.Vector3(-1.9,1.0,0.25), b=new THREE.Vector3(0,1.35,0);
+      off.doc.position.lerpVectors(a,b,smooth(dT));
+      off.doc.position.y+=Math.sin(dT*Math.PI)*0.5;
+      off.doc.rotation.y=dT*4;
+      off.doc.material.opacity=Math.sin(dT*Math.PI);
+    } else off.doc.material.opacity=0;
+    off.moon.material.opacity=(o.night||0)*(0.7+0.2*Math.sin(t*1.5));
+    // answers: green pulse model -> screen
+    const ans=(tt,sx)=>{
+      if(tt<=0||tt>=1){ return; }
+      const a=new THREE.Vector3(0,1.35,0), b=new THREE.Vector3(sx,1.0,0.25);
+      off.ans.position.lerpVectors(a,b,smooth(tt));
+      off.ans.material.opacity=Math.sin(tt*Math.PI);
+    };
+    off.ans.material.opacity=0;
+    ans(o.ansTa||0,-1.9); ans(o.ansTb||0, 1.9);
+    off.A.screen.material.color.setHex((o.speakA||0)>0.5?0x2C7D57:0x22305a);
+    off.B.screen.material.color.setHex((o.speakB||0)>0.5?0x2C7D57:0x22305a);
+  }
+  const OCAMS=[
+    [0.00, 4.6, -2.40, 1.18, -1.9],
+    [0.30, 4.4, -2.30, 1.15, -1.6],
+    [0.46, 5.6, -1.57, 1.10,  0.0],   // pan across the model
+    [0.58, 4.4, -0.85, 1.15,  1.6],
+    [0.78, 4.6, -0.70, 1.18,  1.9],
+    [0.92, 7.2, -1.57, 1.08,  0.0],   // pull wide: both offices, one memory
+  ];
+  function setCamOffice(camera,p){
+    let i=0;
+    while(i<OCAMS.length-2 && p>OCAMS[i+1][0]) i++;
+    const A=OCAMS[i], B=OCAMS[i+1];
+    const f=smooth((p-A[0])/(B[0]-A[0]));
+    const r=lerp(A[1],B[1],f), az=lerp(A[2],B[2],f), po=lerp(A[3],B[3],f),
+          tx=lerp(A[4],B[4],f);
+    camera.position.set(tx*0.4+r*Math.sin(po)*Math.cos(az), r*Math.cos(po)+0.8,
+                        r*Math.sin(po)*Math.sin(az));
+    camera.lookAt(tx,0.8,0);
+  }
+  function buildExtras(){ buildShelf(); buildOffice(); }
+  function xtarget(key){
+    return { cubeOld:shelfCubes[0], cubeNew:shelfCubes[9], sweep:shelfSweep,
+             headA:off.A&&off.A.person.userData.head, screenA:off.A&&off.A.monitor,
+             headB:off.B&&off.B.person.userData.head, screenB:off.B&&off.B.monitor,
+             mini:off.miniTop }[key]||null;
+  }
+
+  return { build, setState, setCam, target, setJourney, setCamJourney, setCamRepair,
+           buildExtras, setShelf, setCamShelf, setOffice, setCamOffice, xtarget };
 })();

@@ -238,6 +238,34 @@
   .barrow { display:flex; align-items:center; justify-content:center;
     font-size:clamp(1.2rem,2vw,1.8rem); color:var(--muted); opacity:0; }
 
+  /* ---- scene 15: the gaps ---- */
+  #s15 .brain-label { left:7vw; top:24vh; width:min(42vw,600px); }
+  #d-fade .k { color:#E0A44A; } #d-reh .k { color:#4FB98A; }
+
+  /* ---- scene 16: where it could go ---- */
+  .chat { position:absolute; z-index:4; width:min(34vw,470px);
+    background:rgba(27,33,51,0.94); border:1px solid var(--dark-line);
+    border-radius:14px; padding:2vh 1.4vw; opacity:0; }
+  .chat .k { font-family:var(--mono); font-size:clamp(10px,0.95vw,14px);
+    letter-spacing:0.14em; text-transform:uppercase; color:var(--dark-accent);
+    display:block; margin-bottom:0.9vh; }
+  .chat p { font-size:clamp(0.92rem,1.35vw,1.2rem); color:var(--dark-soft); line-height:1.5; }
+  .chat p.q { color:#E6EAF4; font-weight:600; }
+  .chat p.a { color:#7FE8C0; margin-top:0.8vh; }
+  .chat p.sub { font-family:var(--mono); font-size:clamp(10px,0.95vw,14px);
+    color:var(--dark-accent); margin-top:0.9vh; letter-spacing:0.08em; }
+  #o-blr  { left:7vw;  top:26vh; }
+  #o-night{ left:7vw;  top:30vh; }
+  #o-askA { left:7vw;  top:26vh; }
+  #o-pan  { left:0; right:0; margin:0 auto; top:12vh; width:min(38vw,480px); text-align:center; }
+  #o-askB { right:7vw; top:26vh; } #o-askB .k { color:#4FB98A; }
+  #s16-final { position:absolute; inset:0; display:flex; align-items:center;
+    justify-content:center; z-index:5; opacity:0; padding:0 12vw; pointer-events:none; }
+  #s16-final p { font-family:var(--serif); font-size:clamp(1.3rem,2.6vw,2.3rem);
+    color:#E6EAF4; line-height:1.6; text-align:center; text-wrap:balance;
+    text-shadow:0 2px 26px rgba(0,0,0,0.8); }
+  #s16-final b { color:#7FE8C0; }
+
   .footer-strip { position:fixed; left:0; right:0; bottom:0; z-index:6;
     display:flex; justify-content:space-between; padding:12px 24px;
     font-family:var(--mono); font-size:12px; letter-spacing:0.06em; color:var(--muted);
@@ -906,6 +934,71 @@ damage: still under 1.0</pre>
       </div>
     </div>
   </section>
+
+  <!-- ================= SCENE 15 : THE GAPS ================= -->
+  <section class="scene" id="s15" data-len="680">
+    <div class="stage">
+      <div class="stage-inner">
+        <div class="head" id="s15-head">
+          <p class="eyebrow">14 &middot; What still needs work &mdash; named, not hidden</p>
+        </div>
+        <div class="brain-label" id="d-fade">
+          <span class="k">Gap 1 &middot; early memories fade</span>
+          <p>Each night rehearses <b>only that night's facts</b>. Watch the shelf: as cycle 10
+             learns, cycle 1 dims. Cumulative recall decays &mdash; the engine has no habit
+             of revisiting what it already knows.</p>
+        </div>
+        <div class="brain-label" id="d-reh">
+          <span class="k">Gap 2 &middot; the fix: interleaved rehearsal</span>
+          <p>The fix biology already uses: each night, replay a few <b>old</b> memories alongside
+             the new. The sweep relights the shelf. <b>Not built yet</b> &mdash; the clearest
+             next experiment, and the most biologically faithful one.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SCENE 16 : WHERE IT COULD GO ================= -->
+  <section class="scene" id="s16" data-len="900">
+    <div class="stage">
+      <div class="stage-inner">
+        <div class="head" id="s16-head">
+          <p class="eyebrow">15 &middot; Where it could go</p>
+        </div>
+        <div class="chat" id="o-blr">
+          <span class="k">Bengaluru &middot; Monday, 6:12 pm</span>
+          <p class="q">&ldquo;Uploading today's client documents &mdash; the Vortex master
+             agreement is in.&rdquo;</p>
+          <p class="sub">one pass &middot; tagged &middot; filed into short-term memory</p>
+        </div>
+        <div class="chat" id="o-night">
+          <span class="k">That night</span>
+          <p>The office is dark. <b style="color:#E6EAF4;">SLEEP consolidates</b> &mdash; the
+             agreement becomes weights, and the notes are wiped.</p>
+        </div>
+        <div class="chat" id="o-askA">
+          <span class="k">Bengaluru &middot; Tuesday</span>
+          <p class="q">&ldquo;What payment terms did we agree with Vortex?&rdquo;</p>
+          <p class="a">&ldquo;Net-45, renegotiated 12 Sep &mdash; clause 7.2 of the master
+             agreement.&rdquo;</p>
+        </div>
+        <div class="chat" id="o-pan">
+          <span class="k">one month later &middot; 2,700 km away</span>
+          <p>Same model. Same weights. <b style="color:#E6EAF4;">Nobody re-uploads anything.</b></p>
+        </div>
+        <div class="chat" id="o-askB">
+          <span class="k">Dubai &middot; a month later</span>
+          <p class="q">&ldquo;What were the payment terms in the Vortex agreement?&rdquo;</p>
+          <p class="a">&ldquo;Net-45, renegotiated 12 Sep &mdash; clause 7.2.&rdquo;</p>
+          <p class="sub">no documents attached &mdash; answered from its own weights</p>
+        </div>
+        <div id="s16-final">
+          <p>This is the vision &mdash; <b>not yet production-optimised</b>, and a long way
+             from there.<br>But it is the <b>first step</b>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <div class="footer-strip"><span>SLEEP &middot; SP Jain School of Global Management</span><span>Brain: MRI model by Nevit Dilmen (NIH 3DPX-003765) &middot; Aditya Tripathi</span></div>
@@ -1168,6 +1261,9 @@ const els = {
         c:[$('s13c0'),$('s13c1'),$('s13c2'),$('s13c3'),$('s13c4'),$('s13c5')] },
   s14:{ head:$('s14-head'),
         r:[$('s14r0'),$('s14r1'),$('s14r2'),$('s14r3'),$('s14r4')] },
+  s15:{ head:$('s15-head'), fade:$('d-fade'), reh:$('d-reh') },
+  s16:{ head:$('s16-head'), blr:$('o-blr'), night:$('o-night'), askA:$('o-askA'),
+        pan:$('o-pan'), askB:$('o-askB'), fin:$('s16-final') },
 };
 
 /* line-chart draw-on: measure path lengths once */
@@ -1235,13 +1331,13 @@ function update(){
   let p1 = prog('s1'), p2 = prog('s2'), p3 = prog('s3'), p4 = prog('s4'),
       p5 = prog('s5'), p6 = prog('s6'), p7 = prog('s7'), p8 = prog('s8'),
       p9 = prog('s9'), p10 = prog('s10'), p11 = prog('s11'), p12 = prog('s12'),
-      p13 = prog('s13'), p14 = prog('s14');
+      p13 = prog('s13'), p14 = prog('s14'), p15 = prog('s15'), p16 = prog('s16');
   if(FS){
     const n = parseInt(FS,10);
-    const arr = [0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+    const arr = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
     for(let i=0;i<n-1;i++) arr[i]=1;
     arr[n-1]=FP;
-    [p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14] = arr;
+    [p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16] = arr;
   }
 
   /* scene 1 — title vanishes upward */
@@ -1266,7 +1362,8 @@ function update(){
 
   /* scene 3 — brain */
   const glIn = clamp(seg(p2, 0.92, 1) * (1 - seg(p5, 0.985, 1))
-             + seg(p11, 0.002, 0.03) * (1 - seg(p11, 0.985, 1)), 0, 1);
+             + seg(p11, 0.002, 0.03) * (1 - seg(p11, 0.985, 1))
+             + seg(p15, 0.002, 0.03) * (1 - seg(p16, 0.985, 1)), 0, 1);
   els.gl.style.opacity = glIn;
   els.svg.style.opacity = glIn;
 
@@ -1413,7 +1510,52 @@ function update(){
     });
   });
 
-  if(p11 > 0.0005 && p12 <= 0 && renderer){
+  if(p16 > 0.0005 && renderer){
+    /* ---- scene 16: where it could go ---- */
+    if(brainRoot) brainRoot.visible = false;
+    TOWER.setState({visible:false}); TOWER.setShelf({visible:false});
+    const night16 = win(p16,[0.20,0.32],0.04);
+    TOWER.setOffice({visible:true, time,
+      docT: seg(p16,0.11,0.20), night: night16,
+      speakA: win(p16,[0.32,0.45],0.03), ansTa: seg(p16,0.34,0.40),
+      speakB: win(p16,[0.58,0.75],0.03), ansTb: seg(p16,0.60,0.66)});
+    TOWER.setCamOffice(camera, p16);
+    setF(els.s16.head, (1-seg(p16,0.005,0.05))*30,
+         seg(p16,0.005,0.05)*(1-seg(p16,0.78,0.86)));
+    defs.push(
+      [els.s16.blr,  win(p16,[0.02,0.185],0.03), TOWER.xtarget('headA'),'right'],
+      [els.s16.night,win(p16,[0.21,0.31],0.03),  TOWER.xtarget('mini'), 'right'],
+      [els.s16.askA, win(p16,[0.325,0.45],0.03), TOWER.xtarget('screenA'),'right'],
+      [els.s16.pan,  win(p16,[0.47,0.565],0.03), null],
+      [els.s16.askB, win(p16,[0.585,0.75],0.03), TOWER.xtarget('screenB'),'left'],
+    );
+    const fw = win(p16,[0.80,0.975],0.04);
+    els.s16.fin.style.opacity = fw;
+    els.s16.fin.style.transform = `scale(${0.96+0.04*fw})`;
+    els.dim.style.opacity = 0.35*night16 + 0.45*fw;
+    if(glIn > 0.002) renderer.render(scene, camera);
+  }
+  else if(p15 > 0.0005 && renderer){
+    /* ---- scene 15: the gaps (memory shelf) ---- */
+    if(brainRoot) brainRoot.visible = false;
+    TOWER.setState({visible:false}); TOWER.setOffice({visible:false});
+    const appearT = seg(p15,0.05,0.42);
+    const fadeAmt = seg(p15,0.14,0.46);
+    let sweepX = null;
+    const rw = seg(p15,0.52,0.90);
+    if(rw>0){ sweepX = -2.6 + rw*5.6; }
+    TOWER.setShelf({visible:true, appearT, fadeAmt, sweepX, time});
+    TOWER.setCamShelf(camera, p15);
+    setF(els.s15.head, (1-seg(p15,0.005,0.05))*30,
+         seg(p15,0.005,0.05)*(1-seg(p15,0.96,0.995)));
+    defs.push(
+      [els.s15.fade, win(p15,[0.10,0.44],0.04), TOWER.xtarget('cubeOld'),'right'],
+      [els.s15.reh,  win(p15,[0.52,0.92],0.04), TOWER.xtarget('cubeNew'),'right'],
+    );
+    els.dim.style.opacity = 0;
+    if(glIn > 0.002) renderer.render(scene, camera);
+  }
+  else if(p11 > 0.0005 && p12 <= 0 && renderer){
     /* ---- scene 11: the repair ---- */
     if(brainRoot) brainRoot.visible = false;
     const explode = seg(p11,0.10,0.16) * (1 - seg(p11,0.84,0.90));
@@ -1423,6 +1565,7 @@ function update(){
     const hiA = win(p11,[0.17,0.30],0.04);
     const hiM = win(p11,[0.295,0.60],0.05);
     const alive = seg(p11,0.895,0.945);
+    TOWER.setShelf({visible:false}); TOWER.setOffice({visible:false});
     TOWER.setState({visible:true, explode,
       appear:{tag:1,kv:1,prp:1,engine:1,wafer:1}, alive,
       pulse:{}, time, waferMove:wMove, clampOn, clampFix, hiAttn:hiA, hiMLP:hiM});
@@ -1572,6 +1715,7 @@ function onResize(){
 addEventListener('resize', onResize);
 measure();
 initGL();
+TOWER.buildExtras();
 
 /* debug: ?p=0.62 scrolls to a fraction of the document; add &shot for
    headless screenshots (timer-driven loop — rAF stalls under virtual time) */
@@ -1583,7 +1727,7 @@ if(q.has('p')){
 }
 if(q.has('fs')){
   FS = q.get('fs'); FP = parseFloat(q.get('fp')||'0');
-  ['s1','s2','s3','s4','s5','s6','s7','s8','s9','s10','s11','s12','s13','s14'].forEach(id=>{
+  ['s1','s2','s3','s4','s5','s6','s7','s8','s9','s10','s11','s12','s13','s14','s15','s16'].forEach(id=>{
     if(id !== 's'+FS) document.getElementById(id).style.display='none'; });
   measure();
 }
